@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Document-Parser</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <form>
+
+            <!-- Title -->
+            <label class="form-label">Title</label>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" id="title">
+            </div>
+
+            <!-- Basic Author Info -->
+            <div class="mb-3">
+                <label class="form-label">Author</label>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="name">Name</span>
+                    <input type="text" class="form-control">
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="institution">Institution</span>
+                    <input type="text" class="form-control">
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Bio</span>
+                    <textarea class="form-control" id="bio"></textarea>
+                </div>
+                
+                <button>Add Another Author</button>
+            </div>
+
+            
+
+            <!-- Abstract -->
+            <label class="form-label">Abstract</label>
+            <div class="input-group mb-3">
+                <input type="file" class="form-control" id="uploadAbstract">
+            </div>
+
+            <!-- Additional Supplementary Materials -->
+            <label class="form-label">Supplementary Materials (optional)</label>
+            
+            <div class="mb-3">
+                <div class="input-group mb-3">
+                    <select class="form-select" id="material-type">
+                        <option selected>Material Type</option>
+                        <option value="1">Handout</option>
+                        <option value="2">Slides</option>
+                        <option value="3">Script</option>
+                        <option value="4">Other</option>
+                    </select>
+                    <input type="file" class="form-control" id="uploadHandout">
+                </div>
+
+                <button>Add Another Document</button>
+
+            </div>
+
+            <button>PREVIEW SUBMISSION</button>
+
+        </form>
+
+
+    </div>
+      
+
+</body>
+
+
+</html>
