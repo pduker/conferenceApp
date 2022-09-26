@@ -1,0 +1,19 @@
+{
+  "name": "document-parser",
+  "version": "1.0.0",
+  "description": "parses documents",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "local": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.eecis.udel.edu/cisc-capstone-teams/cisc498-22f/team-17/document-parser.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
