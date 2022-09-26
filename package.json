@@ -12,5 +12,8 @@
     "url": "https://gitlab.eecis.udel.edu/cisc-capstone-teams/cisc498-22f/team-17/document-parser.git"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "nodemon": "^2.0.20"
+  }
 }
