@@ -18,15 +18,20 @@ server.get("/", async function(req, res) {
 })
 
 server.post("/api/parse/docx", async function (req, res) {
-    const { fileName } = req.body
+    try {
+        const { fileName } = req.body
 
-    console.log(fileName)
+        console.log(fileName)
 
-    const text = await parseDoc('./test.docx')
+        const text = await parseDoc('./test.docx')
 
-    console.log(text)
+        console.log(text)
 
-    res.send(text)
+        res.send(text)
+    catch (err) {
+        console.error(err)
+        res.status(500).send('Internal failure')
+    }
 })
 
 server.use(express.static("public"))
