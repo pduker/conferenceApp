@@ -1,9 +1,12 @@
+let data = {
+    authors: [],
+    title: '',
+    handouts: [],
+    abstractFile: ''
+}
 
-let abstractFile;
 let numAuthors = 1;
-let authors = [];
-let title;
-let handouts = [];
+let numMaterials = 1;
 
 $('#preview').on('click', function(e){
     e.preventDefault();
@@ -12,17 +15,28 @@ $('#preview').on('click', function(e){
         let name = $(`#name-${i}`)[0].value;
         let institution = $(`#institution-${i}`)[0].value;
         let bio = $(`#bio-${i}`)[0].value;
-        authors.push({
+        data.authors.push({
             name: name,
             institution: institution,
             bio: bio
         });
     }
 
-    title = $('#title')[0].value;
-    abstractFile = $('#uploadAbstract')[0].files[0];
+    for(let i = 0; i < numMaterials; i++){
+        let materialType = $(`#materialType-${i}`)[0].value;
+        let materialFile = $(`#uploadHandout-${i}`)[0].files[0];
+        if(materialType && materialFile){
+            data.handouts.push({
+                type: materialType,
+                file: materialFile
+            });
+        }
+    }
 
-    console.log(authors);
+    data.title = $('#title')[0].value;
+    data.abstractFile = $('#uploadAbstract')[0].files[0];
+
+    console.log(data);
 
 });
 
@@ -45,6 +59,20 @@ $('#add-author').on('click', function(e){
             <span class="input-group-text">Bio</span>
             <textarea class="form-control" id="bio-${numAuthors-1}" ></textarea>
         </div>`
+    );
+
+});
+
+
+$('#add-document').on('click', function(e){
+    e.preventDefault();
+    numMaterials++;
+
+    $('#materials').append(
+        `<div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="Material Type (e.g Handout, Slides, Script)" id="materialType-${numMaterials-1}">
+        <input type="file" class="form-control" id="uploadHandout-${numMaterials-1}">
+    </div>`
     );
 
 });
