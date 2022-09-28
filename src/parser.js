@@ -3,38 +3,27 @@ const fs = require('fs')
 const path = require('path')
 
 /**
- * Returns a buffer of the file (if it exists)
- * @param {string} fileName 
- * @returns 
+ * Deletes the file at the specified path
+ * @param {string} filePath
  */
-async function readFinishedFile (fileName) {
-  const file = fs.readFileSync(path.join(__dirname, '../tmp', fileName))
-  return file
-}
-
-async function cleanUpFile (fileName) {
-
+async function deleteFile (filePath) {
+  fs.unlinkSync(filePath)
 }
 
 /**
- * Takes a file name from the uploader and reads the tmp file to parse from DOCX format to HTML
- * @param {string} localFileName 
+ * Converts a .docx document into raw html. Does not delete file after.
+ * @param {string} inputFilePath
+ * @param {string} outputFilePath
  * @returns {Promise<Buffer>} Returns a promise (that needs to be awaited) with the Buffer from the HTML file
  */
-async function parseDocx (localFileName) {
+async function parseDocx (inputFilePath, outputFilePath) {
 
-  if (!localFileName) {
-    throw new Error('A valid file name was not passed!')
+  if (!inputFilePath || !outputFilePath) {
+    throw new Error('Valid paths were not passed!')
   }
-
-  const fileName = localFileName.split('.')[0] 
 
   // Wrap this exec callback function in a promise so it's easier to work with
   await new Promise(function (resolve, reject) {
-
-    const inputFilePath = path.join(__dirname, '../tmp', localFileName)
-    const outputFilePath = path.join(__dirname, '../tmp', `${fileName}.html`)
-
     exec(`pandoc ${inputFilePath} -f docx -t html -o ${outputFilePath}`, function (internalError, stdout, stderr){
       if (internalError) {
         console.error(internalError)
@@ -50,13 +39,13 @@ async function parseDocx (localFileName) {
     })
   })
 
-  const fileBuffer = await readFinishedFile(`${fileName}.html`)
-  
+  const fileBuffer = fs.readFileSync(outputFilePath)
+
   return fileBuffer
 }
 
 
 module.exports = {
   parseDocx,
-  cleanUpFile
+  deleteFile
 }
