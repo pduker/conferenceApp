@@ -3,8 +3,10 @@
 
 <head>
     <meta charset="utf-8">
+    <link rel="stylesheet" href="styles.css">
     <title>Document-Parser</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <script src="./js/jquery.min.js"></script>
 </head>
 
 <body>
@@ -21,23 +23,25 @@
 
             <!-- Basic Author Info -->
             <div class="mb-3">
-                <label class="form-label">Author</label>
-                <div class="input-group mb-3">
-                    <span class="input-group-text" id="name">Name</span>
-                    <input type="text" class="form-control">
+                <div id="authors">
+                    <label class="form-label">Author</label>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">Name</span>
+                        <input type="text" class="form-control" id="name-0">
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">Institution</span>
+                        <input type="text" class="form-control" id="institution-0">
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">Bio</span>
+                        <textarea class="form-control" id="bio-0" ></textarea>
+                    </div>
                 </div>
-                <div class="input-group mb-3">
-                    <span class="input-group-text" id="institution">Institution</span>
-                    <input type="text" class="form-control">
-                </div>
-                <div class="input-group mb-3">
-                    <span class="input-group-text">Bio</span>
-                    <textarea class="form-control" id="bio"></textarea>
-                </div>
-                
-                <button>Add Another Author</button>
-            </div>
 
+                <button class="btn btn-primary" id="add-author">Add Another Author</button>
+                
+            </div>
             
 
             <!-- Abstract -->
@@ -51,27 +55,22 @@
             
             <div class="mb-3">
                 <div class="input-group mb-3">
-                    <select class="form-select" id="material-type">
-                        <option selected>Material Type</option>
-                        <option value="1">Handout</option>
-                        <option value="2">Slides</option>
-                        <option value="3">Script</option>
-                        <option value="4">Other</option>
-                    </select>
+                    <input type="text" class="form-control" placeholder="Material Type (e.g Handout, Slides, Script)">
                     <input type="file" class="form-control" id="uploadHandout">
                 </div>
 
-                <button>Add Another Document</button>
+                <button class="btn btn-primary">Add Another Document</button>
 
             </div>
 
-            <button>PREVIEW SUBMISSION</button>
+            <button class="btn btn-primary" id="preview">PREVIEW SUBMISSION</button>
 
         </form>
 
 
     </div>
       
+    <script src='./script.js'></script>
 
 </body>
 

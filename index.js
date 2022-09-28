@@ -1,8 +1,13 @@
+const path = require('path')
 const express = require("express")
 const bodyParser = require("body-parser")
 const fs = require("fs")
 
 const server = express()
+
+server.use('/css', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/css')))
+server.use('/js', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/js')))
+server.use('/js', express.static(path.join(__dirname, 'node_modules/jquery/dist')))
 
 server.use(bodyParser.json())
 server.get("/", async function(req, res){
