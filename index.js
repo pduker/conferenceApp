@@ -23,12 +23,10 @@ server.post("/api/parse/docx", async function (req, res) {
 
         console.log(fileName)
 
-        const processedText = await parseDocx('test.docx')
+        const fileBuffer = await parseDocx(fileName)
 
-        console.log(text)
-
-        res.send(text)
-    catch (err) {
+        res.send(fileBuffer)
+    } catch (err) {
         console.error(err)
         res.status(500).send('Internal failure')
     }
