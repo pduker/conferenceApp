@@ -23,7 +23,7 @@ server.post("/api/parse/docx", async function (req, res) {
 
         console.log(fileName)
 
-        const text = await parseDoc('./test.docx')
+        const processedText = await parseDocx('test.docx')
 
         console.log(text)
 
