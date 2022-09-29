@@ -3,6 +3,7 @@ A super cool parser
 
 ## Requirements
 - Node (latest preferably, v16)
+- Pandoc (2.19 preferably)
 
 ## How to Start
 - Install the packages `npm i`
