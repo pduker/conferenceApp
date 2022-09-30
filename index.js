@@ -6,7 +6,7 @@ const multer = require("multer")
 
 const uploadMiddleware = multer({ storage: multer.diskStorage({ destination: "./tmp"}) })
 
-const { parseDocx, deleteFile } = require("./src/parser.js")
+const { parseDocx, deleteFile, exportYAML } = require("./src/parser.js")
 
 const server = express()
 
@@ -24,23 +24,37 @@ server.post("/api/papers", uploadMiddleware.single("abstract"), async function (
             res.status(400).send("Bad Request")
         }
 
-        const authors = []
+        const authors = {}
+        for (const [rawkey, value] of Object.entries(req.body)) {
+            const splitVals = rawkey.split("-")
+            const id = splitVals[1]
+            const field = splitVals[0]
 
-        for (const [key, value] of Object.entries(req.body)) {
-            
+            let temp = authors[id]
+
+            // If we have not added an entry yet for that author, add it
+            if (!temp) {
+                temp = {}
+            }
+
+            temp[field] = value
+
+            // Update our authors listing based off the id
+            authors[id] = temp
         }
 
-        console.log(req.file)
-        console.log(req.body)
         const fileName = req.file.filename
 
         const inputFilePath = req.file.path
         const outputFilePath = path.join(__dirname, 'tmp', `${fileName}.html`)
 
         const fileBuffer = await parseDocx(inputFilePath, outputFilePath)
+        const abstractHTML = fileBuffer.toString('utf8')
+
+        await exportYAML(authors, abstractHTML)
 
         res.json({
-            html: fileBuffer.toString('utf8')
+            html: abstractHTML
         })
 
         await deleteFile(outputFilePath)
