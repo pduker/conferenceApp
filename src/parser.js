@@ -44,8 +44,21 @@ async function parseDocx (inputFilePath, outputFilePath) {
   return fileBuffer
 }
 
+/**
+ * Takes in a map of author information and a HTML abstract to write to a YAML file
+ * @param {Object} authors A map where each author is mapped to it's information. First author is 0 and so on.
+ * @param {string} authors.name The name of the author
+ * @param {string} authors.institution The institution of the author
+ * @param {string | ""} authors.bio The bio, optional param and could be empty
+ * @param {string} abstract The HTML string from the parsed abstract upload
+ */
+function exportYAML(authors, abstract) {
+  // Export to YAML 
+}
+
 
 module.exports = {
   parseDocx,
-  deleteFile
+  deleteFile,
+  exportYAML
 }
