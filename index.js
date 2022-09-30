@@ -2,6 +2,9 @@ const path = require('path')
 const express = require("express")
 const bodyParser = require("body-parser")
 const fs = require("fs")
+const multer = require("multer")
+
+const uploadMiddleware = multer({ storage: multer.diskStorage({ destination: "./tmp"}) })
 
 const { parseDocx, deleteFile } = require("./src/parser.js")
 
@@ -12,6 +15,26 @@ server.use(bodyParser.json())
 server.get("/", async function(req, res) {
     const html = fs.readFileSync("./public/index.html")
     res.send(html.toString())
+})
+
+server.post("/api/papers", uploadMiddleware.single("abstract"), async function (req, res) {
+    try {
+        if (!req.file) {
+            console.error("File missing!")
+            res.status(400).send("Bad Request")
+        }
+
+        console.log(req.file)
+
+
+    } catch (err) {
+        console.error(err)
+        res.status(500).send("Internal Server Error")
+    }
+})
+
+server.post("/api/papers/materials", async function (req, res) {
+    // Placeholder for the future supplementary materials route
 })
 
 server.post("/api/parse/docx", async function (req, res) {
