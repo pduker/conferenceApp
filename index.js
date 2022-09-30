@@ -25,8 +25,19 @@ server.post("/api/papers", uploadMiddleware.single("abstract"), async function (
         }
 
         console.log(req.file)
+        const fileName = req.file.filename
 
+        const inputFilePath = req.file.path
+        const outputFilePath = path.join(__dirname, 'tmp', `${fileName}.html`)
 
+        const fileBuffer = await parseDocx(inputFilePath, outputFilePath)
+
+        res.json({
+            html: fileBuffer.toString('utf8')
+        })
+
+        await deleteFile(outputFilePath)
+        await deleteFile(inputFilePath)
     } catch (err) {
         console.error(err)
         res.status(500).send("Internal Server Error")
