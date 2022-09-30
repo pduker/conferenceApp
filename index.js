@@ -24,7 +24,14 @@ server.post("/api/papers", uploadMiddleware.single("abstract"), async function (
             res.status(400).send("Bad Request")
         }
 
+        const authors = []
+
+        for (const [key, value] of Object.entries(req.body)) {
+            
+        }
+
         console.log(req.file)
+        console.log(req.body)
         const fileName = req.file.filename
 
         const inputFilePath = req.file.path
