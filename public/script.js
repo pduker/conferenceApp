@@ -3,7 +3,7 @@ let numAuthors = 1;
 let numMaterials = 1;
 
 /**
- * Sends the paper submission via POST request to PAPER_API_LINK
+ * Sends the paper submission via POST request to /api/papers/
  */
 async function sendPaper(){
     const submissionResponse = await fetch('/api/papers', {
@@ -16,9 +16,9 @@ async function sendPaper(){
 }
 
 /**
- * Sends the materials submission via POST request to MATERIALS_API_LINK
+ * Sends the materials submission via POST request to /api/papers/materials/
  */
-async function sendMaterials(){
+async function sendPaperMaterials(){
     const materialSubmissionResponse = await fetch('/api/papers/materials', {
         method: 'POST',
         body: new FormData(document.querySelector('#materials-submission')),
@@ -36,7 +36,7 @@ $('#preview').on('click', function(e){
     e.preventDefault();
 
     sendPaper();
-    sendMaterials();
+    sendPaperMaterials();
 
     // TODO : generate preview html
 });
