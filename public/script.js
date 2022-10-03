@@ -8,10 +8,7 @@ let numMaterials = 1;
 async function sendPaper(){
     const submissionResponse = await fetch('/api/papers', {
         method: 'POST',
-        body: new FormData(document.querySelector('#submission')),
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        },
+        body: new FormData(document.querySelector('#submission'))
     })
 }
 
