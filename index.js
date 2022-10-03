@@ -24,6 +24,9 @@ server.post("/api/papers", uploadMiddleware.single("abstract"), async function (
             res.status(400).send("Bad Request")
         }
 
+        const title = req.body.title
+        delete req.body.title
+
         const authors = {}
         for (const [rawkey, value] of Object.entries(req.body)) {
             const splitVals = rawkey.split("-")
@@ -54,7 +57,9 @@ server.post("/api/papers", uploadMiddleware.single("abstract"), async function (
         await exportYAML(authors, abstractHTML)
 
         res.json({
-            html: abstractHTML
+            html: abstractHTML,
+            authors,
+            title
         })
 
         await deleteFile(outputFilePath)
