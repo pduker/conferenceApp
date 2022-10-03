@@ -6,7 +6,7 @@ let numMaterials = 1;
  * Sends the paper submission via POST request to PAPER_API_LINK
  */
 async function sendPaper(){
-    const submissionResponse = await fetch('/test', {
+    const submissionResponse = await fetch('/api/papers', {
         method: 'POST',
         body: new FormData(document.querySelector('#submission')),
         headers: {
@@ -19,7 +19,7 @@ async function sendPaper(){
  * Sends the materials submission via POST request to MATERIALS_API_LINK
  */
 async function sendMaterials(){
-    const materialSubmissionResponse = await fetch('/test', {
+    const materialSubmissionResponse = await fetch('/api/papers/materials', {
         method: 'POST',
         body: new FormData(document.querySelector('#materials-submission')),
         headers: {
