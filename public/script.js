@@ -9,7 +9,9 @@ async function sendPaper(){
     const submissionResponse = await fetch('/api/papers', {
         method: 'POST',
         body: new FormData(document.querySelector('#submission'))
-    })
+    });
+
+    return await submissionResponse.json(); 
 }
 
 /**
@@ -18,24 +20,51 @@ async function sendPaper(){
 async function sendPaperMaterials(){
     const materialSubmissionResponse = await fetch('/api/papers/materials', {
         method: 'POST',
-        body: new FormData(document.querySelector('#materials-submission')),
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        },
+        body: new FormData(document.querySelector('#materials-submission'))
     })
+}
+
+/*
+ * Generates HTML to preview paper submission
+ */
+function generatePreview(paper, materials){
+
+    let content = `<p class="title">${paper.title}</p>`;
+    for(let author of Object.values(paper.authors)){
+        content += `<div>
+            <p class="author">${author.author}</p>
+            <details><summary>bio for ${author.author}</summary><p>${author.bio}</p></details>
+        </div>`;
+    }
+
+    content += `<details class="root"><summary>Abstract</summary>${paper.html}</details>`
+    
+    // MATERIALS NOT IMPLEMENTED YET
+    // content += `<details class="root"><summary>Supplementary Material(s)</summary>
+    //     <ul class="handouts">`;
+    // for(let material of Object.values(materials)){
+    //     content += `<li><a href="">${materials[i].type}</a></li>`;
+    // }
+    // content += `
+    //     </ul>
+    //     </details>`;
+
+    $('#preview')[0].innerHTML = content;
+    
 }
 
 /**
  * Sends all data to server
  * Generates a preview of the submission (TODO) 
  */
-$('#preview').on('click', function(e){
+$('#submit-preview').on('click', async function(e){
     e.preventDefault();
 
-    sendPaper();
-    sendPaperMaterials();
+    const paperResponse = await sendPaper();
+    //const materialsResponse = await sendPaperMaterials();
 
     // TODO : generate preview html
+    generatePreview(paperResponse, '');
 });
 
 
