@@ -4,9 +4,12 @@ let numMaterials = 1;
 
 /**
  * Sends the paper submission via POST request to /api/papers/
+ * If sending the paper for a preview, send to /api/papers/preview/
  */
-async function sendPaper(){
-    const submissionResponse = await fetch('/api/papers', {
+async function sendPaper(preview){
+    let url = preview ? '/api/papers/preview/' : '/api/papers/'
+
+    const submissionResponse = await fetch(url, {
         method: 'POST',
         body: new FormData(document.querySelector('#submission'))
     });
@@ -32,39 +35,51 @@ function generatePreview(paper, materials){
     let content = `<p class="title">${paper.title}</p>`;
     for(let author of Object.values(paper.authors)){
         content += `<div>
-            <p class="author">${author.author}</p>
-            <details><summary>bio for ${author.author}</summary><p>${author.bio}</p></details>
+            <p class="author">${author.name} (${author.institution})</p>
+            <details><summary>bio for ${author.name}</summary><p>${author.bio}</p></details>
         </div>`;
     }
 
     content += `<details class="root"><summary>Abstract</summary>${paper.html}</details>`
     
-    // MATERIALS NOT IMPLEMENTED YET
-    // content += `<details class="root"><summary>Supplementary Material(s)</summary>
-    //     <ul class="handouts">`;
-    // for(let material of Object.values(materials)){
-    //     content += `<li><a href="">${materials[i].type}</a></li>`;
-    // }
-    // content += `
-    //     </ul>
-    //     </details>`;
+    // goal is to display the list of materials but show a popup saying something like "when a user clicks this link the file will download"
+    content += `<details class="root"><summary>Supplementary Material(s)</summary>
+        <ul class="handouts">`;
+    for(let material of materials){
+        content += `<li><a href="">${material}</a></li>`;
+    }
+    content += `
+        </ul>
+        </details>`;
 
     $('#preview')[0].innerHTML = content;
     
 }
 
 /**
- * Sends all data to server
- * Generates a preview of the submission (TODO) 
+ * Generates a preview of the paper submission
  */
 $('#submit-preview').on('click', async function(e){
     e.preventDefault();
 
-    const paperResponse = await sendPaper();
-    //const materialsResponse = await sendPaperMaterials();
+    // false because preview endpoint is not active in this branch
+    // change to true before merging to main
+    const paperResponse = await sendPaper(false)
+    let materials = []
+    for (let i = 0; i < numMaterials; i++)
+        materials.push($(`#materialType-${i}`)[0].value)
+    
+    generatePreview(paperResponse, materials);
+});
 
-    // TODO : generate preview html
-    generatePreview(paperResponse, '');
+/**
+ * Sends all data to server
+ */
+ $('#submit-paper').on('click', async function(e){
+    e.preventDefault();
+
+    const paperResponse = await sendPaper(false);
+    const materialsResponse = await sendPaperMaterials();
 });
 
 
