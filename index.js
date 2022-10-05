@@ -7,6 +7,7 @@ const multer = require("multer")
 const uploadMiddleware = multer({ storage: multer.diskStorage({ destination: "./tmp"}) })
 
 const { parseDocx, deleteFile, exportYAML } = require("./src/parser.js")
+const { buildAuthorsMap } = require("./src/utils")
 
 const server = express()
 
@@ -27,25 +28,7 @@ server.post("/api/papers", uploadMiddleware.single("abstract"), async function (
         const title = req.body.title
         delete req.body.title
 
-        const authors = {}
-        for (const [rawkey, value] of Object.entries(req.body)) {
-            const splitVals = rawkey.split("-")
-            const id = splitVals[1]
-            const field = splitVals[0]
-
-            let temp = authors[id]
-
-            // If we have not added an entry yet for that author, add it
-            if (!temp) {
-                temp = {}
-            }
-
-            temp[field] = value
-
-            // Update our authors listing based off the id
-            authors[id] = temp
-        }
-
+        const authors = buildAuthorsMap(req.body)
         const fileName = req.file.filename
 
         const inputFilePath = req.file.path
@@ -55,6 +38,35 @@ server.post("/api/papers", uploadMiddleware.single("abstract"), async function (
         const abstractHTML = fileBuffer.toString('utf8')
 
         await exportYAML(authors, abstractHTML)
+
+        await deleteFile(outputFilePath)
+        await deleteFile(inputFilePath)
+
+        res.sendStatus(200)
+    } catch (err) {
+        console.error(err)
+        res.status(500).send("Internal Server Error")
+    }
+})
+
+server.post("/api/papers/preview", uploadMiddleware.single("abstract"), async function (req, res) {
+    try {
+        if (!req.file) {
+            console.error("File missing!")
+            res.status(400).send("Bad Request")
+        }
+
+        const title = req.body.title
+        delete req.body.title
+
+        const authors = buildAuthorsMap(req.body)
+        const fileName = req.file.filename
+
+        const inputFilePath = req.file.path
+        const outputFilePath = path.join(__dirname, 'tmp', `${fileName}.html`)
+
+        const fileBuffer = await parseDocx(inputFilePath, outputFilePath)
+        const abstractHTML = fileBuffer.toString('utf8')
 
         res.json({
             html: abstractHTML,
