@@ -41,6 +41,8 @@ server.post("/api/papers", uploadMiddleware.single("abstract"), async function (
 
         await deleteFile(outputFilePath)
         await deleteFile(inputFilePath)
+
+        res.sendStatus(200)
     } catch (err) {
         console.error(err)
         res.status(500).send("Internal Server Error")
