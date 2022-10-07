@@ -31,34 +31,30 @@ async function sendPaperMaterials(){
  * Generates HTML to preview paper submission
  */
 function generatePreview(paper, materials){
-
+    let authors = Object.values(paper.authors);
     let content = `<p class="title">${paper.title}</p>`;
     content += `<div>`;
-    // add all author names first
-    for(let author of Object.values(paper.authors)){
-        content += `<p class="author">${author.name} (${author.institution})</p>`;
-    }
+    // add all author names and institutions first
+    authors.forEach((author) => {
+        content += `<p class="author">${author.name} (${author.institution})</p>`
+    });
     // then add a dropdown for any author that has a bio
-    for(let author of Object.values(paper.authors)){
+    authors.forEach((author) => {
         if (author.bio)
-         content += `<details><summary>bio for ${author.name}</summary><p>${author.bio}</p></details>`
-    }
+            content += `<details><summary>bio for ${author.name}</summary><p>${author.bio}</p></details>`;
+    });
     content += `</div>`;
 
     content += `<details class="root"><summary>Abstract</summary>${paper.html}</details>`
     
-    // goal is to display the list of materials but show a popup saying something like "when a user clicks this link the file will download"
-    content += `<details class="root"><summary>Supplementary Material(s)</summary>
-        <ul class="handouts">`;
-    for(let material of materials){
+    // display the list of materials with dummy links for preview purposes
+    content += `<details class="root"><summary>Supplementary Material(s)</summary>`;
+    content += `<ul class="handouts">`;
+    for(let material of materials)
         content += `<li><a href="">${material}</a></li>`;
-    }
-    content += `
-        </ul>
-        </details>`;
+    content += `</ul> </details>`;
 
     $('#preview')[0].innerHTML = content;
-    
 }
 
 /**
