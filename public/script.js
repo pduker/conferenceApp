@@ -33,12 +33,17 @@ async function sendPaperMaterials(){
 function generatePreview(paper, materials){
 
     let content = `<p class="title">${paper.title}</p>`;
+    content += `<div>`;
+    // add all author names first
     for(let author of Object.values(paper.authors)){
-        content += `<div>
-            <p class="author">${author.name} (${author.institution})</p>
-            <details><summary>bio for ${author.name}</summary><p>${author.bio}</p></details>
-        </div>`;
+        content += `<p class="author">${author.name} (${author.institution})</p>`;
     }
+    // then add a dropdown for any author that has a bio
+    for(let author of Object.values(paper.authors)){
+        if (author.bio)
+         content += `<details><summary>bio for ${author.name}</summary><p>${author.bio}</p></details>`
+    }
+    content += `</div>`;
 
     content += `<details class="root"><summary>Abstract</summary>${paper.html}</details>`
     
