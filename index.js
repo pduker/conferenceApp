@@ -37,7 +37,7 @@ server.post("/api/papers", uploadMiddleware.single("abstract"), async function (
         const fileBuffer = await parseDocx(inputFilePath, outputFilePath)
         const abstractHTML = fileBuffer.toString('utf8')
 
-        await exportYAML(authors, abstractHTML)
+        await exportYAML(title, authors, abstractHTML)
 
         await deleteFile(outputFilePath)
         await deleteFile(inputFilePath)

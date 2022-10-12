@@ -52,10 +52,20 @@ async function parseDocx (inputFilePath, outputFilePath) {
  * @param {string | ""} authors.bio The bio, optional param and could be empty
  * @param {string} abstract The HTML string from the parsed abstract upload
  */
-function exportYAML(authors, abstract) {
-  // Export to YAML 
+function exportYAML(title, authors, abstract) {
+  // Export to YAML
+  let filePath = path.join(__dirname, '../tmp/yaml', `${title}.yaml`)
+  fs.writeFileSync(filePath, "---\n")
+  let authorsString = "authors:\n"
+  console.log(authors)
+  for (const author of Object.values(authors)) {
+    // author = {name: ..., institution: ..., bio: ...}
+    authorsString += "\t- name: "+ author.name + "\n\t\tinstitution: " + author.institution + "\n\t\tbio: " + author.bio
+  }
+  fs.appendFileSync(filePath, authorsString)
+  fs.appendFileSync(filePath, "\ntitle: " + title)
+  fs.appendFileSync(filePath, "\nabstract: |\n\t" + abstract)
 }
-
 
 module.exports = {
   parseDocx,
