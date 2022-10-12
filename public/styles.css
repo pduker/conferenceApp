@@ -1,5 +1,13 @@
 /* p, div, details, summary, ul, li */
 /* .title, .author, .root, .handouts */
+#preview {
+    padding: 0 1em 2em 1em;
+    margin: 3em 1em;
+    border: 1px grey solid;
+    border-radius: 10px;
+    display: none;
+}
+
 body {
     font-family: freight-sans-pro, Gill Sans, Arial, sans-serif;
     font-size: 18px;

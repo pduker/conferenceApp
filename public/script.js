@@ -54,6 +54,7 @@ function generatePreview(paper, materials){
         content += `<li><a href="">${material}</a></li>`;
     content += `</ul> </details>`;
 
+    $('#preview')[0].style.display = 'block';
     $('#preview')[0].innerHTML = content;
 }
 
