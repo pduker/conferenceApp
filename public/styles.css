@@ -1,0 +1,83 @@
+/* p, div, details, summary, ul, li */
+/* .title, .author, .root, .handouts */
+#preview {
+    padding: 0 1em 2em 1em;
+    margin: 3em 1em;
+    border: 1px grey solid;
+    border-radius: 10px;
+    display: none;
+}
+
+body {
+    font-family: freight-sans-pro, Gill Sans, Arial, sans-serif;
+    font-size: 18px;
+    line-height: 1.45;
+    font-weight: 300;
+    color: #111;
+    background-color: #fdfdfd;
+    -webkit-text-size-adjust: 100%
+}
+
+p.title {
+    margin-top: 1.5em;
+    font-weight: 500;
+    font-size: 125%;
+    margin-bottom: .5em
+}
+
+p.author {
+    margin-top: 0;
+    font-weight: normal;
+    font-size: 110%;
+    font-style: italic;
+    margin-bottom: 15px;
+    padding-left: 30px
+}
+
+p.author+p.author {
+    margin-top: -15px;
+}
+
+summary {
+    cursor: pointer;
+    font-weight: 500
+}
+
+p,
+ul {
+    margin: 0;
+    padding: 0;
+    margin-bottom: 15px;
+}
+
+ul {
+    margin-left: 30px
+}
+
+ul.handouts {
+    padding-left: 0.5em;
+    margin-bottom: 1em
+}
+
+a {
+    color: #2474ff;
+    text-decoration: none
+}
+
+a:visited {
+    color: #005dfc
+}
+
+a:hover {
+    color: #111;
+    text-decoration: underline
+}
+
+details {
+    padding-left: 15px
+}
+
+details.root {
+    padding-left: 1em;
+    border-left: 3px solid #ffb433
+}

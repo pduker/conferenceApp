@@ -4,12 +4,17 @@ let numMaterials = 1;
 
 /**
  * Sends the paper submission via POST request to /api/papers/
+ * If sending the paper for a preview, send to /api/papers/preview/
  */
-async function sendPaper(){
-    const submissionResponse = await fetch('/api/papers', {
+async function sendPaper(preview){
+    let url = preview ? '/api/papers/preview/' : '/api/papers/'
+
+    const submissionResponse = await fetch(url, {
         method: 'POST',
         body: new FormData(document.querySelector('#submission'))
-    })
+    });
+
+    return await submissionResponse.json(); 
 }
 
 /**
@@ -18,24 +23,65 @@ async function sendPaper(){
 async function sendPaperMaterials(){
     const materialSubmissionResponse = await fetch('/api/papers/materials', {
         method: 'POST',
-        body: new FormData(document.querySelector('#materials-submission')),
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        },
+        body: new FormData(document.querySelector('#materials-submission'))
     })
 }
 
-/**
- * Sends all data to server
- * Generates a preview of the submission (TODO) 
+/*
+ * Generates HTML to preview paper submission
  */
-$('#preview').on('click', function(e){
+function generatePreview(paper, materials){
+    let authors = Object.values(paper.authors);
+    let content = `<p class="title">${paper.title}</p>`;
+    content += `<div>`;
+    // add all author names and institutions first
+    authors.forEach((author) => {
+        content += `<p class="author">${author.name} (${author.institution})</p>`
+    });
+    // then add a dropdown for any author that has a bio
+    authors.forEach((author) => {
+        if (author.bio)
+            content += `<details><summary>bio for ${author.name}</summary><p>${author.bio}</p></details>`;
+    });
+    content += `</div>`;
+
+    content += `<details class="root"><summary>Abstract</summary>${paper.html}</details>`
+    
+    // display the list of materials with dummy links for preview purposes
+    content += `<details class="root"><summary>Supplementary Material(s)</summary>`;
+    content += `<ul class="handouts">`;
+    for(let material of materials)
+        content += `<li><a href="">${material}</a></li>`;
+    content += `</ul> </details>`;
+
+    $('#preview')[0].style.display = 'block';
+    $('#preview')[0].innerHTML = content;
+}
+
+/**
+ * Generates a preview of the paper submission
+ */
+$('#submit-preview').on('click', async function(e){
     e.preventDefault();
 
-    sendPaper();
-    sendPaperMaterials();
+    // false because preview endpoint is not active in this branch
+    // change to true before merging to main
+    const paperResponse = await sendPaper(false)
+    let materials = []
+    for (let i = 0; i < numMaterials; i++)
+        materials.push($(`#materialType-${i}`)[0].value)
+    
+    generatePreview(paperResponse, materials);
+});
 
-    // TODO : generate preview html
+/**
+ * Sends all data to server
+ */
+ $('#submit-paper').on('click', async function(e){
+    e.preventDefault();
+
+    const paperResponse = await sendPaper(false);
+    const materialsResponse = await sendPaperMaterials();
 });
 
 
