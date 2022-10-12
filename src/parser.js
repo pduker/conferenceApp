@@ -60,10 +60,10 @@ function exportYAML(title, authors, abstract) {
   console.log(authors)
   for (const author of Object.values(authors)) {
     // author = {name: ..., institution: ..., bio: ...}
-    authorsString += "\t- name: "+ author.name + "\n\t\tinstitution: " + author.institution + "\n\t\tbio: " + author.bio
+    authorsString += "\t- name: "+ author.name + "\n\t\tinstitution: " + author.institution + "\n\t\tbio: " + author.bio + "\n"
   }
   fs.appendFileSync(filePath, authorsString)
-  fs.appendFileSync(filePath, "\ntitle: " + title)
+  fs.appendFileSync(filePath, "title: " + title)
   fs.appendFileSync(filePath, "\nabstract: |\n\t" + abstract)
 }
 
