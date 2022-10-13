@@ -64,9 +64,7 @@ function generatePreview(paper, materials){
 $('#submit-preview').on('click', async function(e){
     e.preventDefault();
 
-    // false because preview endpoint is not active in this branch
-    // change to true before merging to main
-    const paperResponse = await sendPaper(false)
+    const paperResponse = await sendPaper(true)
     let materials = []
     for (let i = 0; i < numMaterials; i++)
         materials.push($(`#materialType-${i}`)[0].value)
