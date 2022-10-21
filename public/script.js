@@ -41,7 +41,7 @@ async function sendPaperMaterials(){
  */
 $('#submit-abstract').on('click', async function(e){
     e.preventDefault();
-
+    
     const abstractHTML = await sendAbstract();
     $('#abstract-preview')[0].innerHTML = `<summary>Abstract</summary>${abstractHTML.html}`;
 });

@@ -14,14 +14,15 @@
     <div class="container">
 
         <div class="row">
-            <div class="col">
+            <!-- LEFT: form -->
+            <div class="col" id="paper">
+                <h4> Paper Information </h4>
                 <form id="submission">
                     <!-- Title -->
                     <label class="form-label">Title</label>
                     <div class="input-group mb-3">
                         <input type="text" class="form-control" id="title" name="title">
                     </div>
-
                     <!-- Basic Author Info -->
                     <div class="mb-3">
                         <div id="authors">
@@ -39,25 +40,19 @@
                                 <textarea class="form-control" id="bio-0" name="bio-0"></textarea>
                             </div>
                         </div>
-
                         <button class="btn btn-primary" id="add-author">Add Another Author</button>
-
                     </div>
-
                     <!-- Abstract -->
                     <label class="form-label">Abstract</label>
                     <div class="input-group mb-3">
                         <input type="file" class="form-control" id="uploadAbstract" name="abstract">
                     </div>
-                    <button class="btn btn-primary" id="submit-abstract">Upload Abstract for Preview</button>
-
+                    <button class="btn btn-primary" id="submit-abstract" style="margin-bottom: 1em;">Upload Abstract for Preview</button>
                 </form>
-
 
                 <form id="materials-submission">
                     <!-- Additional Supplementary Materials -->
                     <label class="form-label">Supplementary Materials (optional)</label>
-
                     <div class="mb-3">
                         <div id="materials">
                             <div class="input-group mb-3">
@@ -67,18 +62,15 @@
                                 <input type="file" class="form-control" id="uploadMaterial-0" name="material-0">
                             </div>
                         </div>
-
                         <button class="btn btn-primary" id="add-document">Add Another Document</button>
-
                     </div>
                 </form>
-
                 <button class="btn btn-primary" id="submit-paper">SUBMIT PAPER</button>
-
             </div>
 
-            <div class="col">
-                <h4> Preview </h4>
+            <!-- RIGHT: preview -->
+            <div class="col" id="paper-preview">
+                <h4 style="margin-left: 1em;"> Preview </h4>
                 <div id="preview">
                     <p class="title" id="title-preview">TITLE</p>
                     <div id="authors-preview">
@@ -89,14 +81,11 @@
                     <details class="root" id="abstract-preview"><summary>Abstract</summary></details>
                     <details class="root" id="materials-preview" style="display:none;">
                         <summary>Supplementary Material(s)</summary>
-                        <ul class="handouts" id="materials-list-preview">
-                        </ul>
+                        <ul class="handouts" id="materials-list-preview"></ul>
                     </details>
                 </div>
             </div>
         </div>
-
-
     </div>
 
     <script src='./script.js'></script>

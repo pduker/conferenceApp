@@ -17,6 +17,10 @@ body {
     -webkit-text-size-adjust: 100%
 }
 
+#paper, #paper-preview {
+    margin-top: 3em;
+}
+
 p.title {
     margin-top: 1.5em;
     font-weight: 500;
