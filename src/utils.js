@@ -21,12 +21,17 @@ function buildAuthorsMap(rawFormFields) {
   return authors
 }
 
-function parseToPathSafe(text) {
+/**
+ * Takes in a raw string with spaces and converts it to a path safe string (removing spaces)
+ * @param {string} text 
+ * @returns {string} The path safe name
+ */
+function removeSpaces(text) {
   return text.replace(/ /g,"_") // Replace all spaces with _ to make sure we support Unix file paths
 }
 
 
 module.exports = {
   buildAuthorsMap,
-  parseToPathSafe
+  removeSpaces
 }
