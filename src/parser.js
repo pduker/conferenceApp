@@ -1,6 +1,7 @@
 const { exec } = require('child_process')
 const fs = require('fs')
 const path = require('path')
+const { removeSpaces } = require('./utils')
 
 /**
  * Deletes the file at the specified path
@@ -54,7 +55,8 @@ async function parseDocx (inputFilePath, outputFilePath) {
  */
 function exportYAML(title, authors, abstract) {
   // Export to YAML
-  let filePath = path.join(__dirname, '../tmp/yaml', `${title}.yaml`)
+  const safeTitle = removeSpaces(title)
+  let filePath = path.join(__dirname, '../tmp/yaml', `${safeTitle}.yaml`)
   fs.writeFileSync(filePath, "---\n")
   let authorsString = "authors:\n"
   console.log(authors)

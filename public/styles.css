@@ -2,10 +2,9 @@
 /* .title, .author, .root, .handouts */
 #preview {
     padding: 0 1em 2em 1em;
-    margin: 3em 1em;
+    margin: 0em 1em;
     border: 1px grey solid;
     border-radius: 10px;
-    display: none;
 }
 
 body {
@@ -16,6 +15,10 @@ body {
     color: #111;
     background-color: #fdfdfd;
     -webkit-text-size-adjust: 100%
+}
+
+#paper, #paper-preview {
+    margin-top: 3em;
 }
 
 p.title {

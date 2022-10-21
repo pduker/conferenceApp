@@ -4,17 +4,26 @@ let numMaterials = 1;
 
 /**
  * Sends the paper submission via POST request to /api/papers/
- * If sending the paper for a preview, send to /api/papers/preview/
  */
-async function sendPaper(preview){
-    let url = preview ? '/api/papers/preview/' : '/api/papers/'
-
-    const submissionResponse = await fetch(url, {
+async function sendPaper(){
+    const submissionResponse = await fetch('api/papers', {
         method: 'POST',
         body: new FormData(document.querySelector('#submission'))
     });
 
     return await submissionResponse.json(); 
+}
+
+/**
+ * Sends the abstract via POST request to /api/papers/abstract
+ */
+async function sendAbstract(){
+    const abstractResponse = await fetch('api/papers/abstract', {
+        method: 'POST',
+        body: new FormData(document.querySelector('#submission'))
+    });
+
+    return await abstractResponse.json(); 
 }
 
 /**
@@ -27,50 +36,16 @@ async function sendPaperMaterials(){
     })
 }
 
-/*
- * Generates HTML to preview paper submission
- */
-function generatePreview(paper, materials){
-    let authors = Object.values(paper.authors);
-    let content = `<p class="title">${paper.title}</p>`;
-    content += `<div>`;
-    // add all author names and institutions first
-    authors.forEach((author) => {
-        content += `<p class="author">${author.name} (${author.institution})</p>`
-    });
-    // then add a dropdown for any author that has a bio
-    authors.forEach((author) => {
-        if (author.bio)
-            content += `<details><summary>bio for ${author.name}</summary><p>${author.bio}</p></details>`;
-    });
-    content += `</div>`;
-
-    content += `<details class="root"><summary>Abstract</summary>${paper.html}</details>`
-    
-    // display the list of materials with dummy links for preview purposes
-    content += `<details class="root"><summary>Supplementary Material(s)</summary>`;
-    content += `<ul class="handouts">`;
-    for(let material of materials)
-        content += `<li><a href="">${material}</a></li>`;
-    content += `</ul> </details>`;
-
-    $('#preview')[0].style.display = 'block';
-    $('#preview')[0].innerHTML = content;
-}
-
 /**
- * Generates a preview of the paper submission
+ * Sends abstract to server
  */
-$('#submit-preview').on('click', async function(e){
+$('#submit-abstract').on('click', async function(e){
     e.preventDefault();
-
-    const paperResponse = await sendPaper(true)
-    let materials = []
-    for (let i = 0; i < numMaterials; i++)
-        materials.push($(`#materialType-${i}`)[0].value)
     
-    generatePreview(paperResponse, materials);
+    const abstractHTML = await sendAbstract();
+    $('#abstract-preview')[0].innerHTML = `<summary>Abstract</summary>${abstractHTML.html}`;
 });
+
 
 /**
  * Sends all data to server
@@ -78,7 +53,7 @@ $('#submit-preview').on('click', async function(e){
  $('#submit-paper').on('click', async function(e){
     e.preventDefault();
 
-    const paperResponse = await sendPaper(false);
+    const paperResponse = await sendPaper();
     const materialsResponse = await sendPaperMaterials();
 });
 
@@ -106,6 +81,10 @@ $('#add-author').on('click', function(e){
         </div>`
     );
 
+    $('#authors-preview').prepend(`<p class="author" id="author-${numAuthors-1}-preview">AUTHOR NAME (Institution)</p>`);
+    $(`#author-${numAuthors-1}-preview`).insertAfter($(`#author-${numAuthors-2}-preview`));
+    authorPreviewListeners(numAuthors-1);
+
 });
 
 
@@ -123,4 +102,58 @@ $('#add-document').on('click', function(e){
     </div>`
     );
 
+    materialPreviewListeners(numMaterials - 1);
+
 });
+
+/** 
+ * Listener for live updating preview with title
+ */
+$('#title').on('input', function(e){
+    $('#title-preview')[0].innerHTML = e.currentTarget.value;
+});
+
+/** 
+ * Listeners for live updating preview with material information
+ */
+function materialPreviewListeners(num){
+    $(`#materialType-${num}`).on('input', function(e){
+        $('#materials-preview')[0].style.display = '';
+        if ($(`#material-${num}-preview`).length)
+            $(`#material-${num}-preview`)[0].innerHTML = `<a href="">${e.currentTarget.value}</a>`;
+        else
+            $('#materials-list-preview').append(`<li id="material-${num}-preview"><a href="">${e.currentTarget.value}</a></li>`);
+    });
+
+} materialPreviewListeners(0);
+
+/** 
+ * Listeners for live updating preview with author information
+ */
+function authorPreviewListeners(num){
+    $(`#name-${num}`).on('input', function(e){
+        let institution = $(`#author-${num}-preview`)[0].innerHTML.split('(')[1];
+        $(`#author-${num}-preview`)[0].innerHTML = `${e.currentTarget.value} (${institution}`;
+    });
+    
+    $(`#institution-${num}`).on('input', function(e){
+        let name = $(`#author-${num}-preview`)[0].innerHTML.split('(')[0];
+        $(`#author-${num}-preview`)[0].innerHTML = `${name}(${e.currentTarget.value})`;
+    });
+    
+    $(`#bio-${num}`).on('input', function(e){
+        // if bio element already exists, edit data in element
+        if($(`#bio-${num}-preview`).length){
+            // remove element if bio is empty
+            if (!e.currentTarget.value)
+                $(`#bio-${num}-preview`).remove();
+            else
+                $(`#bio-${num}-preview`)[0].innerHTML = `<summary>bio for ${$(`#name-${num}`)[0].value}</summary><p>${e.currentTarget.value}</p>`
+        } else {
+            // create bio element if it does not exist  
+            $('#bios-preview').prepend(`
+                <details id="bio-${num}-preview"><summary>bio for ${$(`#name-${num}`)[0].value}</summary><p>${e.currentTarget.value}</p></details>
+            `);
+        }
+    });
+} authorPreviewListeners(0);
