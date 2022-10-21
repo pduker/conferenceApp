@@ -13,67 +13,92 @@
 
     <div class="container">
 
-        <form id="submission">
-            <!-- Title -->
-            <label class="form-label">Title</label>
-            <div class="input-group mb-3">
-                <input type="text" class="form-control" id="title" name="title">
+        <div class="row">
+            <div class="col">
+                <form id="submission">
+                    <!-- Title -->
+                    <label class="form-label">Title</label>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="title" name="title">
+                    </div>
+
+                    <!-- Basic Author Info -->
+                    <div class="mb-3">
+                        <div id="authors">
+                            <label class="form-label">Author</label>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">Name</span>
+                                <input type="text" class="form-control" id="name-0" name="name-0">
+                            </div>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">Institution</span>
+                                <input type="text" class="form-control" id="institution-0" name="institution-0">
+                            </div>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">Bio</span>
+                                <textarea class="form-control" id="bio-0" name="bio-0"></textarea>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary" id="add-author">Add Another Author</button>
+
+                    </div>
+
+                    <!-- Abstract -->
+                    <label class="form-label">Abstract</label>
+                    <div class="input-group mb-3">
+                        <input type="file" class="form-control" id="uploadAbstract" name="abstract">
+                    </div>
+                    <button class="btn btn-primary" id="submit-abstract">Upload Abstract for Preview</button>
+
+                </form>
+
+
+                <form id="materials-submission">
+                    <!-- Additional Supplementary Materials -->
+                    <label class="form-label">Supplementary Materials (optional)</label>
+
+                    <div class="mb-3">
+                        <div id="materials">
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control"
+                                    placeholder="Material Type (e.g Handout, Slides, Script)" id="materialType-0"
+                                    name="material-type-0">
+                                <input type="file" class="form-control" id="uploadMaterial-0" name="material-0">
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary" id="add-document">Add Another Document</button>
+
+                    </div>
+                </form>
+
+                <button class="btn btn-primary" id="submit-paper">SUBMIT PAPER</button>
+
             </div>
 
-            <!-- Basic Author Info -->
-            <div class="mb-3">
-                <div id="authors">
-                    <label class="form-label">Author</label>
-                    <div class="input-group mb-3">
-                        <span class="input-group-text">Name</span>
-                        <input type="text" class="form-control" id="name-0" name="name-0">
+            <div class="col">
+                <h4> Preview </h4>
+                <div id="preview">
+                    <p class="title" id="title-preview">TITLE</p>
+                    <div id="authors-preview">
+                        <p class="author" id="author-0-preview">AUTHOR NAME (Institution)</p>
+                        <div id="bios-preview">
+                        </div>
                     </div>
-                    <div class="input-group mb-3">
-                        <span class="input-group-text">Institution</span>
-                        <input type="text" class="form-control" id="institution-0" name="institution-0">
-                    </div>
-                    <div class="input-group mb-3">
-                        <span class="input-group-text">Bio</span>
-                        <textarea class="form-control" id="bio-0" name="bio-0"></textarea>
-                    </div>
+                    <details class="root" id="abstract-preview"><summary>Abstract</summary></details>
+                    <details class="root" id="materials-preview" style="display:none;">
+                        <summary>Supplementary Material(s)</summary>
+                        <ul class="handouts" id="materials-list-preview">
+                        </ul>
+                    </details>
                 </div>
-
-                <button class="btn btn-primary" id="add-author">Add Another Author</button>
-                
             </div>
-            
-            <!-- Abstract -->
-            <label class="form-label">Abstract</label>
-            <div class="input-group mb-3">
-                <input type="file" class="form-control" id="uploadAbstract" name="abstract">
-            </div>
-        </form>
-        
+        </div>
 
-        <form id="materials-submission">
-             <!-- Additional Supplementary Materials -->
-             <label class="form-label">Supplementary Materials (optional)</label>
-            
-             <div class="mb-3">
-                 <div id="materials">
-                     <div class="input-group mb-3">
-                         <input type="text" class="form-control" placeholder="Material Type (e.g Handout, Slides, Script)" id="materialType-0" name="material-type-0">
-                         <input type="file" class="form-control" id="uploadMaterial-0" name="material-0">
-                     </div>
-                 </div>
- 
-                 <button class="btn btn-primary" id="add-document">Add Another Document</button>
- 
-             </div> 
-        </form>
-
-        <button class="btn btn-primary" id="submit-preview">PREVIEW SUBMISSION</button>
-        <button class="btn btn-primary" id="submit-paper">SUBMIT PAPER</button>
-
-        <div id="preview"></div>
 
     </div>
-      
+
     <script src='./script.js'></script>
 
 </body>

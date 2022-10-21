@@ -49,17 +49,13 @@ server.post("/api/papers", uploadMiddleware.single("abstract"), async function (
     }
 })
 
-server.post("/api/papers/preview", uploadMiddleware.single("abstract"), async function (req, res) {
+server.post("/api/papers/abstract", uploadMiddleware.single("abstract"), async function (req, res) {
     try {
         if (!req.file) {
             console.error("File missing!")
             res.status(400).send("Bad Request")
         }
 
-        const title = req.body.title
-        delete req.body.title
-
-        const authors = buildAuthorsMap(req.body)
         const fileName = req.file.filename
 
         const inputFilePath = req.file.path
@@ -70,8 +66,6 @@ server.post("/api/papers/preview", uploadMiddleware.single("abstract"), async fu
 
         res.json({
             html: abstractHTML,
-            authors,
-            title
         })
 
         await deleteFile(outputFilePath)
