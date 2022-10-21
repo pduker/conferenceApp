@@ -108,4 +108,9 @@ server.use(express.static("public"))
 
 server.listen(8080, function () {
     console.log("Listening on port 8080")
+
+    // Create the yaml directory if it does not exist
+    if (!fs.existsSync("./tmp/yaml")) {
+        fs.mkdirSync("./tmp/yaml")
+    }
 })
