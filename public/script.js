@@ -6,12 +6,14 @@ let numMaterials = 1;
  * This validates that every input field is filled with proper values
  * @param {FormData} FormData 
  */
-function inputValidation(FormData){
+function PaperFormValidation(FormData){
     let hasEverything = true;
     for(let [name, value] of FormData) {
-        if(!isNotWhiteSpace(value)){
-            hasEverything = false;
-            break;
+        if(!name.includes("bio") || !name.includes("material") ){
+            if(!isNotWhiteSpace(value)){
+                hasEverything = false;
+                break;
+            }
         }
     }
     return hasEverything;
@@ -36,7 +38,7 @@ function isNotUndefinedOrNull (text) {
  */
 async function sendPaper(){
     let tempFormData = new FormData(document.querySelector('#submission'))
-    let hasEverything = inputValidation(tempFormData);
+    let hasEverything = PaperFormValidation(tempFormData);
     if(hasEverything){
         let submissionResponse = await fetch('api/papers', {
             method: 'POST',
@@ -50,8 +52,11 @@ async function sendPaper(){
  * Sends the abstract via POST request to /api/papers/abstract
  */
 async function sendAbstract(){
+    let hasEverything = true;
     let tempFormData = new FormData(document.querySelector('#submission'))
-    let hasEverything = inputValidation(tempFormData);
+    if(tempFormData.get("abstract").size == 0){
+         hasEverything = false;
+    }
     if(hasEverything){
         const abstractResponse = await fetch('api/papers/abstract', {
             method: 'POST',
@@ -66,7 +71,7 @@ async function sendAbstract(){
  */
 async function sendPaperMaterials(){
     let tempFormData = new FormData(document.querySelector('#materials-submission'))
-    let hasEverything = inputValidation(tempFormData);
+    let hasEverything = PaperFormValidation(tempFormData);
     if(hasEverything){
         const materialSubmissionResponse = await fetch('/api/papers/materials', {
             method: 'POST',
