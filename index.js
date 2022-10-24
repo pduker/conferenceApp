@@ -78,6 +78,7 @@ server.post("/api/papers/abstract", uploadMiddleware.single("abstract"), async f
 
 server.post("/api/papers/materials", async function (req, res) {
     // Placeholder for the future supplementary materials route
+    res.send("OK")
 })
 
 server.post("/api/parse/docx", async function (req, res) {

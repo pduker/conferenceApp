@@ -1,4 +1,4 @@
-
+//const alert = require('alert');
 let numAuthors = 1;
 let numMaterials = 1;
 
@@ -11,7 +11,7 @@ async function sendPaper(){
         body: new FormData(document.querySelector('#submission'))
     });
 
-    return await submissionResponse.json(); 
+    return await submissionResponse; 
 }
 
 /**
@@ -54,7 +54,8 @@ $('#submit-abstract').on('click', async function(e){
     e.preventDefault();
 
     const paperResponse = await sendPaper();
-    const materialsResponse = await sendPaperMaterials();
+    //const materialsResponse = await sendPaperMaterials();
+    $("#Success-Alert").show()
 });
 
 
