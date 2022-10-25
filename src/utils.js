@@ -1,3 +1,5 @@
+const path = require("path")
+
 function buildAuthorsMap(rawFormFields) {
   const authors = {}
   for (const [rawkey, value] of Object.entries(rawFormFields)) {
@@ -30,8 +32,24 @@ function removeSpaces(text) {
   return text.replace(/ /g,"_") // Replace all spaces with _ to make sure we support Unix file paths
 }
 
+/**
+ * Checks that the directory structure is correct and creates folders if needed. Handles
+ * other server startup tasks.
+ * @param {string} parentDir The parent directory (usually __dirname)
+ */
+function initializeServer (parentDir) {
+  if (!fs.existsSync(path.join(parentDir, "tmp"))) {
+    fs.mkdirSync(path.join(parentDir, "tmp"))
+  }
+
+  if (!fs.existsSync(path.join(parentDir, "tmp", "yaml"))) {
+    fs.mkdirSync(path.join(parentDir, "tmp", "yaml"))
+  }
+}
+
 
 module.exports = {
   buildAuthorsMap,
-  removeSpaces
+  removeSpaces,
+  initializeServer
 }

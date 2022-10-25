@@ -7,7 +7,7 @@ const multer = require("multer")
 const uploadMiddleware = multer({ storage: multer.diskStorage({ destination: "./tmp"}) })
 
 const { parseDocx, deleteFile, exportYAML } = require("./src/parser.js")
-const { buildAuthorsMap } = require("./src/utils")
+const { buildAuthorsMap, initializeServer } = require("./src/utils")
 
 const server = express()
 
@@ -106,11 +106,7 @@ server.use('/js', express.static(path.join(__dirname, 'node_modules/bootstrap/di
 server.use('/js', express.static(path.join(__dirname, 'node_modules/jquery/dist')))
 server.use(express.static("public"))
 
-server.listen(8080, function () {
+server.listen(8080, () => {
+    initializeServer(__dirname)
     console.log("Listening on port 8080")
-
-    // Create the yaml directory if it does not exist
-    if (!fs.existsSync("./tmp/yaml")) {
-        fs.mkdirSync("./tmp/yaml")
-    }
 })
