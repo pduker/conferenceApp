@@ -22,7 +22,7 @@ function PaperFormValidation(FormData){
 function isNotWhiteSpace (text) {
     let hasEverything = /\S/.test(text) && isNotUndefinedOrNull(text)
     if(typeof text === "object"){
-        if(text.size == 0){
+        if(text.size === 0){
             hasEverything = false;
         }
     }
@@ -30,7 +30,7 @@ function isNotWhiteSpace (text) {
 }
 
 function isNotUndefinedOrNull (text) {
-  return text !== undefined || text !== null
+  return text !== undefined && text !== null
 }
 
 /**
@@ -57,6 +57,7 @@ async function sendAbstract(){
     if(tempFormData.get("abstract").size == 0){
          hasEverything = false;
     }
+    alert(hasEverything)
     if(hasEverything){
         const abstractResponse = await fetch('api/papers/abstract', {
             method: 'POST',
@@ -87,7 +88,7 @@ $('#submit-abstract').on('click', async function(e){
     e.preventDefault();
     
     const abstractHTML = await sendAbstract();
-    if(!isNotUndefinedOrNull(abstractHTML)){
+    if(isNotUndefinedOrNull(abstractHTML)){
         $('#abstract-preview')[0].innerHTML = `<summary>Abstract</summary>${abstractHTML.html}`;
     }
 });
