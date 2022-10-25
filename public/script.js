@@ -57,7 +57,6 @@ async function sendAbstract(){
     if(tempFormData.get("abstract").size == 0){
          hasEverything = false;
     }
-    alert(hasEverything)
     if(hasEverything){
         const abstractResponse = await fetch('api/papers/abstract', {
             method: 'POST',
