@@ -52,12 +52,8 @@ async function sendPaper(){
  * Sends the abstract via POST request to /api/papers/abstract
  */
 async function sendAbstract(){
-    let hasEverything = true;
     let tempFormData = new FormData(document.querySelector('#submission'))
-    if(tempFormData.get("abstract").size == 0){
-         hasEverything = false;
-    }
-    if(hasEverything){
+    if(!tempFormData.get("abstract").size == 0){
         const abstractResponse = await fetch('api/papers/abstract', {
             method: 'POST',
             body: tempFormData
