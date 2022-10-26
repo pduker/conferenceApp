@@ -57,6 +57,7 @@ async function sendPaper(){
         });
         return submissionResponse; 
     }
+    return "fail"
     
 }
 
@@ -111,9 +112,9 @@ $('#submit-abstract').on('click', async function(e){
     if(paperResponse?.ok){
         $("#Success-Alert").show()
     }else if (paperResponse.status === 500){
-        //error alert
+        $("#Error-Alert").show()
     } else {
-        //warning alert
+        $("#Warning-Alert").show()
     }
 });
 
