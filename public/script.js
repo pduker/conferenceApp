@@ -3,13 +3,14 @@ let numAuthors = 1;
 let numMaterials = 1;
 
 /**
- * This validates that every input field is filled with proper values
+ * This validates that every input field is filled with proper values and returns a boolean value
  * @param {FormData} FormData 
+ * @returns {boolean} Returns true if the validation passes, false otherwise
  */
-function PaperFormValidation(FormData){
+function paperFormValidation(FormData){
     let hasEverything = true;
-    for(let [name, value] of FormData) {
-        if(!name.includes("bio") || !name.includes("material") ){
+    for(let [name, value] of FormData) {   
+        if(!name.includes("bio") && !name.includes("material") ){
             if(!isNotWhiteSpace(value)){
                 hasEverything = false;
                 break;
@@ -22,7 +23,7 @@ function PaperFormValidation(FormData){
 function isNotWhiteSpace (text) {
     let hasEverything = /\S/.test(text) && isNotUndefinedOrNull(text)
     if(typeof text === "object"){
-        if(text.size == 0){
+        if(text.size === 0){
             hasEverything = false;
         }
     }
@@ -30,7 +31,7 @@ function isNotWhiteSpace (text) {
 }
 
 function isNotUndefinedOrNull (text) {
-  return text !== undefined || text !== null
+  return text !== undefined && text !== null
 }
 
 /**
@@ -38,8 +39,7 @@ function isNotUndefinedOrNull (text) {
  */
 async function sendPaper(){
     let tempFormData = new FormData(document.querySelector('#submission'))
-    let hasEverything = PaperFormValidation(tempFormData);
-    if(hasEverything){
+    if(paperFormValidation(tempFormData)){
         let submissionResponse = await fetch('api/papers', {
             method: 'POST',
             body: tempFormData
@@ -53,12 +53,8 @@ async function sendPaper(){
  * Sends the abstract via POST request to /api/papers/abstract
  */
 async function sendAbstract(){
-    let hasEverything = true;
     let tempFormData = new FormData(document.querySelector('#submission'))
-    if(tempFormData.get("abstract").size == 0){
-         hasEverything = false;
-    }
-    if(hasEverything){
+    if(!tempFormData.get("abstract").size == 0){
         const abstractResponse = await fetch('api/papers/abstract', {
             method: 'POST',
             body: tempFormData
@@ -72,8 +68,7 @@ async function sendAbstract(){
  */
 async function sendPaperMaterials(){
     let tempFormData = new FormData(document.querySelector('#materials-submission'))
-    let hasEverything = PaperFormValidation(tempFormData);
-    if(hasEverything){
+    if(paperFormValidation(tempFormData)){
         const materialSubmissionResponse = await fetch('/api/papers/materials', {
             method: 'POST',
             body: tempFormData
@@ -88,7 +83,7 @@ $('#submit-abstract').on('click', async function(e){
     e.preventDefault();
     
     const abstractHTML = await sendAbstract();
-    if(!isNotUndefinedOrNull(abstractHTML)){
+    if(isNotUndefinedOrNull(abstractHTML)){
         $('#abstract-preview')[0].innerHTML = `<summary>Abstract</summary>${abstractHTML.html}`;
     }
 });

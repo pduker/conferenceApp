@@ -81,27 +81,6 @@ server.post("/api/papers/materials", async function (req, res) {
     res.send("OK")
 })
 
-server.post("/api/parse/docx", async function (req, res) {
-    try {
-        const { fileName } = req.body
-
-        console.log(fileName)
-
-        const parsedFileName = fileName.split('.')[0] 
-        const inputFilePath = path.join(__dirname, 'tmp', fileName)
-        const outputFilePath = path.join(__dirname, 'tmp', `${parsedFileName}.html`)
-
-        const fileBuffer = await parseDocx(inputFilePath, outputFilePath)
-
-        res.send(fileBuffer)
-
-        await deleteFile(outputFilePath)
-    } catch (err) {
-        console.error(err)
-        res.status(500).send('Internal failure')
-    }
-})
-
 server.use('/css', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/css')))
 server.use('/js', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/js')))
 server.use('/js', express.static(path.join(__dirname, 'node_modules/jquery/dist')))
