@@ -5,8 +5,9 @@ let numMaterials = 1;
 /**
  * This validates that every input field is filled with proper values and returns a boolean value
  * @param {FormData} FormData 
+ * @returns {boolean} Returns true if the validation passes, false otherwise
  */
-function PaperFormValidation(FormData){
+function paperFormValidation(FormData){
     let hasEverything = true;
     for(let [name, value] of FormData) {   
         if(!name.includes("bio") && !name.includes("material") ){
@@ -38,8 +39,7 @@ function isNotUndefinedOrNull (text) {
  */
 async function sendPaper(){
     let tempFormData = new FormData(document.querySelector('#submission'))
-    let hasEverything = PaperFormValidation(tempFormData);
-    if(hasEverything){
+    if(paperFormValidation(tempFormData)){
         let submissionResponse = await fetch('api/papers', {
             method: 'POST',
             body: tempFormData
@@ -67,11 +67,10 @@ async function sendAbstract(){
  */
 async function sendPaperMaterials(){
     let tempFormData = new FormData(document.querySelector('#materials-submission'))
-    let hasEverything = PaperFormValidation(tempFormData);
-    if(hasEverything){
+    if(paperFormValidation(tempFormData)){
         const materialSubmissionResponse = await fetch('/api/papers/materials', {
             method: 'POST',
-            body: tempFormData
+            body: JSON.stringify(tempFormData)
         })
     }
 }
