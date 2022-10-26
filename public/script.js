@@ -96,7 +96,6 @@ $('#submit-abstract').on('click', async function(e){
     e.preventDefault();
 
     const paperResponse = await sendPaper();
-    console.log(paperResponse)
     //const materialsResponse = await sendPaperMaterials();
     if(paperResponse?.ok){
         $("#Success-Alert").show()
