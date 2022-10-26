@@ -20,6 +20,12 @@ function paperFormValidation(FormData){
     return hasEverything;
 }
 
+
+/**
+ * this function checks if the input is not just spaces, if it is undefined or null, and if it is the abstract is of size 0
+ * @param {*} text this is the inputs from FormData feed in one at a time
+ * @returns {boolean} returns true if not just spaces, not undefined or null , and is not of size 0 when it is a object
+ */
 function isNotWhiteSpace (text) {
     let hasEverything = /\S/.test(text) && isNotUndefinedOrNull(text)
     if(typeof text === "object"){
@@ -30,6 +36,11 @@ function isNotWhiteSpace (text) {
     return hasEverything;
 }
 
+/**
+ * this returns true if it is not undefined and null
+ * @param {*} text this is the input from FormData feed in one at a time
+ * @returns {boolean} This reutrns true if the argument is not undefined or null
+ */
 function isNotUndefinedOrNull (text) {
   return text !== undefined && text !== null
 }
