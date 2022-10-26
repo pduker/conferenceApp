@@ -44,8 +44,9 @@ async function sendPaper(){
             method: 'POST',
             body: tempFormData
         });
-        return await submissionResponse; 
+        return submissionResponse; 
     }
+    
 }
 
 /**
@@ -100,8 +101,15 @@ $('#submit-abstract').on('click', async function(e){
     e.preventDefault();
 
     const paperResponse = await sendPaper();
+    console.log(paperResponse)
     //const materialsResponse = await sendPaperMaterials();
-    $("#Success-Alert").show()
+    if(paperResponse?.ok){
+        $("#Success-Alert").show()
+    }else if (paperResponse.status === 500){
+        //error alert
+    } else {
+        //warning alert
+    }
 });
 
 
