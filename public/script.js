@@ -70,7 +70,7 @@ async function sendPaperMaterials(){
     if(paperFormValidation(tempFormData)){
         const materialSubmissionResponse = await fetch('/api/papers/materials', {
             method: 'POST',
-            body: JSON.stringify(tempFormData)
+            body: tempFormData
         })
     }
 }
