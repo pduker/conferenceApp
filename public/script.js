@@ -3,13 +3,13 @@ let numAuthors = 1;
 let numMaterials = 1;
 
 /**
- * This validates that every input field is filled with proper values
+ * This validates that every input field is filled with proper values and returns a boolean value
  * @param {FormData} FormData 
  */
 function PaperFormValidation(FormData){
     let hasEverything = true;
-    for(let [name, value] of FormData) {
-        if(!name.includes("bio") || !name.includes("material") ){
+    for(let [name, value] of FormData) {   
+        if(!name.includes("bio") && !name.includes("material") ){
             if(!isNotWhiteSpace(value)){
                 hasEverything = false;
                 break;
@@ -54,10 +54,10 @@ async function sendPaper(){
 async function sendAbstract(){
     let hasEverything = true;
     let tempFormData = new FormData(document.querySelector('#submission'))
+    console.log(tempFormData)
     if(tempFormData.get("abstract").size == 0){
          hasEverything = false;
     }
-    alert(hasEverything)
     if(hasEverything){
         const abstractResponse = await fetch('api/papers/abstract', {
             method: 'POST',
