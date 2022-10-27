@@ -48,17 +48,13 @@ function isNotUndefinedOrNull (text) {
 /**
  * Sends the paper submission via POST request to /api/papers/
  */
-async function sendPaper(){
-    let tempFormData = new FormData(document.querySelector('#submission'))
-    if(paperFormValidation(tempFormData)){
-        let submissionResponse = await fetch('api/papers', {
-            method: 'POST',
-            body: tempFormData
-        });
-        return submissionResponse; 
-    }
-    return "fail"
-    
+async function sendPaper(formData){
+    let submissionResponse = await fetch('api/papers', {
+        method: 'POST',
+        body: formData
+    });
+
+    return submissionResponse; 
 }
 
 /**
@@ -107,14 +103,27 @@ $('#submit-abstract').on('click', async function(e){
  $('#submit-paper').on('click', async function(e){
     e.preventDefault();
 
-    const paperResponse = await sendPaper();
-    //const materialsResponse = await sendPaperMaterials();
-    if(paperResponse?.ok){
-        $("#Success-Alert").show()
-    }else if (paperResponse.status === 500){
-        $("#Error-Alert").show()
+    const alert = $("#Success-Alert")
+    alert.hide()
+    alert.removeClass("alert-success alert-warning alert-error")
+
+    const formData = new FormData(document.querySelector('#submission'))
+    if(paperFormValidation(formData)){
+        const paperResponse = await sendPaper(formData);
+        //const materialsResponse = await sendPaperMaterials();
+        if(paperResponse?.ok){
+            alert.addClass("alert-success")
+            alert.text("Paper submission successful!")
+            alert.show()
+        } else {
+            alert.addClass("alert-error")
+            alert.text("Paper submission failed! Please try again")
+            alert.show()
+        }
     } else {
-        $("#Warning-Alert").show()
+        alert.addClass("alert-warning")
+        alert.text("Please make sure all required fields are filled")
+        alert.show()
     }
 });
 
