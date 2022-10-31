@@ -190,9 +190,9 @@ function materialPreviewListeners(num){
     $(`#materialType-${num}`).on('input', function(e){
         $('#materials-preview')[0].style.display = '';
         if ($(`#material-${num}-preview`).length)
-            $(`#material-${num}-preview`)[0].innerHTML = `<a href="">${e.currentTarget.value}</a>`;
+            $(`#material-${num}-preview`)[0].innerHTML = `<a href="#">${e.currentTarget.value}</a>`;
         else
-            $('#materials-list-preview').append(`<li id="material-${num}-preview"><a href="">${e.currentTarget.value}</a></li>`);
+            $('#materials-list-preview').append(`<li id="material-${num}-preview"><a href="#">${e.currentTarget.value}</a></li>`);
     });
 
 } materialPreviewListeners(0);
