@@ -1,14 +1,15 @@
-import { Sequelize, DataTypes } from 'sequelize'
+const { Sequelize, DataTypes } = require('sequelize')
 
 const db = new Sequelize({
   dialect: 'sqlite',
   storage: './main.db'
 })
 
-db.define('User', {
+const User = db.define('User', {
   username: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
+    unique: true
   },
   password: {
     type: DataTypes.STRING,
@@ -31,4 +32,7 @@ db.define('User', {
 // Create tables if they are missing
 db.sync()
 
-export default db
+module.exports = {
+  db,
+  User
+}
