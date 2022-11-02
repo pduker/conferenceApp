@@ -134,6 +134,8 @@ $('#submit-abstract').on('click', async function(e){
 $('#add-author').on('click', function(e){
     e.preventDefault();
     numAuthors++;
+    $('#remove-author')[0].style = '';
+
 
     $('#authors').append(
         `<label class="form-label">Author ${numAuthors}</label>
@@ -164,6 +166,7 @@ $('#add-author').on('click', function(e){
 $('#add-document').on('click', function(e){
     e.preventDefault();
     numMaterials++;
+    $('#remove-document')[0].style = '';
 
     $('#materials').append(
     `<div class="input-group mb-3">
@@ -173,7 +176,36 @@ $('#add-document').on('click', function(e){
     );
 
     materialPreviewListeners(numMaterials - 1);
+});
 
+/**
+ * Remove the last supplementary material input
+ */
+$('#remove-document').on('click', function(e){
+    e.preventDefault();
+    numMaterials--;
+    $('#materials')[0].children[numMaterials].remove();
+
+    if (numMaterials == 1)
+        $('#remove-document')[0].style = 'display:none';
+});
+
+/**
+ * Remove the last author input
+ */
+ $('#remove-author').on('click', function(e){
+    e.preventDefault();
+    numAuthors--;
+
+    $(`#author-${numAuthors}-preview`)[0].remove()
+
+    // remove all 4 elements of author
+    // (header, name, institution, bio)
+    for (let i = 0; i < 4; i++)
+        $('#authors')[0].children[numAuthors*4].remove();
+
+    if (numAuthors == 1)
+        $('#remove-author')[0].style = 'display:none';
 });
 
 /** 
