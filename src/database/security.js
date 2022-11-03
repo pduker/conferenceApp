@@ -1,7 +1,8 @@
 const { Security } = require('./db')
 
 /**
- * Creates a AuthRecord in our Security database table
+ * Creates a AuthRecord in our Security database table.
+ * Mostly is used by createUser and should not be used directly outside the auth system
  * @param {string} username 
  * @param {string} hashedPassword 
  * @returns 
