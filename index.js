@@ -86,6 +86,16 @@ server.post("/api/papers/materials", async function (req, res) {
     res.send("OK")
 })
 
+server.get('/login', async function (req, res) {
+    try {
+        const data = fs.readFileSync(path.join(__dirname, 'public', 'login.html'))
+        res.send(data.toString())
+    } catch (err) {
+        console.error(err)
+        res.sendStatus(500)
+    }
+})
+
 server.use('/css', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/css')))
 server.use('/js', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/js')))
 server.use('/js', express.static(path.join(__dirname, 'node_modules/jquery/dist')))
@@ -94,6 +104,17 @@ server.use(express.static("public"))
 // Protected authenticated routing
 
 server.use(authMiddleware)
+
+// Loading the protected website behind our web auth
+server.get('/dashboard', async function (req, res) {
+    try {
+        const data = fs.readFileSync(path.join(__dirname, 'public', 'dashboard.html'))
+        res.send(data.toString())
+    } catch (err) {
+        console.error(err)
+        res.sendStatus(500)
+    }
+})
 
 server.get('/api/valid', async function (req, res) {
     res.send('Valid!')

@@ -1,7 +1,7 @@
 const express = require('express')
 const { compareToHash, getToken, createHash } = require('../auth/auth')
 const { getAuthRecordByUsername } = require('../database/security')
-const { createUser } = require('../database/users')
+const { createUser, getUserByUsername } = require('../database/users')
 
 const router = express.Router()
 
