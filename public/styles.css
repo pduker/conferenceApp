@@ -84,3 +84,10 @@ details.root {
     padding-left: 1em;
     border-left: 3px solid #ffb433
 }
+:root{
+    --sub-background:#FBFBF9
+}
+
+.accordion-body{
+    background-color: var(--sub-background)
+}
