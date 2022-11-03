@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+const { getAuthRecordByUsername } = require('../database/security');
 
 const SALT_ROUNDS = 10
 
@@ -20,14 +21,20 @@ function getToken(obj) {
   return jwt.sign(obj, TOKEN_SECRET, { expiresIn: '1h' });
 }
 
-function verifyToken(token) {
+async function verifyToken(token) {
   if (!token || token.length === 0)
     return null;
   try {
-    //in production I would take the value of verify,
-    //extract the user and make sure they are still
-    //valid in the database by doing a db lookup
-    return jwt.verify(token, TOKEN_SECRET);
+    const payload = jwt.verify(token, TOKEN_SECRET);
+
+    const user = await getAuthRecordByUsername(payload.username)
+
+    if (user) {
+      return payload
+    } else {
+      console.log('Token for user is no longer valid!')
+      return null
+    }
   } catch(e){
     console.error(e);
     return null;

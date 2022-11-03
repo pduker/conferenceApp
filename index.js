@@ -5,6 +5,7 @@ const fs = require("fs")
 const multer = require("multer")
 
 const uploadMiddleware = multer({ storage: multer.diskStorage({ destination: "./tmp"}) })
+const authMiddleware = require('./src/auth/middleware')
 
 const { parseDocx, deleteFile, exportYAML } = require("./src/parser.js")
 const { buildAuthorsMap, initializeServer } = require("./src/utils")
@@ -91,6 +92,12 @@ server.use('/js', express.static(path.join(__dirname, 'node_modules/jquery/dist'
 server.use(express.static("public"))
 
 // Protected authenticated routing
+
+server.use(authMiddleware)
+
+server.get('/api/valid', async function (req, res) {
+    res.send('Valid!')
+})
 
 server.listen(8080, () => {
     initializeServer(__dirname)
