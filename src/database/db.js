@@ -5,6 +5,7 @@ const db = new Sequelize({
   storage: './main.db'
 })
 
+// Define our Security table schema here
 const Security = db.define('Security', {
   username: {
     type: DataTypes.STRING,
@@ -21,7 +22,8 @@ const Security = db.define('Security', {
   }
 })
 
-const User = db.define('User', {
+// Define our Users table schema here
+const Users = db.define('Users', {
   username: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -37,11 +39,11 @@ const User = db.define('User', {
   }
 })
 
-// Create tables if they are missing
+// Sync the database with our schema and create it if they are missing
 db.sync()
 
 module.exports = {
   db,
-  User,
+  Users,
   Security
 }
