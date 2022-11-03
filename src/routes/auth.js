@@ -1,6 +1,7 @@
 const express = require('express')
 const { compareToHash, getToken, createHash } = require('../auth/auth')
-const { getUserByUsername, createUser } = require('../database/users')
+const { getAuthRecordByUsername } = require('../database/security')
+const { createUser } = require('../database/users')
 
 const router = express.Router()
 
@@ -13,7 +14,7 @@ router.post('/login', async function (req, res) {
       res.status(400).send('Bad request')
     }
 
-    const user = await getUserByUsername(username)
+    const user = await getAuthRecordByUsername(username)
 
     if (!user) {
       console.log('User with that username does not exist')
@@ -44,7 +45,7 @@ router.post('/register', async function (req, res) {
       res.status(400).send({ status: 'error', message: 'Missing required info' })
     }
 
-    const user = await getUserByUsername(username)
+    const user = await getAuthRecordByUsername(username)
 
     if (user) {
       // User with that username already exists

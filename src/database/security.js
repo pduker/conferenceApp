@@ -1,7 +1,7 @@
 const { Security } = require('./db')
 
 async function createAuthRecord (username, hashedPassword) {
-  const authRecord = await Security.create({ username, hashedPassword, role: 'admin'})
+  const authRecord = await Security.create({ username, password: hashedPassword, role: 'admin'})
 
   return authRecord
 }
