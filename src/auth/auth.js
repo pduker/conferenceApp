@@ -17,7 +17,7 @@ async function createHash(input) {
 }
 
 function getToken(obj) {
-  return jwt.sign(obj, TOKEN_SECRET);
+  return jwt.sign(obj, TOKEN_SECRET, { expiresIn: '1h' });
 }
 
 function verifyToken(token) {
