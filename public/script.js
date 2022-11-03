@@ -110,7 +110,7 @@ $('#submit-abstract').on('click', async function(e){
     const formData = new FormData(document.querySelector('#submission'))
     if(paperFormValidation(formData)){
         const paperResponse = await sendPaper(formData);
-        //const materialsResponse = await sendPaperMaterials();
+        const materialsResponse = await sendPaperMaterials();
         if(paperResponse?.ok){
             alert.addClass("alert-success")
             alert.text("Paper submission successful!")
