@@ -8,6 +8,7 @@ const uploadMiddleware = multer({ storage: multer.diskStorage({ destination: "./
 
 const { parseDocx, deleteFile, exportYAML } = require("./src/parser.js")
 const { buildAuthorsMap, initializeServer } = require("./src/utils")
+const authRoutes = require('./src/routes/auth')
 
 const server = express()
 
@@ -17,6 +18,9 @@ server.get("/", async function(req, res) {
     const html = fs.readFileSync("./public/index.html")
     res.send(html.toString())
 })
+
+// This loads in the routes from the router in authRoutes, as if they were defined directly here at /api/auth
+server.use("/api/auth", authRoutes)
 
 server.post("/api/papers", uploadMiddleware.single("abstract"), async function (req, res) {
     try {
@@ -85,6 +89,8 @@ server.use('/css', express.static(path.join(__dirname, 'node_modules/bootstrap/d
 server.use('/js', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/js')))
 server.use('/js', express.static(path.join(__dirname, 'node_modules/jquery/dist')))
 server.use(express.static("public"))
+
+// Protected authenticated routing
 
 server.listen(8080, () => {
     initializeServer(__dirname)

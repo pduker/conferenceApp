@@ -5,7 +5,7 @@ const db = new Sequelize({
   storage: './main.db'
 })
 
-const User = db.define('User', {
+const Security = db.define('Security', {
   username: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -14,10 +14,18 @@ const User = db.define('User', {
   password: {
     type: DataTypes.STRING,
     allowNull: false
-  }
+  },
   role: {
     type: DataTypes.STRING,
     allowNull: false
+  }
+})
+
+const User = db.define('User', {
+  username: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true
   },
   firstName: {
     type: DataTypes.STRING,
@@ -34,5 +42,6 @@ db.sync()
 
 module.exports = {
   db,
-  User
+  User,
+  Security
 }
