@@ -101,7 +101,7 @@ server.use('/js', express.static(path.join(__dirname, 'node_modules/bootstrap/di
 server.use('/js', express.static(path.join(__dirname, 'node_modules/jquery/dist')))
 server.use(express.static("public"))
 
-// Protected authenticated routing
+// Protected authenticated routing from here on
 
 server.use(authMiddleware)
 
@@ -116,6 +116,7 @@ server.get('/dashboard', async function (req, res) {
     }
 })
 
+// Test function to see if the middleware is running
 server.get('/api/valid', async function (req, res) {
     res.send('Valid!')
 })
