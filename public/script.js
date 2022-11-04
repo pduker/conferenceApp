@@ -71,19 +71,6 @@ async function sendAbstract(){
     }
 }
 
-/**
- * Sends the materials submission via POST request to /api/papers/materials/
- */
-async function sendPaperMaterials(){
-    let tempFormData = new FormData(document.querySelector('#materials-submission'))
-    if(paperFormValidation(tempFormData)){
-        const materialSubmissionResponse = await fetch('/api/papers/materials', {
-            method: 'POST',
-            body: tempFormData
-        })
-    }
-}
-
 /** 
  * Sends abstract to server
  */
@@ -110,7 +97,6 @@ $('#submit-abstract').on('click', async function(e){
     const formData = new FormData(document.querySelector('#submission'))
     if(paperFormValidation(formData)){
         const paperResponse = await sendPaper(formData);
-        //const materialsResponse = await sendPaperMaterials();
         if(paperResponse?.ok){
             alert.addClass("alert-success")
             alert.text("Paper submission successful!")

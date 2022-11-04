@@ -4,10 +4,10 @@ const bodyParser = require("body-parser")
 const fs = require("fs")
 const multer = require("multer")
 
-const uploadMiddleware = multer({ storage: multer.diskStorage({ destination: "./tmp"}) })
-
 const { parseDocx, deleteFile, exportYAML } = require("./src/parser.js")
-const { buildAuthorsMap, initializeServer } = require("./src/utils")
+const { buildAuthorsMap, initializeServer, parseSuppMats, fileNameGenerator} = require("./src/utils")
+
+const uploadMiddleware = multer({ storage: multer.diskStorage({ destination: "./tmp", filename: fileNameGenerator}) })
 
 const server = express()
 
@@ -18,10 +18,10 @@ server.get("/", async function(req, res) {
     res.send(html.toString())
 })
 
-server.post("/api/papers", uploadMiddleware.single("abstract"), async function (req, res) {
+server.post("/api/papers", uploadMiddleware.any(), async function (req, res) {
     try {
-        if (!req.file) {
-            console.error("File missing!")
+        if (!req.files) {
+            console.error("File(s) missing!")
             res.status(400).send("Bad Request")
         }
 
@@ -29,15 +29,17 @@ server.post("/api/papers", uploadMiddleware.single("abstract"), async function (
         delete req.body.title
 
         const authors = buildAuthorsMap(req.body)
-        const fileName = req.file.filename
+        const abstractFileName = req.files[0].filename
 
-        const inputFilePath = req.file.path
-        const outputFilePath = path.join(__dirname, 'tmp', `${fileName}.html`)
+        const inputFilePath = req.files[0].path
+        const outputFilePath = path.join(__dirname, 'tmp', `${abstractFileName}.html`)
 
         const fileBuffer = await parseDocx(inputFilePath, outputFilePath)
         const abstractHTML = fileBuffer.toString('utf8')
 
-        await exportYAML(title, authors, abstractHTML)
+        const suppMats = parseSuppMats(req.files, req.body)
+
+        await exportYAML(title, authors, abstractHTML, suppMats)
 
         await deleteFile(outputFilePath)
         await deleteFile(inputFilePath)
@@ -76,10 +78,6 @@ server.post("/api/papers/abstract", uploadMiddleware.single("abstract"), async f
     }
 })
 
-server.post("/api/papers/materials", async function (req, res) {
-    // Placeholder for the future supplementary materials route
-    res.send("OK")
-})
 
 server.use('/css', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/css')))
 server.use('/js', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/js')))
