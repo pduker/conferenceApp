@@ -71,19 +71,6 @@ async function sendAbstract(){
     }
 }
 
-/**
- * Sends the materials submission via POST request to /api/papers/materials/
- */
-async function sendPaperMaterials(){
-    let tempFormData = new FormData(document.querySelector('#materials-submission'))
-    if(paperFormValidation(tempFormData)){
-        const materialSubmissionResponse = await fetch('/api/papers/materials', {
-            method: 'POST',
-            body: tempFormData
-        })
-    }
-}
-
 /** 
  * Sends abstract to server
  */
