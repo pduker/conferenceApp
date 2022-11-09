@@ -71,19 +71,6 @@ async function sendAbstract(){
     }
 }
 
-/**
- * Sends the materials submission via POST request to /api/papers/materials/
- */
-async function sendPaperMaterials(){
-    let tempFormData = new FormData(document.querySelector('#materials-submission'))
-    if(paperFormValidation(tempFormData)){
-        const materialSubmissionResponse = await fetch('/api/papers/materials', {
-            method: 'POST',
-            body: tempFormData
-        })
-    }
-}
-
 /** 
  * Sends abstract to server
  */
@@ -110,7 +97,6 @@ $('#submit-abstract').on('click', async function(e){
     const formData = new FormData(document.querySelector('#submission'))
     if(paperFormValidation(formData)){
         const paperResponse = await sendPaper(formData);
-        //const materialsResponse = await sendPaperMaterials();
         if(paperResponse?.ok){
             alert.addClass("alert-success")
             alert.text("Paper submission successful!")
@@ -134,6 +120,8 @@ $('#submit-abstract').on('click', async function(e){
 $('#add-author').on('click', function(e){
     e.preventDefault();
     numAuthors++;
+    $('#remove-author')[0].style = '';
+
 
     $('#authors').append(
         `<label class="form-label">Author ${numAuthors}</label>
@@ -164,6 +152,7 @@ $('#add-author').on('click', function(e){
 $('#add-document').on('click', function(e){
     e.preventDefault();
     numMaterials++;
+    $('#remove-document')[0].style = '';
 
     $('#materials').append(
     `<div class="input-group mb-3">
@@ -173,7 +162,36 @@ $('#add-document').on('click', function(e){
     );
 
     materialPreviewListeners(numMaterials - 1);
+});
 
+/**
+ * Remove the last supplementary material input
+ */
+$('#remove-document').on('click', function(e){
+    e.preventDefault();
+    numMaterials--;
+    $('#materials')[0].children[numMaterials].remove();
+
+    if (numMaterials == 1)
+        $('#remove-document')[0].style = 'display:none';
+});
+
+/**
+ * Remove the last author input
+ */
+ $('#remove-author').on('click', function(e){
+    e.preventDefault();
+    numAuthors--;
+
+    $(`#author-${numAuthors}-preview`)[0].remove()
+
+    // remove all 4 elements of author
+    // (header, name, institution, bio)
+    for (let i = 0; i < 4; i++)
+        $('#authors')[0].children[numAuthors*4].remove();
+
+    if (numAuthors == 1)
+        $('#remove-author')[0].style = 'display:none';
 });
 
 /** 

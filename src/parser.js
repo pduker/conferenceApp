@@ -53,7 +53,7 @@ async function parseDocx (inputFilePath, outputFilePath) {
  * @param {string | ""} authors.bio The bio, optional param and could be empty
  * @param {string} abstract The HTML string from the parsed abstract upload
  */
-function exportYAML(title, authors, abstract) {
+function exportYAML(title, authors, abstract, suppMats) {
   // Export to YAML
   const safeTitle = removeSpaces(title)
   let filePath = path.join(__dirname, '../tmp/yaml', `${safeTitle}.yaml`)
@@ -66,6 +66,12 @@ function exportYAML(title, authors, abstract) {
   }
   fs.appendFileSync(filePath, authorsString)
   fs.appendFileSync(filePath, "title: " + title)
+  if(suppMats){
+    fs.appendFileSync(filePath, "\nhandouts:")
+    for (const [rawkey, value] of Object.entries(suppMats)){
+      fs.appendFileSync(filePath, "\n\t- desc: " + value +"\n\t\tpath: " + rawkey)
+    }
+  }
   fs.appendFileSync(filePath, "\nabstract: |\n\t" + abstract)
 }
 
