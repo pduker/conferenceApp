@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="styles.css">
     <title>Document-Parser</title>
     <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <script src="./js/bootstrap.min.js"></script>
     <script src="./js/jquery.min.js"></script>
 </head>
 
@@ -35,49 +36,82 @@
                     <div class="input-group mb-3">
                         <input type="text" class="form-control" id="title" name="title">
                     </div>
-                    <!-- Basic Author Info -->
-                    <div class="mb-3">
-                        <div id="authors">
-                            <label class="form-label">Author</label>
-                            <div class="input-group mb-3">
-                                <span class="input-group-text">Name</span>
-                                <input type="text" class="form-control" id="name-0" name="name-0">
+                    <div class="accordion" id="accordionMain">
+                        <!-- Basic Author Info -->
+                        <div class="accordion-item">
+                          <h2 class="accordion-header" id="headingAuthors">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAuthors" aria-expanded="true" aria-controls="collapseAuthors">
+                                Authors
+                            </button>
+                          </h2>
+                          <div id="collapseAuthors" class="accordion-collapse collapse show" aria-labelledby="headingAuthors" data-bs-parent="#accordionMain">
+                            <div class="accordion-body">
+                                <div class="mb-3">
+                                    <div id="authors">
+                                        <label class="form-label">Author</label>
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">Name</span>
+                                            <input type="text" class="form-control" id="name-0" name="name-0">
+                                        </div>
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">Institution</span>
+                                            <input type="text" class="form-control" id="institution-0" name="institution-0">
+                                        </div>
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">Bio</span>
+                                            <textarea class="form-control" id="bio-0" name="bio-0"></textarea>
+                                        </div>
+                                    </div>
+                                
+                                    <button class="btn btn-primary" id="add-author">Add Another Author</button>
+                                    <button class="btn btn-primary" id="remove-author" style="display:none">Remove Last Author</button>
+                                </div>
                             </div>
-                            <div class="input-group mb-3">
-                                <span class="input-group-text">Institution</span>
-                                <input type="text" class="form-control" id="institution-0" name="institution-0">
-                            </div>
-                            <div class="input-group mb-3">
-                                <span class="input-group-text">Bio</span>
-                                <textarea class="form-control" id="bio-0" name="bio-0"></textarea>
-                            </div>
+                          </div>
                         </div>
-                    
-                        <button class="btn btn-primary" id="add-author">Add Another Author</button>
-                        <button class="btn btn-primary" id="remove-author" style="display:none">Remove Last Author</button>
-                    </div>
-                    <!-- Abstract -->
-                    <label class="form-label">Abstract</label>
-                    <div class="input-group mb-3">
-                        <input type="file" class="form-control" id="uploadAbstract" name="abstract">
-                    </div>
-                    <button class="btn btn-primary" id="submit-abstract" style="margin-bottom: 1em;">Upload Abstract for Preview</button>
-                    <br>
-                    <!-- Additional Supplementary Materials -->
-                    <label class="form-label">Supplementary Materials (optional)</label>
-                    <div class="mb-3">
-                        <div id="materials">
-                            <div class="input-group mb-3">
-                                <input type="text" class="form-control"
-                                    placeholder="Material Type (e.g Handout, Slides, Script)" id="materialType-0"
-                                    name="material-type-0">
-                                <input type="file" class="form-control" id="uploadMaterial-0" name="material-0">
+                        <!-- Abstract -->
+                        <div class="accordion-item">
+                          <h2 class="accordion-header" id="headingAbstract">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAbstract" aria-expanded="false" aria-controls="collapseAbstract">
+                                Abstract
+                            </button>
+                          </h2>
+                          <div id="collapseAbstract" class="accordion-collapse collapse" aria-labelledby="headingAbstract" data-bs-parent="#accordionMain">
+                            <div class="accordion-body">
+                                <div class="input-group mb-3">
+                                    <input type="file" class="form-control" id="uploadAbstract" name="abstract">
+                                </div>
+                                <button class="btn btn-primary" id="submit-abstract" style="margin-bottom: 1em;">Upload Abstract for Preview</button>
+                                <br>
                             </div>
+                          </div>
                         </div>
-                        
-                        <button class="btn btn-primary" id="add-document">Add Another Document</button>
-                        <button class="btn btn-primary" id="remove-document" style="display:none">Remove Last Document</button>
-                    </div>
+                        <!--Supplimentary Materials-->
+                        <div class="accordion-item">
+                          <h2 class="accordion-header" id="headingMaterials">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMaterials" aria-expanded="false" aria-controls="collapseMaterials">
+                                Supplementary Materials (optional)
+                            </button>
+                          </h2>
+                          <div id="collapseMaterials" class="accordion-collapse collapse" aria-labelledby="headingMaterials" data-bs-parent="#accordionMain">
+                            <div class="accordion-body">
+                                <div class="mb-3">
+                                    <div id="materials">
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control"
+                                                placeholder="Material Type (e.g Handout, Slides, Script)" id="materialType-0"
+                                                name="material-type-0">
+                                            <input type="file" class="form-control" id="uploadMaterial-0" name="material-0">
+                                        </div>
+                                    </div>
+                                    
+                                    <button class="btn btn-primary" id="add-document">Add Another Document</button>
+                                    <button class="btn btn-primary" id="remove-document" style="display:none">Remove Last Document</button>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                 </form>
                 <button class="btn btn-primary" id="submit-paper">SUBMIT PAPER</button>
             </div>
