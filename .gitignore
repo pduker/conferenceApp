@@ -1,3 +1,5 @@
 node_modules
 tmp/yaml
 tmp/
+env/
+src/vimeo_api.py
