@@ -48,9 +48,33 @@ function initializeServer (parentDir) {
   }
 }
 
+function parseSuppMats(files, body){
+  if(files.length === 1){
+    return null
+  }else {
+    let suppOnly = files.slice(1)
+    let value = {}
+    let i = 0
+    for (const supp of suppOnly){
+      value[supp.filename] = body[`material-type-${i}`]
+      i++
+    }
+    console.log(value)
+    return(value)
+  }
+}
+
+function fileNameGenerator(req, file, callback) {
+  let name = `${req.body.title}_${file.originalname}`
+  name = name.replace(/ /g,"_") // Replace all spaces with _ to make sure we support Unix file paths
+  callback(null, name)
+}
+
 
 module.exports = {
   buildAuthorsMap,
   removeSpaces,
-  initializeServer
+  initializeServer,
+  parseSuppMats,
+  fileNameGenerator
 }
