@@ -4,10 +4,12 @@ const bodyParser = require("body-parser")
 const fs = require("fs")
 const multer = require("multer")
 
-const { parseDocx, deleteFile, exportYAML } = require("./src/parser.js")
-const { buildAuthorsMap, initializeServer, parseSuppMats, fileNameGenerator} = require("./src/utils")
+const uploadMiddleware = multer({ storage: multer.diskStorage({ destination: "./tmp"}) })
+const authMiddleware = require('./src/auth/middleware')
 
-const uploadMiddleware = multer({ storage: multer.diskStorage({ destination: "./tmp", filename: fileNameGenerator}) })
+const { parseDocx, deleteFile, exportYAML } = require("./src/parser.js")
+const { buildAuthorsMap, initializeServer } = require("./src/utils")
+const authRoutes = require('./src/routes/auth')
 
 const server = express()
 
@@ -18,7 +20,10 @@ server.get("/", async function(req, res) {
     res.send(html.toString())
 })
 
-server.post("/api/papers", uploadMiddleware.any(), async function (req, res) {
+// This loads in the routes from the router in authRoutes, as if they were defined directly here at /api/auth
+server.use("/api/auth", authRoutes)
+
+server.post("/api/papers", uploadMiddleware.single("abstract"), async function (req, res) {
     try {
         if (!req.files) {
             console.error("File(s) missing!")
@@ -79,10 +84,40 @@ server.post("/api/papers/abstract", uploadMiddleware.single("abstract"), async f
 })
 
 
+server.get('/login', async function (req, res) {
+    try {
+        const data = fs.readFileSync(path.join(__dirname, 'public', 'login.html'))
+        res.send(data.toString())
+    } catch (err) {
+        console.error(err)
+        res.sendStatus(500)
+    }
+})
+
 server.use('/css', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/css')))
 server.use('/js', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/js')))
 server.use('/js', express.static(path.join(__dirname, 'node_modules/jquery/dist')))
 server.use(express.static("public"))
+
+// Protected authenticated routing from here on
+
+server.use(authMiddleware)
+
+// Loading the protected website behind our web auth
+server.get('/dashboard', async function (req, res) {
+    try {
+        const data = fs.readFileSync(path.join(__dirname, 'public', 'dashboard.html'))
+        res.send(data.toString())
+    } catch (err) {
+        console.error(err)
+        res.sendStatus(500)
+    }
+})
+
+// Test function to see if the middleware is running
+server.get('/api/valid', async function (req, res) {
+    res.send('Valid!')
+})
 
 server.listen(8080, () => {
     initializeServer(__dirname)
