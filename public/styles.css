@@ -89,5 +89,9 @@ details.root {
 }
 
 .accordion-body{
-    background-color: var(--sub-background)
+    background-color: var(--sub-background);
+    border: var(--border-size) solid var(--border);
+    overflow-y: scroll; 
+    max-height: 40vh;
+    overflow-x: hidden;
 }
