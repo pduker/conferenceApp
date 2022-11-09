@@ -94,6 +94,16 @@ server.get('/login', async function (req, res) {
     }
 })
 
+server.get('/scheduler', async function (req, res) {
+    try {
+        const data = fs.readFileSync(path.join(__dirname, 'public', 'scheduler.html'))
+        res.send(data.toString())
+    } catch (err) {
+        console.error(err)
+        res.sendStatus(500)
+    }
+})
+
 server.use('/css', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/css')))
 server.use('/js', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/js')))
 server.use('/js', express.static(path.join(__dirname, 'node_modules/jquery/dist')))
