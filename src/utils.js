@@ -8,6 +8,10 @@ function buildAuthorsMap(rawFormFields) {
       const id = splitVals[1]
       const field = splitVals[0]
 
+      if (!(field === 'name' || field === 'institution' || field === 'bio')){
+        continue;
+      }
+      
       let temp = authors[id]
 
       // If we have not added an entry yet for that author, add it

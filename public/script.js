@@ -61,11 +61,15 @@ async function sendPaper(formData){
  * Sends the abstract via POST request to /api/papers/abstract
  */
 async function sendAbstract(){
-    let tempFormData = new FormData(document.querySelector('#submission'))
-    if(!tempFormData.get("abstract").size == 0){
+    const formData = new FormData(document.querySelector('#submission'))
+    for (let i = 0; i < numMaterials; i++){
+        formData.delete(`material-type-${i}`);
+        formData.delete(`material-${i}`);
+    }
+    if(!formData.get("abstract").size == 0){
         const abstractResponse = await fetch('api/papers/abstract', {
             method: 'POST',
-            body: tempFormData
+            body: formData
         });
         return await abstractResponse.json();
     }
