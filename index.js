@@ -8,7 +8,7 @@ const uploadMiddleware = multer({ storage: multer.diskStorage({ destination: "./
 const authMiddleware = require('./src/auth/middleware')
 
 const { parseDocx, deleteFile, exportYAML } = require("./src/parser.js")
-const { buildAuthorsMap, initializeServer } = require("./src/utils")
+const { buildAuthorsMap, initializeServer, parseSuppMats } = require("./src/utils")
 const authRoutes = require('./src/routes/auth')
 
 const server = express()
@@ -23,7 +23,7 @@ server.get("/", async function(req, res) {
 // This loads in the routes from the router in authRoutes, as if they were defined directly here at /api/auth
 server.use("/api/auth", authRoutes)
 
-server.post("/api/papers", uploadMiddleware.single("abstract"), async function (req, res) {
+server.post("/api/papers", uploadMiddleware.any(), async function (req, res) {
     try {
         if (!req.files) {
             console.error("File(s) missing!")
