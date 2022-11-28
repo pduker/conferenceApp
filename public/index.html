@@ -34,7 +34,7 @@
                     <!-- Title -->
                     <label class="form-label">Title</label>
                     <div class="input-group mb-3">
-                        <input type="text" class="form-control" id="title" name="title">
+                        <input type="text" class="form-control validate-me" id="title" name="title" required>
                     </div>
                     <div class="accordion" id="accordionMain">
                         <!-- Basic Author Info -->
@@ -51,11 +51,11 @@
                                         <label class="form-label">Author</label>
                                         <div class="input-group mb-3">
                                             <span class="input-group-text">Name</span>
-                                            <input type="text" class="form-control" id="name-0" name="name-0">
+                                            <input type="text" class="form-control validate-me" id="name-0" name="name-0" required>
                                         </div>
                                         <div class="input-group mb-3">
                                             <span class="input-group-text">Institution</span>
-                                            <input type="text" class="form-control" id="institution-0" name="institution-0">
+                                            <input type="text" class="form-control validate-me" id="institution-0" name="institution-0" required>
                                         </div>
                                         <div class="input-group mb-3">
                                             <span class="input-group-text">Bio</span>
@@ -79,7 +79,7 @@
                           <div id="collapseAbstract" class="accordion-collapse collapse" aria-labelledby="headingAbstract" data-bs-parent="#accordionMain">
                             <div class="accordion-body">
                                 <div class="input-group mb-3">
-                                    <input type="file" class="form-control" id="uploadAbstract" name="abstract">
+                                    <input type="file" class="form-control validate-me" id="uploadAbstract" name="abstract" required>
                                 </div>
                                 <button class="btn btn-primary" id="submit-abstract" style="margin-bottom: 1em;">Upload Abstract for Preview</button>
                                 <br>
@@ -112,8 +112,8 @@
                           </div>
                         </div>
                       </div>
+                      <button class="btn btn-primary" id="submit-paper" type="submit">SUBMIT PAPER</button>
                 </form>
-                <button class="btn btn-primary" id="submit-paper">SUBMIT PAPER</button>
             </div>
 
             <!-- RIGHT: preview -->
