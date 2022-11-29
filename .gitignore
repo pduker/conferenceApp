@@ -3,6 +3,3 @@ tmp/yaml
 tmp/
 main.db
 env/
-vimeo/vimeo_api.py
-vimeo/*.tsv
-vimeo/videos
