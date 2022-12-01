@@ -53,6 +53,7 @@ async function login(username, password) {
       sessionStorage.setItem('token', token)
 
       console.log('Successfully logged in')
+      window.location.assign('/scheduler')
     } else {
       console.error('Login failed')
     }
