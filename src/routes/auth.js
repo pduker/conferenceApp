@@ -19,6 +19,7 @@ router.post('/login', async function (req, res) {
     if (!user) {
       console.log('User with that username does not exist')
       res.status(404).send('User with that password/username combination was not found')
+      return
     }
 
     const hashedPassword = user.password
