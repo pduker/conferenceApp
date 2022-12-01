@@ -54,16 +54,24 @@ async function login(username, password) {
 
       console.log('Successfully logged in')
       window.location.assign('/scheduler')
+      return true
     } else {
       console.error('Login failed')
+      return false
     }
   } catch (err) {
     console.error(err)
+    return false
   }
 }
 
 $('#submit').on('click', async function (e) {
   e.preventDefault();
 
-  await login(username, password)
+  const success = await login(username, password)
+
+  if (!success) {
+    const alert = $("#warning-alert")
+    alert.show()
+  }
 })

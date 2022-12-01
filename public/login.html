@@ -11,20 +11,25 @@
 
 <body>
   <div class="container">
-    <div class="row mt-4">
-      <div class="col-sm-4">
-        <h4>Login</h4>
-        <form id="submission">
-          <label class="form-label">Username</label>
-          <div class="input-group mb-3">
-            <input type="text" class="form-control" id="username" name="username">
+    <div class="row mt-4 d-flex justify-content-center">
+      <div class="col-4">
+        <div class="card d-flex flex-column justify-content-center align-items-center card-body">
+          <h3>Collective Scheduler</h3>
+          <form id="submission" class="mt-2 w-100">
+            <label class="form-label">Username</label>
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" id="username" name="username">
+            </div>
+            <label class="form-label">Password</label>
+            <div class="input-group mb-3">
+              <input type="password" class="form-control" id="password" name="password">
+            </div>
+          </form>
+          <button class="btn btn-primary btn-lg" id="submit">Login</button>
+          <div class="alert alert-warning mt-4 pr-4 pl-4 collapse" role="alert" id="warning-alert">
+            Incorrect username or password. Either the user does not exist or the password was incorrect.
           </div>
-          <label class="form-label">Password</label>
-          <div class="input-group mb-3">
-            <input type="password" class="form-control" id="password" name="password">
-          </div>
-        </form>
-        <button class="btn btn-primary" id="submit">Login</button>
+        </div>
       </div>
     </div>
   </div>
