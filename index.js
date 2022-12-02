@@ -113,17 +113,6 @@ server.use(express.static("public"))
 
 server.use(authMiddleware)
 
-// Loading the protected website behind our web auth
-server.get('/dashboard', async function (req, res) {
-    try {
-        const data = fs.readFileSync(path.join(__dirname, 'public', 'dashboard.html'))
-        res.send(data.toString())
-    } catch (err) {
-        console.error(err)
-        res.sendStatus(500)
-    }
-})
-
 // Test function to see if the middleware is running
 server.get('/api/valid', async function (req, res) {
     res.send('Valid!')

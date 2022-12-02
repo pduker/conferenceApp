@@ -5,13 +5,40 @@
   <meta charset="utf-8">
   <link rel="stylesheet" href="styles.css">
   <title>Login</title>
+  <script src="./utils/auth.js"></script>
   <link rel="stylesheet" href="./css/bootstrap.min.css">
   <script src="./js/jquery.min.js"></script>
 </head>
 
 <body>
   <div class="container">
-    <p>EMPTY PAGE</p>
+    <h1>Create Schedule</h1>
+
+    <div id="new-timeslots">
+      <label class="form-label">Create New Timeslot</label>
+      <div class="input-group mb-3">
+          <span class="input-group-text">Day</span>
+          <input type="text" class="form-control" id="day-0" name="day-0">
+      </div>
+      <div class="input-group mb-3">
+          <span class="input-group-text">Start Time</span>
+          <input type="text" class="form-control" id="starttime-0" name="starttime-0">
+      </div>
+      <div class="input-group mb-3">
+        <span class="input-group-text">End Time</span>
+        <input type="text" class="form-control" id="endtime-0" name="endtime-0">
+      </div>
+      <div class="input-group mb-3">
+        <span class="input-group-text">Abstract</span>
+        <input type="file" class="form-control" id="uploadAbstract" name="abstract">
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="create-timeslot">Create Timeslot</button>
+
+    <p>Your Timeslots:</p>
+    <div id="existingtimeslots"></div>
+
   </div>
 
   <script src='./scheduler.js'></script>
