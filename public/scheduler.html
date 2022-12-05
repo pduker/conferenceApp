@@ -5,14 +5,130 @@
   <meta charset="utf-8">
   <link rel="stylesheet" href="styles.css">
   <title>Login</title>
+  <script src="./utils/auth.js"></script>
   <link rel="stylesheet" href="./css/bootstrap.min.css">
   <script src="./js/jquery.min.js"></script>
 </head>
 
 <body>
-  <div class="container">
+  <div class="container scheduler">
     <h1>Create Schedule</h1>
 
+    <div class="row justify-content-center" style="width: fit-content;">
+      <div class="col-2 session-day">
+        <h3> Monday </h3>
+        <div class="card session-time">
+          <div class="card-body">
+            <h5 class="card-title">12:30 - 11:45</h5>
+            <details class="papers-details">
+              <summary>Papers</summary>
+              <ul class="papers" id="materials-list-preview">
+                <li>paper 1</li>
+                <li>paper 2</li>
+              </ul>
+            </details>
+            <a href="#" class="btn btn-primary">Edit Session</a>
+          </div>
+        </div>
+
+        <div class="card session-time">
+          <div class="card-body">
+            <h5 class="card-title">12:30 - 11:45</h5>
+            <details class="papers-details">
+              <summary>Papers</summary>
+              <ul class="papers" id="materials-list-preview">
+                <li>paper 1</li>
+                <li>paper 2</li>
+              </ul>
+            </details>
+            <a href="#" class="btn btn-primary">Edit Session</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-2 session-day">
+        <h3> Tuesday </h3>
+        <div class="card session-time">
+          <div class="card-body">
+            <h5 class="card-title">12:30 - 11:45</h5>
+            <details class="papers-details">
+              <summary>Papers</summary>
+              <ul class="papers" id="materials-list-preview">
+                <li>paper 1</li>
+                <li>paper 2</li>
+              </ul>
+            </details>
+            <a href="#" class="btn btn-primary">Edit Session</a>
+          </div>
+        </div>
+
+        <div class="card session-time">
+          <div class="card-body">
+            <h5 class="card-title">12:30 - 11:45</h5>
+            <details class="papers-details">
+              <summary>Papers</summary>
+              <ul class="papers" id="materials-list-preview">
+                <li>test</li>
+              </ul>
+            </details>
+            <a href="#" class="btn btn-primary">Edit Session</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-2 session-day">
+        <h3> Wednesday </h3>
+        <div class="card session-time">
+          <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <details class="papers-details">
+              <summary>Papers</summary>
+              <ul class="papers" id="materials-list-preview">
+                <li>paper 1</li>
+                <li>paper 2</li>
+              </ul>
+            </details>
+            <a href="#" class="btn btn-primary">Edit Session</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-2 session-day">
+        <h3> Thursday </h3>
+        <div class="card session-time">
+          <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <details class="papers-details">
+              <summary>Papers</summary>
+              <ul class="papers" id="materials-list-preview">
+                <li>paper 1</li>
+                <li>paper 2</li>
+              </ul>
+            </details>
+            <a href="#" class="btn btn-primary">Edit Session</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-2 session-day">
+        <h3> Friday </h3>
+        <div class="card session-time">
+          <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <details class="papers-details">
+              <summary>Papers</summary>
+              <ul class="papers" id="materials-list-preview">
+                <li>paper 1</li>
+                <li>paper 2</li>
+              </ul>
+            </details>
+            <a href="#" class="btn btn-primary">Edit Session</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--
     <div id="new-timeslots">
       <label class="form-label">Create New Timeslot</label>
       <div class="input-group mb-3">
@@ -28,8 +144,8 @@
         <input type="text" class="form-control" id="endtime-0" name="endtime-0">
       </div>
       <div class="input-group mb-3">
-        <span class="input-group-text">Abstract</span>
-        <input type="file" class="form-control" id="uploadAbstract" name="abstract">
+        <span class="input-group-text">Papers</span>
+        <input type="file" class="form-control" id="uploadPapers" name="Papers">
       </div>
     </div>
 
@@ -37,6 +153,7 @@
 
     <p>Your Timeslots:</p>
     <div id="existingtimeslots"></div>
+  -->
 
   </div>
 
