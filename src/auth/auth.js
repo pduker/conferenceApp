@@ -46,7 +46,7 @@ async function verifyToken(token) {
   if (!token || token.length === 0)
     return null;
   try {
-    const payload = jwt.verify(token, TOKEN_SECRET);
+    const payload = jwt.verify(token.toString(), TOKEN_SECRET);
 
     const user = await getAuthRecordByUsername(payload.username)
 

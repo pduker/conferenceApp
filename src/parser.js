@@ -2,6 +2,7 @@ const { exec } = require('child_process')
 const fs = require('fs')
 const path = require('path')
 const { removeSpaces } = require('./utils')
+const yaml = require('js-yaml')
 
 /**
  * Deletes the file at the specified path
@@ -54,25 +55,19 @@ async function parseDocx (inputFilePath, outputFilePath) {
  * @param {string} abstract The HTML string from the parsed abstract upload
  */
 function exportYAML(title, authors, abstract, suppMats) {
-  // Export to YAML
   const safeTitle = removeSpaces(title)
   let filePath = path.join(__dirname, '../tmp/yaml', `${safeTitle}.yaml`)
-  fs.writeFileSync(filePath, "---\n")
-  let authorsString = "authors:\n"
-  console.log(authors)
-  for (const author of Object.values(authors)) {
-    // author = {name: ..., institution: ..., bio: ...}
-    authorsString += "\t- name: "+ author.name + "\n\t\tinstitution: " + author.institution + "\n\t\tbio: " + author.bio + "\n"
+  
+  const uploadedPaper = {
+    authors: Object.values(authors),
+    title,
+    abstract
   }
-  fs.appendFileSync(filePath, authorsString)
-  fs.appendFileSync(filePath, "title: " + title)
   if(suppMats){
-    fs.appendFileSync(filePath, "\nhandouts:")
-    for (const [rawkey, value] of Object.entries(suppMats)){
-      fs.appendFileSync(filePath, "\n\t- desc: " + value +"\n\t\tpath: " + rawkey)
-    }
+    uploadedPaper.suppMats = suppMats
   }
-  fs.appendFileSync(filePath, "\nabstract: |\n\t" + abstract)
+  const doc = yaml.dump(uploadedPaper)
+  fs.writeFileSync(filePath, doc.toString())
 }
 
 module.exports = {
