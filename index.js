@@ -3,6 +3,7 @@ const express = require("express")
 const bodyParser = require("body-parser")
 const fs = require("fs")
 const multer = require("multer")
+const yaml = require('js-yaml')
 
 const uploadMiddleware = multer({ storage: multer.diskStorage({ destination: "./tmp"}) })
 const authMiddleware = require('./src/auth/middleware')
@@ -98,6 +99,22 @@ server.get('/scheduler', async function (req, res) {
     try {
         const data = fs.readFileSync(path.join(__dirname, 'public', 'scheduler.html'))
         res.send(data.toString())
+    } catch (err) {
+        console.error(err)
+        res.sendStatus(500)
+    }
+})
+
+server.get('/api/getYamls', async function (req, res) {
+    try {
+        let info = []
+        let files = fs.readdirSync(path.join(__dirname, 'tmp','yaml'));
+        for(let file in files){
+            //info.push(fs.readFileSync(path.join(__dirname, 'tmp','yaml',files[file])).toString())
+            let obj = yaml.load(fs.readFileSync(path.join(__dirname, 'tmp','yaml',files[file]), {encoding: 'utf-8'}));
+            info.push(obj);
+        }
+        res.json(info)
     } catch (err) {
         console.error(err)
         res.sendStatus(500)
