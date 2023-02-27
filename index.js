@@ -24,6 +24,22 @@ server.get("/", async function(req, res) {
 // This loads in the routes from the router in authRoutes, as if they were defined directly here at /api/auth
 server.use("/api/auth", authRoutes)
 
+server.get('/api/papers', async function (req, res) {
+    try {
+        let info = []
+        let files = fs.readdirSync(path.join(__dirname, 'tmp','yaml'));
+        for(let file in files){
+            //info.push(fs.readFileSync(path.join(__dirname, 'tmp','yaml',files[file])).toString())
+            let obj = yaml.load(fs.readFileSync(path.join(__dirname, 'tmp','yaml',files[file]), {encoding: 'utf-8'}));
+            info.push(obj);
+        }
+        res.json(info)
+    } catch (err) {
+        console.error(err)
+        res.sendStatus(500)
+    }
+})
+
 server.post("/api/papers", uploadMiddleware.any(), async function (req, res) {
     try {
         if (!req.files) {
@@ -99,22 +115,6 @@ server.get('/scheduler', async function (req, res) {
     try {
         const data = fs.readFileSync(path.join(__dirname, 'public', 'scheduler.html'))
         res.send(data.toString())
-    } catch (err) {
-        console.error(err)
-        res.sendStatus(500)
-    }
-})
-
-server.get('/api/getYamls', async function (req, res) {
-    try {
-        let info = []
-        let files = fs.readdirSync(path.join(__dirname, 'tmp','yaml'));
-        for(let file in files){
-            //info.push(fs.readFileSync(path.join(__dirname, 'tmp','yaml',files[file])).toString())
-            let obj = yaml.load(fs.readFileSync(path.join(__dirname, 'tmp','yaml',files[file]), {encoding: 'utf-8'}));
-            info.push(obj);
-        }
-        res.json(info)
     } catch (err) {
         console.error(err)
         res.sendStatus(500)
