@@ -178,6 +178,7 @@ function populateAccordionData() {
 
             <div class="row">`;
 
+        let index = 0;
         for (let session of sessions){
             accordionHTML += `<div class="col-2 card session-time">
             <div class="card-body">
@@ -191,9 +192,11 @@ function populateAccordionData() {
 
             accordionHTML += `</ul>
                 </details>
-                <button class="btn btn-primary test">Edit Session</button>
+                <button class="btn btn-primary test" id="button${day}${index}">Edit Session</button>
                 </div>
             </div>`
+
+            index = index + 1;
         }
 
         accordionHTML += `</div>
