@@ -10,6 +10,7 @@ const authMiddleware = require('./src/auth/middleware')
 
 const { parseDocx, deleteFile, exportYAML } = require("./src/parser.js")
 const { buildAuthorsMap, initializeServer, parseSuppMats } = require("./src/utils")
+const { createPaper, getAllPapers } = require("./src/database/papers")
 const authRoutes = require('./src/routes/auth')
 
 const server = express()
@@ -26,14 +27,8 @@ server.use("/api/auth", authRoutes)
 
 server.get('/api/papers', async function (req, res) {
     try {
-        let info = []
-        let files = fs.readdirSync(path.join(__dirname, 'tmp','yaml'));
-        for(let file in files){
-            //info.push(fs.readFileSync(path.join(__dirname, 'tmp','yaml',files[file])).toString())
-            let obj = yaml.load(fs.readFileSync(path.join(__dirname, 'tmp','yaml',files[file]), {encoding: 'utf-8'}));
-            info.push(obj);
-        }
-        res.json(info)
+        const papers = await getAllPapers()
+        res.json(papers)
     } catch (err) {
         console.error(err)
         res.sendStatus(500)
@@ -61,7 +56,7 @@ server.post("/api/papers", uploadMiddleware.any(), async function (req, res) {
 
         const suppMats = parseSuppMats(req.files, req.body)
 
-        await exportYAML(title, authors, abstractHTML, suppMats)
+        await createPaper(title, authors, abstractHTML, suppMats)
 
         await deleteFile(outputFilePath)
         await deleteFile(inputFilePath)

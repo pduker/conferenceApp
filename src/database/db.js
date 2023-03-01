@@ -39,11 +39,66 @@ const Users = db.define('Users', {
   }
 })
 
+const Papers = db.define('Papers', {
+  title: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  abstract: {
+    type: DataTypes.STRING,
+    allowNull: false
+  }
+})
+
+const SuppMaterials = db.define('SuppMaterials', {
+  id: {
+    type: DataTypes.STRING,
+    primaryKey: true,
+    allowNull: false
+  },
+  type: {
+    type: DataTypes.STRING,
+    allowNull: false
+  }
+})
+
+const Authors = db.define('Authors', {
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  bio: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  institution: {
+    type: DataTypes.STRING,
+    allowNull: false
+  }
+})
+
+Papers.hasMany(SuppMaterials)
+SuppMaterials.belongsTo(Papers)
+
+Papers.hasMany(Authors)
+Authors.belongsTo(Papers)
+
+const Sessions = db.define('Sessions', {
+  sessionsObj: {
+    type: DataTypes.JSON,
+    allowNull: false
+  }
+})
+
 // Sync the database with our schema and create it if they are missing
 db.sync()
 
 module.exports = {
   db,
   Users,
-  Security
+  Security,
+  Papers,
+  Sessions,
+  SuppMaterials,
+  Authors
 }
