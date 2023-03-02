@@ -9,19 +9,46 @@ async function getAllPapers() {
 async function getPaperByTitle(title) {
   const paper = await Papers.findOne({ 
     where: {
-      title: 'Jaydon Paper'
+      title: title
     },
-    include: SuppMaterial
+    include: SuppMaterials
   })
 
+  return paper
 
 }
 
 async function createPaper(title, authors, abstract, suppMats) {
+  let idString = title
+  for(let author of Object.values(authors)){
+    idString = title + author.name
+  }
+
+  
+
+  Papers.destroy({
+    where: {
+      titleNameString: idString
+    }
+  })
+
+  Authors.destroy({
+    where: {
+      PaperId: null
+    }
+  })
+
+  SuppMaterials.destroy({
+    where: {
+      PaperId: null
+    }
+  })
+
 
   const paper = await Papers.create({
     title,
-    abstract
+    abstract,
+    titleNameString: idString
   })
 
   for (const author of Object.values(authors)) {
@@ -44,5 +71,6 @@ async function createPaper(title, authors, abstract, suppMats) {
 
 module.exports = {
   getAllPapers,
-  createPaper
+  createPaper,
+  getPaperByTitle
 }

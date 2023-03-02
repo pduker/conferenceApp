@@ -10,7 +10,7 @@ const authMiddleware = require('./src/auth/middleware')
 
 const { parseDocx, deleteFile, exportYAML } = require("./src/parser.js")
 const { buildAuthorsMap, initializeServer, parseSuppMats } = require("./src/utils")
-const { createPaper, getAllPapers } = require("./src/database/papers")
+const { createPaper, getAllPapers, getPaperByTitle } = require("./src/database/papers")
 const authRoutes = require('./src/routes/auth')
 
 const server = express()
@@ -34,6 +34,7 @@ server.get('/api/papers', async function (req, res) {
         res.sendStatus(500)
     }
 })
+
 
 server.post("/api/papers", uploadMiddleware.any(), async function (req, res) {
     try {
