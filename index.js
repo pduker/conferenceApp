@@ -12,6 +12,7 @@ const { parseDocx, deleteFile, exportYAML } = require("./src/parser.js")
 const { buildAuthorsMap, initializeServer, parseSuppMats } = require("./src/utils")
 const { createPaper, getAllPapers } = require("./src/database/papers")
 const authRoutes = require('./src/routes/auth')
+const sessionRoutes = require('./src/routes/sessions')
 
 const server = express()
 
@@ -24,6 +25,8 @@ server.get("/", async function(req, res) {
 
 // This loads in the routes from the router in authRoutes, as if they were defined directly here at /api/auth
 server.use("/api/auth", authRoutes)
+
+server.use('/api/sessions', sessionRoutes)
 
 server.get('/api/papers', async function (req, res) {
     try {

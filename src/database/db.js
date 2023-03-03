@@ -83,12 +83,29 @@ SuppMaterials.belongsTo(Papers)
 Papers.hasMany(Authors)
 Authors.belongsTo(Papers)
 
-const Sessions = db.define('Sessions', {
-  sessionsObj: {
-    type: DataTypes.JSON,
+const Days = db.define('Days', {
+  weekday: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  date: {
+    type: DataTypes.STRING,
     allowNull: false
   }
 })
+
+const Sessions = db.define('Sessions', {
+  time: {
+    type: DataTypes.STRING,
+    allowNull: false
+  }
+})
+
+Sessions.hasMany(Papers)
+Papers.belongsTo(Sessions)
+
+Days.hasMany(Sessions)
+Sessions.belongsTo(Days)
 
 // Sync the database with our schema and create it if they are missing
 db.sync()
@@ -97,8 +114,9 @@ module.exports = {
   db,
   Users,
   Security,
+  SuppMaterials,
+  Authors,
   Papers,
   Sessions,
-  SuppMaterials,
-  Authors
+  Days
 }
