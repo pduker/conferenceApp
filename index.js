@@ -13,6 +13,7 @@ const { buildAuthorsMap, initializeServer, parseSuppMats } = require("./src/util
 const { createPaper, getAllPapers } = require("./src/database/papers")
 const authRoutes = require('./src/routes/auth')
 const sessionRoutes = require('./src/routes/sessions')
+const dayRoutes = require('./src/routes/days')
 
 const server = express()
 
@@ -27,6 +28,8 @@ server.get("/", async function(req, res) {
 server.use("/api/auth", authRoutes)
 
 server.use('/api/sessions', sessionRoutes)
+
+server.use('/api/days', dayRoutes)
 
 server.get('/api/papers', async function (req, res) {
     try {
