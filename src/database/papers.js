@@ -26,7 +26,7 @@ async function createPaper(title, authors, abstract, suppMats) {
 
   
 
-  Papers.destroy({
+  await Papers.destroy({
     where: {
       titleNameString: idString
     }
