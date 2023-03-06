@@ -14,8 +14,18 @@ async function getAllSessionsByDay (weekday) {
   return day
 }
 
+async function createSession (time, DayId) {
+  const session = await Sessions.create({
+    time,
+    DayId
+  })
+
+  return session
+}
+
 
 module.exports = {
   getAllSessions,
-  getAllSessionsByDay
+  getAllSessionsByDay,
+  createSession
 }
