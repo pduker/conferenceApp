@@ -21,7 +21,7 @@ async function getPaperByTitle(title) {
 async function createPaper(title, authors, abstract, suppMats) {
   let idString = title
   for(let author of Object.values(authors)){
-    idString = title + author.name
+    idString = idString + author.name
   }
 
   
