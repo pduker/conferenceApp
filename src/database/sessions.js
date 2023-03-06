@@ -1,4 +1,4 @@
-const { Days, Sessions, Papers } = require('./db')
+const { Days, Sessions, Papers, Authors } = require('./db')
 
 async function getAllSessions () {
   const sessions = await Sessions.findAll({ include: [ Papers ]})
