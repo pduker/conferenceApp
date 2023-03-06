@@ -192,7 +192,7 @@ function populateAccordionData() {
 
             accordionHTML += `</ul>
                 </details>
-                <button class="btn btn-primary test" id="button${day}${index}">Edit Session</button>
+                <button class="btn btn-primary test" id="button${day}${index}" data-bs-toggle="modal" data-bs-target="#exampleModal">Edit Session</button>
                 </div>
             </div>`
 
@@ -211,4 +211,20 @@ function populateAccordionData() {
 
 }
 
+/**
+ * generates the listeners to the buttons to capture what session the button was pressed to change the modal
+ */
+function attachListener(){
+    for (const [day, sessions] of Object.entries(data)) {
+        let listenerIndex = 0;
+        for (let session of sessions){
+            $("#button" + day + listenerIndex).on("click", function(){
+                $("#exampleModalLabel").html("" + day + " " + session.time);
+            });
+            listenerIndex = listenerIndex + 1;
+        }
+    }
+}
+
 populateAccordionData();
+attachListener();
