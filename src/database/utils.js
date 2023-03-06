@@ -4,9 +4,11 @@
  * @param {*} updatedModel The new updated model object (with updated fields)
  */
 function updateChangedFields (currModel, updatedModel) {
-  for (const [key, oldVal] of Object.entries(currModel)) {
-    if (currModel[key] !== updatedModel[key]) {
-      currModel[key] = updatedModel[key]
+  for (const key of Object.keys(updatedModel)) {
+    if (currModel[key] !== undefined) {
+      if (currModel[key] !== updatedModel[key]) {
+        currModel[key] = updatedModel[key]
+      }
     }
   }
 }
