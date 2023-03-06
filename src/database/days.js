@@ -1,7 +1,13 @@
 const { Days, Sessions, Papers } = require('./db')
 
 async function getAllDays() {
-  const days = await Days.findAll({ include: [ Sessions ]})
+  const days = await Days.findAll({ include: [
+    { model: Sessions,
+      include: [
+        Papers
+      ]
+    } 
+  ]})
 
   return days
 }

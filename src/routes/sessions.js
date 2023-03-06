@@ -17,14 +17,14 @@ router.get('/', async function (req, res) {
 
 router.post('/', async function (req, res) {
   try {
-    const {time, DayId} = req.body
+    const {time, DayId, description} = req.body
 
-    if (!time || !DayId) {
+    if (!time || !DayId || !description) {
       res.status(400).send('Bad request, missing required fields')
       return
     }
 
-    const session = await createSession(time, DayId)
+    const session = await createSession(time, description, DayId)
 
     res.json(session)
   } catch (err) {

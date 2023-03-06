@@ -14,20 +14,30 @@ async function getAllSessionsByDay (weekday) {
   return day
 }
 
-async function createSession (time, DayId) {
+async function createSession (time, description, DayId) {
   const session = await Sessions.create({
     time,
+    description,
     DayId
   })
 
   return session
 }
 
-async function updateSession
+async function updateSession (newSession) {
+  const currSession = await Sessions.findOne({ where: {
+    id: newSession.id
+  }})
 
+  if (!currSession) {
+    throw new Error('Could not find an existing session with that ID')
+  }
+
+}
 
 module.exports = {
   getAllSessions,
   getAllSessionsByDay,
-  createSession
+  createSession,
+  updateSession
 }
