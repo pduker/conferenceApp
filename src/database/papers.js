@@ -9,12 +9,23 @@ async function getAllPapers() {
 async function getPaperByTitle(title) {
   const paper = await Papers.findOne({ 
     where: {
-      title: 'Jaydon Paper'
+      title
     },
-    include: SuppMaterial
+    include: [Authors, SuppMaterials]
   })
 
+  return paper
+}
 
+async function getAllPapersBySession(SessionId) {
+  const papers = await Papers.findAll({
+    where: {
+      SessionId
+    },
+    include: [Authors, SuppMaterials]
+  })
+
+  return papers
 }
 
 async function createPaper(title, authors, abstract, suppMats) {
@@ -44,5 +55,7 @@ async function createPaper(title, authors, abstract, suppMats) {
 
 module.exports = {
   getAllPapers,
-  createPaper
+  createPaper,
+  getPaperByTitle,
+  getAllPapersBySession
 }
