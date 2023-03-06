@@ -29,10 +29,36 @@ async function getAllPapersBySession(SessionId) {
 }
 
 async function createPaper(title, authors, abstract, suppMats) {
+  let idString = title
+  for(let author of Object.values(authors)){
+    idString = idString + author.name
+  }
+
+  
+
+  Papers.destroy({
+    where: {
+      titleNameString: idString
+    }
+  })
+
+  Authors.destroy({
+    where: {
+      PaperId: null
+    }
+  })
+
+  SuppMaterials.destroy({
+    where: {
+      PaperId: null
+    }
+  })
+
 
   const paper = await Papers.create({
     title,
-    abstract
+    abstract,
+    titleNameString: idString
   })
 
   for (const author of Object.values(authors)) {

@@ -47,6 +47,10 @@ const Papers = db.define('Papers', {
   abstract: {
     type: DataTypes.STRING,
     allowNull: false
+  },
+  titleNameString: {
+    type: DataTypes.STRING,
+    allowNull: false
   }
 })
 
