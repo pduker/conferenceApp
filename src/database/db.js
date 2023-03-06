@@ -102,6 +102,10 @@ const Sessions = db.define('Sessions', {
   time: {
     type: DataTypes.STRING,
     allowNull: false
+  },
+  description: {
+    type: DataTypes.STRING,
+    allowNull: false
   }
 })
 

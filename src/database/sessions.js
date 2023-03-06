@@ -23,6 +23,8 @@ async function createSession (time, DayId) {
   return session
 }
 
+async function updateSession
+
 
 module.exports = {
   getAllSessions,
