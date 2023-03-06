@@ -5,15 +5,13 @@ const fs = require("fs")
 const multer = require("multer")
 const yaml = require('js-yaml')
 
-const uploadMiddleware = multer({ storage: multer.diskStorage({ destination: "./tmp"}) })
 const authMiddleware = require('./src/auth/middleware')
 
-const { parseDocx, deleteFile, exportYAML } = require("./src/parser.js")
-const { buildAuthorsMap, initializeServer, parseSuppMats } = require("./src/utils")
-const { createPaper, getAllPapers, getPaperByTitle, getAllPapersBySession } = require("./src/database/papers")
+const { initializeServer } = require("./src/utils")
 const authRoutes = require('./src/routes/auth')
 const sessionRoutes = require('./src/routes/sessions')
 const dayRoutes = require('./src/routes/days')
+const paperRoutes = require('./src/routes/papers')
 
 const server = express()
 
@@ -26,91 +24,6 @@ server.get("/", async function(req, res) {
 
 // This loads in the routes from the router in authRoutes, as if they were defined directly here at /api/auth
 server.use("/api/auth", authRoutes)
-
-server.use('/api/sessions', sessionRoutes)
-
-server.use('/api/days', dayRoutes)
-
-server.get('/api/papers', async function (req, res) {
-    try {
-        const { SessionId } = req.query
-
-        let papers
-        if (SessionId) {
-            // Filter by the query parameter
-            papers = await getAllPapersBySession(SessionId)
-        } else {
-            papers = await getAllPapers()
-        }
-
-        res.json(papers)
-    } catch (err) {
-        console.error(err)
-        res.sendStatus(500)
-    }
-})
-
-
-server.post("/api/papers", uploadMiddleware.any(), async function (req, res) {
-    try {
-        if (!req.files) {
-            console.error("File(s) missing!")
-            res.status(400).send("Bad Request")
-        }
-
-        const title = req.body.title
-        delete req.body.title
-
-        const authors = buildAuthorsMap(req.body)
-        const abstractFileName = req.files[0].filename
-
-        const inputFilePath = req.files[0].path
-        const outputFilePath = path.join(__dirname, 'tmp', `${abstractFileName}.html`)
-
-        const fileBuffer = await parseDocx(inputFilePath, outputFilePath)
-        const abstractHTML = fileBuffer.toString('utf8')
-
-        const suppMats = parseSuppMats(req.files, req.body)
-
-        await createPaper(title, authors, abstractHTML, suppMats)
-
-        await deleteFile(outputFilePath)
-        await deleteFile(inputFilePath)
-
-        res.sendStatus(200)
-    } catch (err) {
-        console.error(err)
-        res.status(500).send("Internal Server Error")
-    }
-})
-
-server.post("/api/papers/abstract", uploadMiddleware.single("abstract"), async function (req, res) {
-    try {
-        if (!req.file) {
-            console.error("File missing!")
-            res.status(400).send("Bad Request")
-        }
-
-        const fileName = req.file.filename
-
-        const inputFilePath = req.file.path
-        const outputFilePath = path.join(__dirname, 'tmp', `${fileName}.html`)
-
-        const fileBuffer = await parseDocx(inputFilePath, outputFilePath)
-        const abstractHTML = fileBuffer.toString('utf8')
-
-        res.json({
-            html: abstractHTML,
-        })
-
-        await deleteFile(outputFilePath)
-        await deleteFile(inputFilePath)
-    } catch (err) {
-        console.error(err)
-        res.status(500).send("Internal Server Error")
-    }
-})
-
 
 server.get('/login', async function (req, res) {
     try {
@@ -145,6 +58,12 @@ server.use(authMiddleware)
 server.get('/api/valid', async function (req, res) {
     res.send('Valid!')
 })
+
+server.use('/api/sessions', sessionRoutes)
+
+server.use('/api/days', dayRoutes)
+
+server.use('/api/papers', paperRoutes)
 
 server.listen(8080, () => {
     initializeServer(__dirname)
