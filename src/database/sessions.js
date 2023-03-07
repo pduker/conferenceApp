@@ -1,8 +1,10 @@
-const { Days, Sessions, Papers, Authors } = require('./db')
+const { Days, Sessions, Papers, Authors, SuppMaterials } = require('./db')
 const { updateChangedFields } = require('./utils')
 
 async function getAllSessions () {
-  const sessions = await Sessions.findAll({ include: [ Papers ]})
+  const sessions = await Sessions.findAll({ include: [ 
+    { model: Papers, include: [ Authors, SuppMaterials ] }
+]})
 
   return sessions
 }
@@ -10,7 +12,20 @@ async function getAllSessions () {
 async function getAllSessionsByDay (weekday) {
   const day = await Days.findOne({ where: {
     weekday
-  }, include: [ Sessions, Papers ]})
+  },
+  include: [
+    { model: Sessions,
+      include: [
+        {
+          model: Papers,
+          include: [
+            Authors, SuppMaterials
+          ]
+        }
+      ]
+    } 
+  ] 
+})
 
   return day
 }
