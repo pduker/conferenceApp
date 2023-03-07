@@ -226,5 +226,13 @@ function attachListener(){
     }
 }
 
+$("#Search-Sessions").on("click", function(){
+    alert("Minecraft");
+})
+
+$("#Save-Session").on("click", function(){
+    alert("terraria");
+})
+
 populateAccordionData();
 attachListener();
