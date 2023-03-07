@@ -233,20 +233,19 @@ function SearchPapers(){
 /**
  * the hits the route to get all of the papers and parses it into the modal
  */
-function initialFetchPapers(){
-    let tempPaper = 1;
-    /**
-     * fetch for the papers and assign to tempPaper
-     */
+async function initialFetchPapers(){
+    let tempPaper = await fetch('api/papers', {
+        method: 'GET'
+    })
+   await console.log(tempPaper);
     populateModal(tempPaper);
 }
 
 /**
  * parse the data from all of the papers and inserts it into the modal
  */
-function populateModal(papers){
+function populateModal(paper){
     let tempHTML = '';
-    for(let paper of papers){
         tempHTML +=  
         `<div class="card" style="width: 18rem;">
             <div class="card-body">
@@ -255,7 +254,6 @@ function populateModal(papers){
                 <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
                 </div>
         </div>`
-    }
     $("#insertPapers").html(tempHTML);
 }
 
