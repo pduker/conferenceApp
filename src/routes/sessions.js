@@ -1,6 +1,6 @@
 const express = require('express')
 const { Sessions, Papers, Days } = require('../database/db')
-const { getAllSessions, createSession } = require('../database/sessions')
+const { getAllSessions, createSession, updateSession } = require('../database/sessions')
 
 const router = express.Router()
 
@@ -9,6 +9,19 @@ router.get('/', async function (req, res) {
     const sessions = await getAllSessions()
 
     res.json(sessions)
+  } catch (err) {
+    console.error(err)
+    res.sendStatus(500)
+  }
+})
+
+router.put('/', async function (req, res) {
+  try {
+    const newSession = req.body
+
+    await updateSession(newSession)
+
+    res.sendStatus(200)
   } catch (err) {
     console.error(err)
     res.sendStatus(500)

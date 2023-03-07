@@ -1,4 +1,5 @@
 const { Days, Sessions, Papers, Authors } = require('./db')
+const { updateChangedFields } = require('./utils')
 
 async function getAllSessions () {
   const sessions = await Sessions.findAll({ include: [ Papers ]})
@@ -25,14 +26,15 @@ async function createSession (time, description, DayId) {
 }
 
 async function updateSession (newSession) {
-  const currSession = await Sessions.findOne({ where: {
-    id: newSession.id
-  }})
+  const currSession = await Sessions.findByPk(newSession.id)
 
   if (!currSession) {
     throw new Error('Could not find an existing session with that ID')
   }
 
+  updateChangedFields(currSession, newSession)
+
+  await currSession.save()
 }
 
 module.exports = {
