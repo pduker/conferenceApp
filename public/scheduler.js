@@ -1,7 +1,71 @@
 let numTimeslots = 0;
 let schedule;
 
-$("#create-timeslot").on(`click`, ()=>{
+function convertTime(time){
+    let splitTime = time.value.split(':'), hours, minutes, meridian;
+    hours = splitTime[0];
+    minutes = splitTime[1];
+    if(hours > 12){
+        meridian = 'pm';
+        hours -= 12;
+    }
+    else if(hours == 0 || hours < 12){
+        meridian = 'am';
+    }
+    else{
+        meridian = 'pm';
+    }
+    return hours + ':' + minutes + ' ' + meridian;
+}
+
+async function createSession(session) {
+    let res = await fetch('api/sessions', {
+        method: 'POST',
+        body: JSON.stringify(session),
+        headers: {
+            "Content-Type": 'application/json'
+        }
+    });
+    const data = await res.json();
+    return data;
+}
+
+//Adds session to appropriate accordian
+//TODO: Convert Time to 12HR format
+$("#create-timeslot").on(`click`, async ()=>{
+    //sets day, time
+    let accordionDay;
+    
+    let day = parseInt($("#sessionDay").val()); 
+    //console.log(day + 1);
+    let startTime = $("#sessionStart").val();
+    let endTime = $("#sessionEnd").val();
+    let sessionTime = startTime + " - " + endTime;
+    
+    let newSession = {
+        "time": sessionTime,
+        "DayId": day,
+        "description": "TEMP DESC"
+    }
+
+    const sessionResp = await createSession(newSession);
+
+    schedule[day - 1]['Sessions'].push(sessionResp);
+    populateAccordionData();
+
+
+    /*
+    `<div class="col-2 card session-time">
+    <div class="card-body">
+      <h5 class="card-title">${sessionTime}</h5>
+      <details class="papers-details">
+        <summary>Papers</summary>
+        <ul class="papers" id="materials-list-preview"></ul>
+        </details>
+        <button class="btn btn-primary test" id="button${day}${8}">Edit Session</button>
+        </div>
+    </div>`
+    */
     
 });
 
@@ -37,10 +101,11 @@ function populateAccordionData() {
               <details class="papers-details">
                 <summary>Papers</summary>
                 <ul class="papers" id="materials-list-preview">`
-            for (let paper of session['Papers']){
-                accordionHTML += `<li>${paper['title']}</li>`
+            if(session.Papers){
+                for (let paper of session['Papers']){
+                    accordionHTML += `<li>${paper['title']}</li>`
+                }
             }
-
             accordionHTML += `</ul>
                 </details>
                 <button class="btn btn-primary test" id="button${day['weekday']}${index}" data-bs-toggle="modal" data-bs-target="#exampleModal">Edit Session</button>
