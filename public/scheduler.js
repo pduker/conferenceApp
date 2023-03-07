@@ -72,22 +72,34 @@ function saveSession(){
 /**
  * it hits the route to get all of the paper that fit the search
  */
-function SearchPapers(){
+function searchPapers(){
     let tempInput = $("#Search-Session-Input").val();
     let tempPapers = 0;
-    /**
-     * fetch with the routes and assign to tempPapers
-     */
-    populateModal(tempPapers);
+
+    updatePaperList()
+}
+
+function renderSelectedPapers() {
+
 }
 
 function renderAuthors(authors) {
-    authorString = ""
+    let authorString = ""
     for (const author of authors) {
         authorString += `${author.name} `
     }
 
     return authorString
+}
+
+function renderSelectablePapers(papers) {
+    let paperListString = ""
+
+    for (const paper of papers) {
+        paperListString += `<a href="#" class="list-group-item list-group-item-action">${paper.title}</a>`
+    }
+
+    return paperListString
 }
 
 /**
@@ -96,6 +108,7 @@ function renderAuthors(authors) {
 function populateModal(papers){
     let tempHTML = '';
 
+    const selectionPapers = renderSelectablePapers(papers)
 
     for (const paper of papers) {
         const authors = renderAuthors(paper.Authors)
@@ -110,6 +123,7 @@ function populateModal(papers){
     }
 
     $("#insertPapers").html(tempHTML);
+    $("#paperSelect").html(selectionPapers)
 }
 
 /**
