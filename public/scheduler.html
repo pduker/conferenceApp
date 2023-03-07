@@ -29,11 +29,16 @@
       </div>
       <div class="modal-body">
         <div class="input-group mb-3">
-          <div class="input-group-prepend">
-            <button class="btn btn-outline-secondary" type="button" id = "Search-Sessions">Search</button>
-          </div>
-          <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
+          <form class="needs-validation">
+            <div class="input-group-prepend">
+              <button class="btn btn-outline-secondary" type="submit" id = "Search-Sessions">Search</button>
+            </div>
+            <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" id = "Search-Session-Input" required>
+          </form>
         </div>
+      </div>
+      <div class="input-group mb-3" id = "insertPapers">
+
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

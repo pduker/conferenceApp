@@ -212,6 +212,54 @@ function populateAccordionData() {
 }
 
 /**
+ * takes the data and save it
+ */
+function saveSession(){
+
+}
+
+/**
+ * it hits the route to get all of the paper that fit the search
+ */
+function SearchPapers(){
+    let tempInput = $("#Search-Session-Input").val();
+    let tempPapers = 0;
+    /**
+     * fetch with the routes and assign to tempPapers
+     */
+    populateModal(tempPapers);
+}
+
+/**
+ * the hits the route to get all of the papers and parses it into the modal
+ */
+function initialFetchPapers(){
+    let tempPaper = 1;
+    /**
+     * fetch for the papers and assign to tempPaper
+     */
+    populateModal(tempPaper);
+}
+
+/**
+ * parse the data from all of the papers and inserts it into the modal
+ */
+function populateModal(papers){
+    let tempHTML = '';
+    for(let paper of papers){
+        tempHTML +=  
+        `<div class="card" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">${paper.title}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">${paper.author}</h6>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                </div>
+        </div>`
+    }
+    $("#insertPapers").html(tempHTML);
+}
+
+/**
  * generates the listeners to the buttons to capture what session the button was pressed to change the modal
  */
 function attachListener(){
@@ -219,19 +267,21 @@ function attachListener(){
         let listenerIndex = 0;
         for (let session of sessions){
             $("#button" + day + listenerIndex).on("click", function(){
-                $("#exampleModalLabel").html("" + day + " " + session.time);
+                $("#exampleModalLabel").html(day + " " + session.time);
+                initialFetchPapers();
             });
             listenerIndex = listenerIndex + 1;
         }
     }
 }
 
-$("#Search-Sessions").on("click", function(){
-    alert("Minecraft");
+$("#Search-Sessions").on("click", function(e){
+    e.preventDefault();
+    SearchPapers();
 })
 
 $("#Save-Session").on("click", function(){
-    alert("terraria");
+    saveSession();
 })
 
 populateAccordionData();
