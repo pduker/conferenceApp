@@ -1,5 +1,7 @@
 let numTimeslots = 0;
 let schedule;
+let allPapers;
+let currentlySelectedSession = {}
 
 function convertTime(time){
     let splitTime = time.value.split(':'), hours, minutes, meridian;
@@ -52,25 +54,22 @@ $("#create-timeslot").on(`click`, async ()=>{
 
     schedule[day - 1]['Sessions'].push(sessionResp);
     populateAccordionData();
-
-
-    /*
-    `<div class="col-2 card session-time">
-    <div class="card-body">
-      <h5 class="card-title">${sessionTime}</h5>
-      <details class="papers-details">
-        <summary>Papers</summary>
-        <ul class="papers" id="materials-list-preview"></ul>
-        </details>
-        <button class="btn btn-primary test" id="button${day}${8}">Edit Session</button>
-        </div>
-    </div>`
-    */
     
 });
 
+async function getData() {
+    schedule = await getSchedule()
+    allPapers = await getAllPapers()
+}
+
 async function getSchedule() {
     const res = (await fetch('api/days', {method: 'GET'}));
+    const data = await res.json();
+    return data;
+}
+
+async function getAllPapers() {
+    const res = (await fetch('api/papers', {method: 'GET'}));
     const data = await res.json();
     return data;
 }
@@ -134,20 +133,6 @@ function saveSession(){
 
 }
 
-/**
- * it hits the route to get all of the paper that fit the search
- */
-function searchPapers(){
-    let tempInput = $("#Search-Session-Input").val();
-    let tempPapers = 0;
-
-    updatePaperList()
-}
-
-function renderSelectedPapers() {
-
-}
-
 function renderAuthors(authors) {
     let authorString = ""
     for (const author of authors) {
@@ -164,7 +149,7 @@ function renderSelectablePapers(papers) {
         paperListString += `<a href="#" class="list-group-item list-group-item-action">${paper.title}</a>`
     }
 
-    return paperListString
+    $("#paperSelect").html(paperListString)
 }
 
 /**
@@ -172,8 +157,6 @@ function renderSelectablePapers(papers) {
  */
 function populateModal(papers){
     let tempHTML = '';
-
-    const selectionPapers = renderSelectablePapers(papers)
 
     for (const paper of papers) {
         const authors = renderAuthors(paper.Authors)
@@ -188,7 +171,6 @@ function populateModal(papers){
     }
 
     $("#insertPapers").html(tempHTML);
-    $("#paperSelect").html(selectionPapers)
 }
 
 /**
@@ -200,24 +182,28 @@ function attachListener(){
         for (const session of day.Sessions) {
             $("#button" + day.weekday + listenerIndex).on("click", function() {
                 $("#exampleModalLabel").html(day.weekday + " " + session.time);
+                currentlySelectedSession = session
                 populateModal(session.Papers)
+                renderSelectablePapers(allPapers)
             });
             listenerIndex += 1
         }
     }
 }
 
-$("#Search-Sessions").on("click", function(e){
-    e.preventDefault();
-    SearchPapers();
-})
+$("#searchSessionInput").on("input", function(event){
+    let text = event.target.value
+    let filteredPapers = allPapers.filter((a)=>{return a.title.includes(text)})
+    renderSelectablePapers(filteredPapers)
+} );
 
 $("#Save-Session").on("click", function(){
-    saveSession();
+    saveSession()
 })
 
-getSchedule().then((data)=>{
-    schedule = data;
-    populateAccordionData();
+getData().then(()=>{
+    populateAccordionData()
     attachListener()
 });
+
+
