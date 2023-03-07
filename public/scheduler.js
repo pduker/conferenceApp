@@ -81,30 +81,34 @@ function SearchPapers(){
     populateModal(tempPapers);
 }
 
-/**
- * the hits the route to get all of the papers and parses it into the modal
- */
-async function initialFetchPapers(){
-    let tempPaper = await fetch('api/papers', {
-        method: 'GET'
-    })
-   await console.log(tempPaper);
-    populateModal(tempPaper);
+function renderAuthors(authors) {
+    authorString = ""
+    for (const author of authors) {
+        authorString += `${author.name} `
+    }
+
+    return authorString
 }
 
 /**
  * parse the data from all of the papers and inserts it into the modal
  */
-function populateModal(paper){
+function populateModal(papers){
     let tempHTML = '';
+
+
+    for (const paper of papers) {
+        const authors = renderAuthors(paper.Authors)
+
         tempHTML +=  
         `<div class="card" style="width: 18rem;">
             <div class="card-body">
                 <h5 class="card-title">${paper.title}</h5>
-                <h6 class="card-subtitle mb-2 text-muted">${paper.author}</h6>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                </div>
+                <h6 class="card-subtitle mb-2 text-muted">${authors}</h6>
+            </div>
         </div>`
+    }
+
     $("#insertPapers").html(tempHTML);
 }
 
@@ -112,14 +116,14 @@ function populateModal(paper){
  * generates the listeners to the buttons to capture what session the button was pressed to change the modal
  */
 function attachListener(){
-    for (const [day, sessions] of Object.entries(data)) {
+    for (const day of schedule) {
         let listenerIndex = 0;
-        for (let session of sessions){
-            $("#button" + day + listenerIndex).on("click", function(){
-                $("#exampleModalLabel").html(day + " " + session.time);
-                initialFetchPapers();
+        for (const session of day.Sessions) {
+            $("#button" + day.weekday + listenerIndex).on("click", function() {
+                $("#exampleModalLabel").html(day.weekday + " " + session.time);
+                populateModal(session.Papers)
             });
-            listenerIndex = listenerIndex + 1;
+            listenerIndex += 1
         }
     }
 }
@@ -136,5 +140,5 @@ $("#Save-Session").on("click", function(){
 getSchedule().then((data)=>{
     schedule = data;
     populateAccordionData();
-    attachListener();
+    attachListener()
 });
