@@ -37,9 +37,20 @@ async function updateSession (newSession) {
   await currSession.save()
 }
 
+async function deleteSession (sessionId) {
+  const session = await Sessions.findByPk(sessionId)
+
+  if (!session) {
+    throw new Error('Could not find a session that matched that ID')
+  }
+
+  await session.destroy()
+}
+
 module.exports = {
   getAllSessions,
   getAllSessionsByDay,
   createSession,
-  updateSession
+  updateSession,
+  deleteSession
 }

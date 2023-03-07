@@ -1,6 +1,6 @@
 const express = require('express')
 const { Sessions, Papers, Days } = require('../database/db')
-const { getAllSessions, createSession, updateSession } = require('../database/sessions')
+const { getAllSessions, createSession, updateSession, deleteSession } = require('../database/sessions')
 
 const router = express.Router()
 
@@ -40,6 +40,23 @@ router.post('/', async function (req, res) {
     const session = await createSession(time, description, DayId)
 
     res.json(session)
+  } catch (err) {
+    console.error(err)
+    res.sendStatus(500)
+  }
+})
+
+router.delete('/', async function (req, res) {
+  try {
+    const { sessionId } = req.query
+
+    if (!sessionId) {
+      res.status(400).send('Missing required parameters!')
+    }
+
+    await deleteSession(sessionId)
+
+    res.sendStatus(200)
   } catch (err) {
     console.error(err)
     res.sendStatus(500)
