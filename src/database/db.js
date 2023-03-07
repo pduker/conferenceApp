@@ -54,6 +54,7 @@ const Papers = db.define('Papers', {
   }
 })
 
+
 const SuppMaterials = db.define('SuppMaterials', {
   id: {
     type: DataTypes.STRING,

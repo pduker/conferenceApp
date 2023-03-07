@@ -35,8 +35,6 @@ async function createPaper(title, authors, abstract, suppMats) {
     idString = idString + author.name
   }
 
-  
-
   await Papers.destroy({
     where: {
       titleNameString: idString
@@ -89,17 +87,20 @@ async function updatePaper (newPaper) {
 
   updateChangedFields(currPaper, newPaper)
 
-  // Write the updated values we changed in the JSON object into the actual database
-  await currPaper.save() 
-
   if (newPaper.Authors) {
+    let titleNameString = currPaper.title
+    
     for (const newAuthor of newPaper.Authors) {
       const author = await Authors.findByPk(newAuthor.id)
 
       updateChangedFields(author, newAuthor)
 
       await author.save()
+
+      titleNameString += author.name
     }
+
+    currPaper.titleNameString = titleNameString
   }
 
   if (newPaper.SuppMaterials) {
@@ -111,6 +112,9 @@ async function updatePaper (newPaper) {
       await material.save()
     }
   }
+
+  // Write the updated values we changed in the JSON object into the actual database
+  await currPaper.save() 
 }
 
 module.exports = {
