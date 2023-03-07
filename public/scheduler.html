@@ -19,34 +19,31 @@
 
     </div>
 
-      <!--
-    <div id="new-timeslots">
-      <label class="form-label">Create New Timeslot</label>
-      <div class="input-group mb-3">
-          <span class="input-group-text">Day</span>
-          <input type="text" class="form-control" id="day-0" name="day-0">
-      </div>
-      <div class="input-group mb-3">
-          <span class="input-group-text">Start Time</span>
-          <input type="text" class="form-control" id="starttime-0" name="starttime-0">
-      </div>
-      <div class="input-group mb-3">
-        <span class="input-group-text">End Time</span>
-        <input type="text" class="form-control" id="endtime-0" name="endtime-0">
-      </div>
-      <div class="input-group mb-3">
-        <span class="input-group-text">Papers</span>
-        <input type="file" class="form-control" id="uploadPapers" name="Papers">
-      </div>
+    <div class="custom-timeslot">
+      <h1>Create Custom Session</h1>
+    
+      <select class="form-select" aria-label="Select Day" id="sessionDay">
+        <option selected>Select Day</option>
+        <option value="Sunday">Sunday</option>
+        <option value="Monday">Monday</option>
+        <option value="Tuesday">Tuesday</option>
+        <option value="Wednesday">Wednesday</option>
+        <option value="Thursday">Thursday</option>
+        <option value="Friday">Friday</option>
+        <option value="Saturday">Saturday</option>
+      </select>
+    
+      <h3>Start Time</h3>
+      <input id="sessionStart" type="time">
+    
+      <h3>End Time</h3>
+      <input id="sessionEnd" type="time">
+
+      <button class="btn btn-primary test" id="create-timeslot">Create Session</button>
+    
     </div>
 
-    <button class="btn btn-primary" id="create-timeslot">Create Timeslot</button>
-
-    <p>Your Timeslots:</p>
-    <div id="existingtimeslots"></div>
-  -->
-
-    </div>
+  </div>
 
     <script src='./scheduler.js'></script>
 </body>
