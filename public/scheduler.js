@@ -126,10 +126,7 @@ function populateAccordionData() {
 
 }
 
-/**
- * takes the data and save it
- */
-function saveSession(){
+function saveSession() {
 
 }
 
@@ -181,7 +178,10 @@ function attachListener(){
         let listenerIndex = 0;
         for (const session of day.Sessions) {
             $("#button" + day.weekday + listenerIndex).on("click", function() {
-                $("#exampleModalLabel").html(day.weekday + " " + session.time);
+                $("#editSessionModalTitle").html(day.weekday + " " + session.time)
+                $("#sessionTitleInput").attr("value", session.time)
+                $("#sessionDescriptionInput").attr("value", session.description)
+                
                 currentlySelectedSession = session
                 populateModal(session.Papers)
                 renderSelectablePapers(allPapers)
@@ -197,7 +197,7 @@ $("#searchSessionInput").on("input", function(event){
     renderSelectablePapers(filteredPapers)
 } );
 
-$("#Save-Session").on("click", function(){
+$("#saveSession").on("click", function(){
     saveSession()
 })
 

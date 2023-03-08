@@ -3,49 +3,67 @@
 
 <head>
   <meta charset="utf-8">
-  <link rel="stylesheet" href="styles.css">
   <title>Login</title>
-  <script src="./utils/auth.js"></script>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="scheduler.css">
   <link rel="stylesheet" href="./css/bootstrap.min.css">
+
+  <script src="./utils/auth.js"></script>
   <script src="./js/bootstrap.min.js"></script>
   <script src="./js/jquery.min.js"></script>
 </head>
 
 <body>
   <div class="container scheduler">
-    <h1>Create Schedule</h1>
+    <h1>Conference Scheduler</h1>
 
     <div class="accordion" id="accordionMain">
 
     </div>
-    <!-- Button trigger modal -->
 
-    <!-- Modal -->
+    <!-- Edit Session Modal -->
     <div class="modal fade bd-example-modal-lg" id="exampleModal" tabindex="-1" role="dialog"
       aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+            <h5 class="modal-title" id="editSessionModalTitle">Modal title</h5>
           </div>
           <div class="modal-body">
-            <form class="needs-validation">
-              <div class="input-group p-4">
-                <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1"
-                id="searchSessionInput" required>
+            <div class="card mb-4">
+              <div class="card-body">
+                <div class="input-group p-2">
+                  <span class="input-group-text">Title</span>
+                  <input type="text" class="form-control" placeholder="Title"
+                  id="sessionTitleInput">
+                </div>
+                <div class="input-group p-2">
+                  <span class="input-group-text">Description</span>
+                  <textarea class="form-control" placeholder="..." rows="2"
+                  id="sessionDescriptionInput"></textarea>
+                </div>
               </div>
-            </form>
-
-            <div class="list-group mt-3 mb-3 p-4" id="paperSelect">
-
             </div>
-            <div class="input-group mb-3 p-4" id="insertPapers">
+            <div class="card">
+              <div class="card-body">
+                <div class="input-group p-2">
+                  <span class="input-group-text">Search</span>
+                  <input type="text" class="form-control" placeholder="Paper title to search for" aria-label="" aria-describedby="basic-addon1"
+                  id="searchSessionInput">
+                </div>
 
+                <div class="list-group mt-3 mb-3 p-2" id="paperSelect">
+
+                </div>
+                <div class="input-group mb-3 p-2" id="insertPapers">
+
+                </div>
+              </div>
             </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" id="Save-Session">Save changes</button>
+            <button type="button" class="btn btn-primary" id="Save-Session">Save</button>
           </div>
         </div>
       </div>
