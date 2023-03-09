@@ -2,6 +2,7 @@ let numTimeslots = 0;
 let schedule;
 let allPapers;
 let currentlySelectedSession = {}
+let selectedPapers = []
 
 function convertTime(time){
     let splitTime = time.value.split(':'), hours, minutes, meridian;
@@ -31,31 +32,6 @@ async function createSession(session) {
     const data = await res.json();
     return data;
 }
-
-//Adds session to appropriate accordian
-//TODO: Convert Time to 12HR format
-$("#create-timeslot").on(`click`, async ()=>{
-    //sets day, time
-    let accordionDay;
-    
-    let day = parseInt($("#sessionDay").val()); 
-    //console.log(day + 1);
-    let startTime = $("#sessionStart").val();
-    let endTime = $("#sessionEnd").val();
-    let sessionTime = startTime + " - " + endTime;
-    
-    let newSession = {
-        "time": sessionTime,
-        "DayId": day,
-        "description": "TEMP DESC"
-    }
-
-    const sessionResp = await createSession(newSession);
-
-    schedule[day - 1]['Sessions'].push(sessionResp);
-    populateAccordionData();
-    
-});
 
 async function getData() {
     schedule = await getSchedule()
@@ -101,8 +77,8 @@ function populateAccordionData() {
                 <summary>Papers</summary>
                 <ul class="papers" id="materials-list-preview">`
             if(session.Papers){
-                for (let paper of session['Papers']){
-                    accordionHTML += `<li>${paper['title']}</li>`
+                for (let i = 0; i < session.Papers.length; i++){
+                    accordionHTML += `<li>${session.Papers[i]['title']}</li>`
                 }
             }
             accordionHTML += `</ul>
@@ -122,12 +98,23 @@ function populateAccordionData() {
     };
 
     $('#accordionMain').html(accordionHTML);
+    console.log(accordionHTML)
     $('#collapseButtonMonday').trigger('click');
 
 }
 
-function saveSession() {
+async function saveSession() {
+    const description = $('#sessionDescriptionInput').val()
+    const title = $('#sessionTitleInput').val()
 
+    for (const paper of selectedPapers){
+        assignPaperToSession(paper)
+    }
+
+    await updateSessionDetails(title, description)
+
+    console.log(schedule)
+    populateAccordionData()
 }
 
 function renderAuthors(authors) {
@@ -139,14 +126,67 @@ function renderAuthors(authors) {
     return authorString
 }
 
+async function updateSessionDetails(title, description){
+
+    const body = {
+        id: currentlySelectedSession.id,
+        time: title,
+        description
+    }
+
+    let res = await fetch('api/sessions', {
+        method: 'PUT',
+        body: JSON.stringify(body),
+        headers: {
+            "Content-Type": 'application/json'
+        }
+    });
+
+    if (res.ok) {
+        // Will update because it's pass by reference
+        currentlySelectedSession.title = title,
+        currentlySelectedSession.description = description
+    } else {
+        console.error("Failed to update session")
+    }
+}
+
+async function assignPaperToSession(paper) {
+    let data = {
+        "id": paper.id,
+        "SessionId": currentlySelectedSession.id
+    }
+
+    let res = await fetch('api/papers', {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: {
+            "Content-Type": 'application/json'
+        }
+    });
+
+    if (res.ok) {
+        currentlySelectedSession.Papers.push(paper)
+        populateModal(currentlySelectedSession.Papers)
+    } else {
+        console.error('Failed to update the paper')
+    }
+}
+
 function renderSelectablePapers(papers) {
     let paperListString = ""
 
     for (const paper of papers) {
-        paperListString += `<a href="#" class="list-group-item list-group-item-action">${paper.title}</a>`
+        paperListString += `<a href="#" class="list-group-item list-group-item-action" id='paper-${paper.id}'>${paper.title}</a>`
     }
 
-    $("#paperSelect").html(paperListString)
+    $("#paperSelect").html(paperListString);
+
+    for (const paper of papers){
+        $(`#paper-${paper.id}`).on('click', ()=>{
+           selectedPapers.push(paper)
+        })
+    }
 }
 
 /**
