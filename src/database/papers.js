@@ -1,4 +1,5 @@
 const { Papers, SuppMaterials, Authors } = require('./db')
+const { updateChangedFields } = require('./utils')
 
 async function getAllPapers() {
   const papers = await Papers.findAll({ include: [SuppMaterials, Authors] })
@@ -9,13 +10,23 @@ async function getAllPapers() {
 async function getPaperByTitle(title) {
   const paper = await Papers.findOne({ 
     where: {
-      title: title
+      title
     },
-    include: SuppMaterials
+    include: [Authors, SuppMaterials]
   })
 
   return paper
+}
 
+async function getAllPapersBySession(SessionId) {
+  const papers = await Papers.findAll({
+    where: {
+      SessionId
+    },
+    include: [Authors, SuppMaterials]
+  })
+
+  return papers
 }
 
 async function createPaper(title, authors, abstract, suppMats) {
@@ -23,8 +34,6 @@ async function createPaper(title, authors, abstract, suppMats) {
   for(let author of Object.values(authors)){
     idString = idString + author.name
   }
-
-  
 
   await Papers.destroy({
     where: {
@@ -71,8 +80,49 @@ async function createPaper(title, authors, abstract, suppMats) {
   return paper
 }
 
+async function updatePaper (newPaper) {
+  const currPaper = await Papers.findByPk(newPaper.id)
+
+  if (!currPaper) {
+    throw new Error('A paper with that ID does not currently exist!')
+  }
+
+  updateChangedFields(currPaper, newPaper)
+
+  if (newPaper.Authors) {
+    let titleNameString = currPaper.title
+    
+    for (const newAuthor of newPaper.Authors) {
+      const author = await Authors.findByPk(newAuthor.id)
+
+      updateChangedFields(author, newAuthor)
+
+      await author.save()
+
+      titleNameString += author.name
+    }
+
+    currPaper.titleNameString = titleNameString
+  }
+
+  if (newPaper.SuppMaterials) {
+    for (const newMaterial of newPaper.SuppMaterials) {
+      const material = await SuppMaterials.findByPk(newMaterial.id)
+
+      updateChangedFields(material, newMaterial)
+
+      await material.save()
+    }
+  }
+
+  // Write the updated values we changed in the JSON object into the actual database
+  await currPaper.save() 
+}
+
 module.exports = {
   getAllPapers,
   createPaper,
-  getPaperByTitle
+  getPaperByTitle,
+  getAllPapersBySession,
+  updatePaper
 }

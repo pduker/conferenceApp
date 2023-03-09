@@ -10,8 +10,10 @@ const authMiddleware = require('./src/auth/middleware')
 
 const { parseDocx, deleteFile, exportYAML } = require("./src/parser.js")
 const { buildAuthorsMap, initializeServer, parseSuppMats } = require("./src/utils")
-const { createPaper, getAllPapers, getPaperByTitle } = require("./src/database/papers")
+const { createPaper, getAllPapers, getPaperByTitle, getAllPapersBySession, updatePaper } = require("./src/database/papers")
 const authRoutes = require('./src/routes/auth')
+const sessionRoutes = require('./src/routes/sessions')
+const dayRoutes = require('./src/routes/days')
 
 const server = express()
 
@@ -25,9 +27,22 @@ server.get("/", async function(req, res) {
 // This loads in the routes from the router in authRoutes, as if they were defined directly here at /api/auth
 server.use("/api/auth", authRoutes)
 
+server.use('/api/sessions', sessionRoutes)
+
+server.use('/api/days', dayRoutes)
+
 server.get('/api/papers', async function (req, res) {
     try {
-        const papers = await getAllPapers()
+        const { SessionId } = req.query
+
+        let papers
+        if (SessionId) {
+            // Filter by the query parameter
+            papers = await getAllPapersBySession(SessionId)
+        } else {
+            papers = await getAllPapers()
+        }
+
         res.json(papers)
     } catch (err) {
         console.error(err)
@@ -35,6 +50,18 @@ server.get('/api/papers', async function (req, res) {
     }
 })
 
+server.put("/api/papers", async function (req, res) {
+    try {
+        const newPaper = req.body
+
+        await updatePaper(newPaper)
+
+        res.sendStatus(200)
+    } catch (err) {
+        console.error(err)
+        res.sendStatus(500)
+    }
+})
 
 server.post("/api/papers", uploadMiddleware.any(), async function (req, res) {
     try {

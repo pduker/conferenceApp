@@ -1,198 +1,49 @@
 let numTimeslots = 0;
-const data = {
-    "Monday": [
-        {
-            "time": "7:15am - 8:45am",
-            "papers": ["paper 1", "paper 2"]
-        },
-        {
-            "time": "9:00am - 10:30am",
-            "papers": ["paper 1", "paper 2"]
-        },
-        {
-            "time": "10:45am - 12:15pm",
-            "papers": ["paper 1", "paper 2"]
-        },
-        {
-            "time": "12:30pm - 2:00pm",
-            "papers": ["paper 1", "paper 2"]
-        },
-        {
-            "time": "2:15pm - 3:45pm",
-            "papers": ["paper 1", "paper 2"]
-        },
-        {
-            "time": "4:00pm - 5:30pm",
-            "papers": ["paper 1", "paper 2"]
-        },
-        {
-            "time": "7:30pm - 9:00pm",
-            "papers": ["paper 1", "paper 2"]
-        }
-    ],
-    "Tuesday": [
-        {
-            "time": "7:15am - 8:45am",
-            "papers": ["paper 1", "paper 2"]
-        },
-        {
-            "time": "9:00am - 10:30am",
-            "papers": ["paper 1", "paper 2"]
-        },
-        {
-            "time": "10:45am - 12:15pm",
-            "papers": ["paper 1", "paper 2"]
-        },
-        {
-            "time": "12:30pm - 2:00pm",
-            "papers": ["paper 1", "paper 2"]
-        },
-        {
-            "time": "2:15pm - 3:45pm",
-            "papers": ["paper 1", "paper 2"]
-        },
-        {
-            "time": "4:00pm - 5:30pm",
-            "papers": ["paper 1", "paper 2"]
-        },
-        {
-            "time": "7:30pm - 9:00pm",
-            "papers": ["paper 1", "paper 2"]
-        }
-    ],
-    "Wednesday": [
-        {
-            "time": "7:15am - 8:45am",
-            "papers": ["paper 1", "paper 2"]
-        },
-        {
-            "time": "9:00am - 10:30am",
-            "papers": ["paper 1", "paper 2"]
-        },
-        {
-            "time": "10:45am - 12:15pm",
-            "papers": ["paper 1", "paper 2"]
-        },
-        {
-            "time": "12:30pm - 2:00pm",
-            "papers": ["paper 1", "paper 2"]
-        },
-        {
-            "time": "2:15pm - 3:45pm",
-            "papers": ["paper 1", "paper 2"]
-        },
-        {
-            "time": "4:00pm - 5:30pm",
-            "papers": ["paper 1", "paper 2"]
-        },
-        {
-            "time": "7:30pm - 9:00pm",
-            "papers": ["paper 1", "paper 2"]
-        }
-    ],
-    "Thursday": [
-        {
-            "time": "7:15am - 8:45am",
-            "papers": ["paper 1", "paper 2"]
-        },
-        {
-            "time": "9:00am - 10:30am",
-            "papers": ["paper 1", "paper 2"]
-        },
-        {
-            "time": "10:45am - 12:15pm",
-            "papers": ["paper 1", "paper 2"]
-        },
-        {
-            "time": "12:30pm - 2:00pm",
-            "papers": ["paper 1", "paper 2"]
-        },
-        {
-            "time": "2:15pm - 3:45pm",
-            "papers": ["paper 1", "paper 2"]
-        },
-        {
-            "time": "4:00pm - 5:30pm",
-            "papers": ["paper 1", "paper 2"]
-        },
-        {
-            "time": "7:30pm - 9:00pm",
-            "papers": ["paper 1", "paper 2"]
-        }
-    ],
-    "Friday": [
-        {
-            "time": "7:15am - 8:45am",
-            "papers": ["paper 1", "paper 2"]
-        },
-        {
-            "time": "9:00am - 10:30am",
-            "papers": ["paper 1", "paper 2"]
-        },
-        {
-            "time": "10:45am - 12:15pm",
-            "papers": ["paper 1", "paper 2"]
-        },
-        {
-            "time": "12:30pm - 2:00pm",
-            "papers": ["paper 1", "paper 2"]
-        },
-        {
-            "time": "2:15pm - 3:45pm",
-            "papers": ["paper 1", "paper 2"]
-        },
-        {
-            "time": "4:00pm - 5:30pm",
-            "papers": ["paper 1", "paper 2"]
-        },
-        {
-            "time": "7:30pm - 9:00pm",
-            "papers": ["paper 1", "paper 2"]
-        }
-    ]
-};
-
+let schedule;
 
 $("#create-timeslot").on(`click`, ()=>{
     
 });
 
+async function getSchedule() {
+    const res = (await fetch('api/days', {method: 'GET'}));
+    const data = await res.json();
+    return data;
+}
 
 function populateAccordionData() {
 
-    console.log(data);
-
     let accordionHTML = '';
-    for (const [day, sessions] of Object.entries(data)) {
+    for (const day of schedule) {
         accordionHTML += `<div class="accordion-item collapsed">
-        <h2 class="accordion-header" id="heading${day}">
-          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${day}" id="collapseButton${day}"
-            aria-expanded="true" aria-controls="collapse${day}">
-            ${day}
+        <h2 class="accordion-header" id="heading${day['weekday']}">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${day['weekday']}" id="collapseButton${day['weekday']}"
+            aria-expanded="true" aria-controls="collapse${day['weekday']}">
+            ${day['weekday']}
           </button>
         </h2>
 
-        <div id="collapse${day}" class="accordion-collapse collapse" aria-labelledby="heading${day}"
+        <div id="collapse${day['weekday']}" class="accordion-collapse collapse" aria-labelledby="heading${day['weekday']}"
           data-bs-parent="#accordionMain">
           <div class="accordion-body">
 
             <div class="row">`;
 
         let index = 0;
-        for (let session of sessions){
+        for (let session of day['Sessions']){
             accordionHTML += `<div class="col-2 card session-time">
             <div class="card-body">
-              <h5 class="card-title">${session.time}</h5>
+              <h5 class="card-title">${session['time']}</h5>
               <details class="papers-details">
                 <summary>Papers</summary>
                 <ul class="papers" id="materials-list-preview">`
-            for (let paper of session.papers){
-                accordionHTML += `<li>${paper}</li>`
+            for (let paper of session['Papers']){
+                accordionHTML += `<li>${paper['title']}</li>`
             }
 
             accordionHTML += `</ul>
                 </details>
-                <button class="btn btn-primary test" id="button${day}${index}">Edit Session</button>
+                <button class="btn btn-primary test" id="button${day['weekday']}${index}">Edit Session</button>
                 </div>
             </div>`
 
@@ -211,4 +62,7 @@ function populateAccordionData() {
 
 }
 
-populateAccordionData();
+getSchedule().then((data)=>{
+    schedule = data;
+    populateAccordionData();
+});
