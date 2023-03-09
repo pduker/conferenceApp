@@ -1,9 +1,22 @@
 #insertPapers{
+  display: flex;
+  flex-direction: row;
   background-color: var(--sub-background);
   border: var(--border-size) solid var(--border);
+  width: 100%;
+  flex-wrap: wrap;
   overflow-y: scroll; 
   max-height: 40vh;
   overflow-x: hidden;
+}
+
+.card.paper-card {
+  margin: 8px;
+}
+
+.paper-list-container {
+  height: 180px;
+  overflow: scroll;
 }
 
 .scheduler > .row {

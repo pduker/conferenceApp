@@ -32,6 +32,10 @@
           <div class="modal-body">
             <div class="card mb-4">
               <div class="card-body">
+                <h4>Session Properties</h4>
+                <p class="text-muted">Set the session title and it's description.</p>
+                <hr/>
+
                 <div class="input-group p-2">
                   <span class="input-group-text">Title</span>
                   <input type="text" class="form-control" placeholder="Title"
@@ -46,16 +50,23 @@
             </div>
             <div class="card">
               <div class="card-body">
+                <h4>Session Papers</h4>
+                <p class="text-muted">Add and remove papers assigned to this session below.</p>
+                <hr/>
+
                 <div class="input-group p-2">
                   <span class="input-group-text">Search</span>
                   <input type="text" class="form-control" placeholder="Paper title to search for" aria-label="" aria-describedby="basic-addon1"
                   id="searchSessionInput">
                 </div>
 
-                <div class="list-group mt-3 mb-3 p-2" id="paperSelect">
+                <div class="paper-list-container mt-3 mb-3 p-2">
+                  <div class="list-group" id="paperSelect">
 
+                  </div>
                 </div>
-                <div class="input-group mb-3 p-2" id="insertPapers">
+
+                <div class="mb-3 p-2" id="insertPapers">
 
                 </div>
               </div>

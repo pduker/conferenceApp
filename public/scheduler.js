@@ -162,7 +162,7 @@ async function assignPaperToSession(paper) {
 
     if (res.ok) {
         currentlySelectedSession.Papers.push(paper)
-        populateModal(currentlySelectedSession.Papers)
+        updateEditSessionModal(currentlySelectedSession.Papers)
     } else {
         console.error('Failed to update the paper')
     }
@@ -184,17 +184,14 @@ function renderSelectablePapers(papers) {
     }
 }
 
-/**
- * parse the data from all of the papers and inserts it into the modal
- */
-function populateModal(papers){
+function updateEditSessionModal(papers){
     let tempHTML = '';
 
     for (const paper of papers) {
         const authors = renderAuthors(paper.Authors)
 
         tempHTML +=  
-        `<div class="card" style="width: 18rem;">
+        `<div class="card paper-card">
             <div class="card-body">
                 <h5 class="card-title">${paper.title}</h5>
                 <h6 class="card-subtitle mb-2 text-muted">${authors}</h6>
@@ -217,7 +214,7 @@ function attachListener(){
                 $("#sessionDescriptionInput").val(session.description)
                 
                 currentlySelectedSession = session
-                populateModal(session.Papers)
+                updateEditSessionModal(session.Papers)
                 renderSelectablePapers(allPapers)
             });
         }
