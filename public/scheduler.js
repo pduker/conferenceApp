@@ -32,12 +32,9 @@ async function createSession(session) {
 
 //Adds session to appropriate accordian
 //TODO: Convert Time to 12HR format
-$("#create-timeslot").on(`click`, async ()=>{
-    //sets day, time
-    let accordionDay;
-    
+$("#saveCreatedSession").on(`click`, async ()=>{
+    //sets day, time  
     let day = parseInt($("#sessionDay").val()); 
-    //console.log(day + 1);
     let startTime = $("#sessionStart").val();
     let endTime = $("#sessionEnd").val();
     let sessionTime = startTime + " - " + endTime;
