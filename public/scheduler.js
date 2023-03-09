@@ -98,7 +98,6 @@ function populateAccordionData() {
     };
 
     $('#accordionMain').html(accordionHTML);
-    console.log(accordionHTML)
     $('#collapseButtonMonday').trigger('click');
 
 }
@@ -108,12 +107,11 @@ async function saveSession() {
     const title = $('#sessionTitleInput').val()
 
     for (const paper of selectedPapers){
-        assignPaperToSession(paper)
+        await assignPaperToSession(paper)
     }
 
     await updateSessionDetails(title, description)
 
-    console.log(schedule)
     populateAccordionData()
 }
 
@@ -144,7 +142,7 @@ async function updateSessionDetails(title, description){
 
     if (res.ok) {
         // Will update because it's pass by reference
-        currentlySelectedSession.title = title,
+        currentlySelectedSession.time = title,
         currentlySelectedSession.description = description
     } else {
         console.error("Failed to update session")
@@ -219,8 +217,8 @@ function attachListener(){
         for (const session of day.Sessions) {
             $("#button" + day.weekday + listenerIndex).on("click", function() {
                 $("#editSessionModalTitle").html(day.weekday + " " + session.time)
-                $("#sessionTitleInput").attr("value", session.time)
-                $("#sessionDescriptionInput").attr("value", session.description)
+                $("#sessionTitleInput").val(session.time)
+                $("#sessionDescriptionInput").val(session.description)
                 
                 currentlySelectedSession = session
                 populateModal(session.Papers)
