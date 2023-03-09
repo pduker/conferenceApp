@@ -58,12 +58,14 @@ async function createPaper(title, authors, abstract, suppMats) {
     })
   }
 
-  for (const [file, type] of Object.entries(suppMats)) {
-    await SuppMaterials.create({
-      id: file,
-      PaperId: paper.id,
-      type
-    })
+  if(suppMats){
+    for (const [file, type] of Object.entries(suppMats)) {
+      await SuppMaterials.create({
+        id: file,
+        PaperId: paper.id,
+        type
+      })
+    }
   }
 
   return paper
