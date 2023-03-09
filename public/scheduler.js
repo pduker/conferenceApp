@@ -68,7 +68,6 @@ function populateAccordionData() {
 
             <div class="row">`;
 
-        let index = 0;
         for (let session of day['Sessions']){
             accordionHTML += `<div class="col-2 card session-time">
             <div class="card-body">
@@ -83,11 +82,9 @@ function populateAccordionData() {
             }
             accordionHTML += `</ul>
                 </details>
-                <button class="btn btn-primary test" id="button${day['weekday']}${index}" data-bs-toggle="modal" data-bs-target="#exampleModal">Edit Session</button>
+                <button class="btn btn-primary test" id="button-session-${session.id}" data-bs-toggle="modal" data-bs-target="#exampleModal">Edit Session</button>
                 </div>
             </div>`
-
-            index = index + 1;
         }
 
         accordionHTML += `</div>
@@ -213,9 +210,8 @@ function populateModal(papers){
  */
 function attachListener(){
     for (const day of schedule) {
-        let listenerIndex = 0;
         for (const session of day.Sessions) {
-            $("#button" + day.weekday + listenerIndex).on("click", function() {
+            $(`#button-session-${session.id}`).on("click", function() {
                 $("#editSessionModalTitle").html(day.weekday + " " + session.time)
                 $("#sessionTitleInput").val(session.time)
                 $("#sessionDescriptionInput").val(session.description)
@@ -224,7 +220,6 @@ function attachListener(){
                 populateModal(session.Papers)
                 renderSelectablePapers(allPapers)
             });
-            listenerIndex += 1
         }
     }
 }
