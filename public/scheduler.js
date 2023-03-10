@@ -3,6 +3,7 @@ let schedule;
 let allPapers;
 let currentlySelectedSession = {}
 let selectedPapers = []
+let removedPapers = []
 
 function convertTime(time){
     let splitTime = time.value.split(':'), hours, minutes, meridian;
@@ -110,6 +111,7 @@ function attachEditModalListeners(){
                 $("#sessionDescriptionInput").val(session.description)
                 
                 selectedPapers = []
+                removedPapers = []
                 currentlySelectedSession = session
 
                 updateEditSessionModal(session.Papers)
@@ -125,6 +127,10 @@ async function saveSession() {
 
     for (const paper of selectedPapers){
         await assignPaperToSession(paper)
+    }
+
+    for (const paper of removedPapers) {
+        await removePaperFromSession(paper)
     }
 
     await updateSessionDetails(title, description)
@@ -205,6 +211,20 @@ function renderSelectablePapers(papers) {
     }
 }
 
+async function removePaperFromSession(paper) {
+    
+}
+
+function removeSelectedPaperFromList(paper) {
+    selectedPapers = selectedPapers.filter((val) => {
+        return paper.id !== val.id
+    })
+
+    removedPapers.push(paper)
+
+    updateEditSessionModal(currentlySelectedSession.Papers)
+}
+
 function updateEditSessionModal(papers){
     let tempHTML = '';
 
@@ -213,9 +233,11 @@ function updateEditSessionModal(papers){
 
         tempHTML +=  
         `<div class="card paper-card">
-            <div class="card-body">
-                <h5 class="card-title">${paper.title}</h5>
-                <h6 class="card-subtitle mb-2 text-muted">${authors}</h6>
+            <div class='card-link' id='paper-card-${paper.id}'>
+                <div class="card-body">
+                    <h5 class="card-title">${paper.title}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">${authors}</h6>
+                </div>
             </div>
         </div>`
     }
@@ -225,14 +247,30 @@ function updateEditSessionModal(papers){
 
         tempHTML +=  
         `<div class="card paper-card selected">
-            <div class="card-body">
-                <h5 class="card-title">${paper.title}</h5>
-                <h6 class="card-subtitle mb-2 text-muted">${authors}</h6>
+            <div class='card-link' id='paper-card-selected-${paper.id}'>
+                <div class="card-body">
+                    <h5 class="card-title">${paper.title}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">${authors}</h6>
+                </div>
             </div>
         </div>`
     }
 
     $("#insertPapers").html(tempHTML);
+
+    for (const paper of papers) {
+        $(`#paper-card-${paper.id}`).on('click', function(){
+            removeSelectedPaperFromList(paper)
+        })
+    }
+
+    for (const paper of selectedPapers) {
+        $(`#paper-card-selected-${paper.id}`).on('click', function(){
+            removeSelectedPaperFromList(paper)
+        })
+    }
+    
+    
 }
 
 $("#searchSessionInput").on("input", function(event){

@@ -18,6 +18,19 @@
   background-color: #c9ffb4;
 }
 
+.card-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.card-link:hover {
+  text-decoration: none;
+  color: inherit;
+  background-color: rgba(0, 145, 255, 0.201);
+  border-radius: 0.375rem;
+  transition: 0.3s;
+}
+
 .paper-list-container {
   height: 180px;
   overflow: scroll;
