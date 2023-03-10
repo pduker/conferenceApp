@@ -18,12 +18,12 @@
   background-color: #c9ffb4;
 }
 
-.card-link {
+.card-button {
   text-decoration: none;
   color: inherit;
 }
 
-.card-link:hover {
+.card-button:hover {
   text-decoration: none;
   color: inherit;
   background-color: rgba(0, 145, 255, 0.201);
