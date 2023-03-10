@@ -1,12 +1,58 @@
 let numTimeslots = 0;
 let schedule;
+let allPapers;
 
-$("#create-timeslot").on(`click`, ()=>{
-    
-});
+// Reference to the actual currently selected session (WRITING TO THIS IS REFLECTED AS THE DATABASE RECORD)
+let currentlySelectedSession = {}
+// A shallow copy of the session papers to allow for on-the-fly editing before writing changes to sessions
+let currentlySelectedSessionPapers = []
+// Papers to be selected when a session save occurs
+let selectedPapers = []
+// Papers to be removed when a session save occurs
+let removedPapers = []
+
+function convertTime(time){
+    let splitTime = time.value.split(':'), hours, minutes, meridian;
+    hours = splitTime[0];
+    minutes = splitTime[1];
+    if(hours > 12){
+        meridian = 'pm';
+        hours -= 12;
+    }
+    else if(hours == 0 || hours < 12){
+        meridian = 'am';
+    }
+    else{
+        meridian = 'pm';
+    }
+    return hours + ':' + minutes + ' ' + meridian;
+}
+
+async function createSession(session) {
+    let res = await fetch('api/sessions', {
+        method: 'POST',
+        body: JSON.stringify(session),
+        headers: {
+            "Content-Type": 'application/json'
+        }
+    });
+    const data = await res.json();
+    return data;
+}
+
+async function getData() {
+    schedule = await getSchedule()
+    allPapers = await getAllPapers()
+}
 
 async function getSchedule() {
     const res = (await fetch('api/days', {method: 'GET'}));
+    const data = await res.json();
+    return data;
+}
+
+async function getAllPapers() {
+    const res = (await fetch('api/papers', {method: 'GET'}));
     const data = await res.json();
     return data;
 }
@@ -29,25 +75,31 @@ function populateAccordionData() {
 
             <div class="row">`;
 
-        let index = 0;
         for (let session of day['Sessions']){
-            accordionHTML += `<div class="col-2 card session-time">
+
+            let shortenedDescr = session.description
+
+            if (shortenedDescr.length >= 40) {
+                shortenedDescr = shortenedDescr.substring(0, 40) + '...'
+            }
+
+            accordionHTML += `<div class="col-3 card session-time">
             <div class="card-body">
-              <h5 class="card-title">${session['time']}</h5>
+              <h5 class="card-title">${session.time}</h5>
+              <p class="text-muted mb-0">${shortenedDescr}</p>
               <details class="papers-details">
                 <summary>Papers</summary>
                 <ul class="papers" id="materials-list-preview">`
-            for (let paper of session['Papers']){
-                accordionHTML += `<li>${paper['title']}</li>`
+            if(session.Papers){
+                for (let i = 0; i < session.Papers.length; i++){
+                    accordionHTML += `<li>${session.Papers[i].title}</li>`
+                }
             }
-
             accordionHTML += `</ul>
                 </details>
-                <button class="btn btn-primary test" id="button${day['weekday']}${index}">Edit Session</button>
+                <button class="btn btn-primary test" id="edit-session-${session.id}" data-bs-toggle="modal" data-bs-target="#exampleModal">Edit Session</button>
                 </div>
             </div>`
-
-            index = index + 1;
         }
 
         accordionHTML += `</div>
@@ -60,9 +112,256 @@ function populateAccordionData() {
     $('#accordionMain').html(accordionHTML);
     $('#collapseButtonMonday').trigger('click');
 
+    
+    attachEditModalListeners()
 }
 
-getSchedule().then((data)=>{
-    schedule = data;
-    populateAccordionData();
+function attachEditModalListeners(){
+    for (const day of schedule) {
+        for (const session of day.Sessions) {
+            $(`#edit-session-${session.id}`).on("click", function() {
+                $("#editSessionModalTitle").html(day.weekday + " " + session.time)
+                $("#sessionTitleInput").val(session.time)
+                $("#sessionDescriptionInput").val(session.description)
+                
+                selectedPapers = []
+                removedPapers = []
+                currentlySelectedSession = session
+                currentlySelectedSessionPapers = [...session.Papers]
+
+                updateEditSessionModal(currentlySelectedSessionPapers)
+                renderSelectablePapers(allPapers)
+            });
+        }
+    }
+}
+
+async function saveSession() {
+    try {
+        const description = $('#sessionDescriptionInput').val()
+        const title = $('#sessionTitleInput').val()
+
+        for (const paper of selectedPapers){
+            await assignPaperToSession(paper)
+        }
+
+        for (const paper of removedPapers) {
+            await unassignPaperFromSession(paper)
+        }
+
+        await updateSessionDetails(title, description)
+
+        currentlySelectedSession.Papers = currentlySelectedSessionPapers
+
+        populateAccordionData()
+    } catch (err) {
+        console.error(err)
+    }
+}
+
+function renderAuthors(authors) {
+    let authorString = ""
+
+    authorString += `${authors[0].name}`
+
+    for (let i = 1; i < authors.length; i++) {
+        authorString += `, ${authors[i].name}`
+    }
+
+    return authorString
+}
+
+async function updateSessionDetails(title, description){
+
+    const body = {
+        id: currentlySelectedSession.id,
+        time: title,
+        description
+    }
+
+    let res = await fetch('api/sessions', {
+        method: 'PUT',
+        body: JSON.stringify(body),
+        headers: {
+            "Content-Type": 'application/json'
+        }
+    });
+
+    if (res.ok) {
+        // Will update because it's pass by reference
+        currentlySelectedSession.time = title,
+        currentlySelectedSession.description = description
+    } else {
+        console.error("Failed to update session")
+        throw new Error('Failed to update session details')
+    }
+}
+
+async function assignPaperToSession(paper) {
+    let data = {
+        "id": paper.id,
+        "SessionId": currentlySelectedSession.id
+    }
+
+    let res = await fetch('api/papers', {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: {
+            "Content-Type": 'application/json'
+        }
+    });
+
+    if (res.ok) {  
+        currentlySelectedSessionPapers.push(paper)
+    } else {
+        throw new Error('Failed to assign paper to session due to non-200 response code')
+    }
+}
+
+async function unassignPaperFromSession(paper) {
+    let data = {
+        "id": paper.id,
+        "SessionId": null
+    }
+
+    let res = await fetch('api/papers', {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: {
+            "Content-Type": 'application/json'
+        }
+    });
+
+    if (!res.ok) {
+        throw new Error('Received a non-200 response code while removing paper from session!')
+    }
+}
+
+function renderSelectablePapers(papers) {
+    let paperListString = ""
+
+    for (const paper of papers) {
+        paperListString += `<a href="#" class="list-group-item list-group-item-action" id='paper-${paper.id}'><i class="fa-solid fa-square-plus pr-4"></i> ${paper.title}</a>`
+    }
+
+    $("#paperSelect").html(paperListString);
+
+    for (const paper of papers){
+        $(`#paper-${paper.id}`).on('click', ()=>{
+           addSelectedPaperToList(paper)
+           updateEditSessionModal(currentlySelectedSessionPapers)
+        })
+    }
+}
+
+function addSelectedPaperToList(paper) {
+    // Check this paper has not already been added to our selected papers or existing papers
+    for (const selectedPaper of selectedPapers.concat(currentlySelectedSessionPapers)) {
+        if (selectedPaper.id === paper.id) {
+            return
+        }
+    }
+
+    removedPapers = removedPapers.filter(function (val) {
+        return paper.id !== val.id
+    })
+
+    selectedPapers.push(paper)
+}
+
+function removeSelectedPaperFromList(paper) {
+    selectedPapers = selectedPapers.filter(function (val) {
+        return paper.id !== val.id
+    })
+
+    currentlySelectedSessionPapers = currentlySelectedSessionPapers.filter(function (val) {
+        if (paper.id === val.id) {
+            removedPapers.push(paper)
+            return false
+        } else {
+            return true
+        }
+    })
+
+    updateEditSessionModal(currentlySelectedSessionPapers)
+}
+
+function updateEditSessionModal(papers){
+    let tempHTML = '';
+
+    for (const paper of papers) {
+        const authors = renderAuthors(paper.Authors)
+
+        tempHTML +=  
+        `<div class="card paper-card">
+            <div class='card-button h-100' id='paper-card-${paper.id}'>
+                <div class="card-body">
+                    <div class="row d-flex">
+                        <div class="col-10 d-flex">
+                            <h5 class="card-title">${paper.title}</h5>
+                        </div>
+                        <div class="col-2 d-flex justify-content-end">
+                            <i class="fa-solid fa-x"></i>
+                        </div>
+                    </div>
+                    <h6 class="card-subtitle mb-2 text-muted">${authors}</h6>
+                </div>
+            </div>
+        </div>`
+    }
+
+    for (const paper of selectedPapers) {
+        const authors = renderAuthors(paper.Authors)
+
+        tempHTML +=  
+        `<div class="card paper-card selected">
+            <div class='card-button h-100' id='paper-card-selected-${paper.id}'>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-10">
+                            <h5 class="card-title">${paper.title}</h5>
+                        </div>
+                        <div class="col-sm-2 d-flex justify-content-end">
+                            <i class="fa-solid fa-x"></i>
+                        </div>
+                    </div>
+                    <h6 class="card-subtitle mb-2 text-muted">${authors}</h6>
+                </div>
+            </div>
+        </div>`
+    }
+
+    $("#insertPapers").html(tempHTML);
+
+    for (const paper of papers) {
+        $(`#paper-card-${paper.id}`).on('click', function(event){
+            event.stopPropagation()
+            removeSelectedPaperFromList(paper)
+        })
+    }
+
+    for (const paper of selectedPapers) {
+        $(`#paper-card-selected-${paper.id}`).on('click', function(event){
+            event.stopPropagation()
+            removeSelectedPaperFromList(paper)
+        })
+    }
+    
+    
+}
+
+$("#searchSessionInput").on("input", function(event){
+    let text = event.target.value
+    let filteredPapers = allPapers.filter((a)=>{return a.title.includes(text)})
+    renderSelectablePapers(filteredPapers)
+} );
+
+$("#saveSession").on("click", function(){
+    saveSession()
+})
+
+getData().then(()=>{
+    populateAccordionData()
 });
+
+
