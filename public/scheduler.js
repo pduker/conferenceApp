@@ -283,9 +283,16 @@ function updateEditSessionModal(papers){
 
         tempHTML +=  
         `<div class="card paper-card">
-            <div class='card-button' id='paper-card-${paper.id}'>
+            <div class='card-button h-100' id='paper-card-${paper.id}'>
                 <div class="card-body">
-                    <h5 class="card-title">${paper.title}</h5>
+                    <div class="row d-flex">
+                        <div class="col-10 d-flex">
+                            <h5 class="card-title">${paper.title}</h5>
+                        </div>
+                        <div class="col-2 d-flex justify-content-end">
+                            <i class="fa-solid fa-x"></i>
+                        </div>
+                    </div>
                     <h6 class="card-subtitle mb-2 text-muted">${authors}</h6>
                 </div>
             </div>
@@ -297,9 +304,16 @@ function updateEditSessionModal(papers){
 
         tempHTML +=  
         `<div class="card paper-card selected">
-            <div class='card-button' id='paper-card-selected-${paper.id}'>
+            <div class='card-button h-100' id='paper-card-selected-${paper.id}'>
                 <div class="card-body">
-                    <h5 class="card-title">${paper.title}</h5>
+                    <div class="row">
+                        <div class="col-sm-10">
+                            <h5 class="card-title">${paper.title}</h5>
+                        </div>
+                        <div class="col-sm-2 d-flex justify-content-end">
+                            <i class="fa-solid fa-x"></i>
+                        </div>
+                    </div>
                     <h6 class="card-subtitle mb-2 text-muted">${authors}</h6>
                 </div>
             </div>
