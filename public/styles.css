@@ -104,7 +104,7 @@ details.root {
     background-color: var(--sub-background);
     border: var(--border-size) solid var(--border);
     overflow-y: scroll; 
-    max-height: 40vh;
+    max-height: 350px;
     overflow-x: hidden;
 }
 

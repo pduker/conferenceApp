@@ -82,7 +82,7 @@ function populateAccordionData() {
             }
             accordionHTML += `</ul>
                 </details>
-                <button class="btn btn-primary test" id="button-session-${session.id}" data-bs-toggle="modal" data-bs-target="#exampleModal">Edit Session</button>
+                <button class="btn btn-primary test" id="edit-session-${session.id}" data-bs-toggle="modal" data-bs-target="#exampleModal">Edit Session</button>
                 </div>
             </div>`
         }
@@ -97,6 +97,26 @@ function populateAccordionData() {
     $('#accordionMain').html(accordionHTML);
     $('#collapseButtonMonday').trigger('click');
 
+    
+    attachEditModalListeners()
+}
+
+function attachEditModalListeners(){
+    for (const day of schedule) {
+        for (const session of day.Sessions) {
+            $(`#edit-session-${session.id}`).on("click", function() {
+                $("#editSessionModalTitle").html(day.weekday + " " + session.time)
+                $("#sessionTitleInput").val(session.time)
+                $("#sessionDescriptionInput").val(session.description)
+                
+                selectedPapers = []
+                currentlySelectedSession = session
+
+                updateEditSessionModal(session.Papers)
+                renderSelectablePapers(allPapers)
+            });
+        }
+    }
 }
 
 async function saveSession() {
@@ -180,6 +200,7 @@ function renderSelectablePapers(papers) {
     for (const paper of papers){
         $(`#paper-${paper.id}`).on('click', ()=>{
            selectedPapers.push(paper)
+           updateEditSessionModal(currentlySelectedSession.Papers)
         })
     }
 }
@@ -199,26 +220,19 @@ function updateEditSessionModal(papers){
         </div>`
     }
 
-    $("#insertPapers").html(tempHTML);
-}
+    for (const paper of selectedPapers) {
+        const authors = renderAuthors(paper.Authors)
 
-/**
- * generates the listeners to the buttons to capture what session the button was pressed to change the modal
- */
-function attachListener(){
-    for (const day of schedule) {
-        for (const session of day.Sessions) {
-            $(`#button-session-${session.id}`).on("click", function() {
-                $("#editSessionModalTitle").html(day.weekday + " " + session.time)
-                $("#sessionTitleInput").val(session.time)
-                $("#sessionDescriptionInput").val(session.description)
-                
-                currentlySelectedSession = session
-                updateEditSessionModal(session.Papers)
-                renderSelectablePapers(allPapers)
-            });
-        }
+        tempHTML +=  
+        `<div class="card paper-card selected">
+            <div class="card-body">
+                <h5 class="card-title">${paper.title}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">${authors}</h6>
+            </div>
+        </div>`
     }
+
+    $("#insertPapers").html(tempHTML);
 }
 
 $("#searchSessionInput").on("input", function(event){
@@ -233,7 +247,6 @@ $("#saveSession").on("click", function(){
 
 getData().then(()=>{
     populateAccordionData()
-    attachListener()
 });
 
 
