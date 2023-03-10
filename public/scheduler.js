@@ -161,8 +161,11 @@ async function saveSession() {
 
 function renderAuthors(authors) {
     let authorString = ""
-    for (const author of authors) {
-        authorString += `${author.name} `
+
+    authorString += `${authors[0].name}`
+
+    for (let i = 1; i < authors.length; i++) {
+        authorString += `, ${authors[i].name}`
     }
 
     return authorString
@@ -238,7 +241,7 @@ function renderSelectablePapers(papers) {
     let paperListString = ""
 
     for (const paper of papers) {
-        paperListString += `<a href="#" class="list-group-item list-group-item-action" id='paper-${paper.id}'>${paper.title}</a>`
+        paperListString += `<a href="#" class="list-group-item list-group-item-action" id='paper-${paper.id}'><i class="fa-solid fa-square-plus pr-4"></i> ${paper.title}</a>`
     }
 
     $("#paperSelect").html(paperListString);
