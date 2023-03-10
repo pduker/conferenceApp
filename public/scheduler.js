@@ -1,8 +1,14 @@
 let numTimeslots = 0;
 let schedule;
 let allPapers;
+
+// Reference to the actual currently selected session (WRITING TO THIS IS REFLECTED AS THE DATABASE RECORD)
 let currentlySelectedSession = {}
+// A shallow copy of the session papers to allow for on-the-fly editing before writing changes to sessions
+let currentlySelectedSessionPapers = []
+// Papers to be selected when a session save occurs
 let selectedPapers = []
+// Papers to be removed when a session save occurs
 let removedPapers = []
 
 function convertTime(time){
@@ -113,8 +119,9 @@ function attachEditModalListeners(){
                 selectedPapers = []
                 removedPapers = []
                 currentlySelectedSession = session
+                currentlySelectedSessionPapers = [...session.Papers]
 
-                updateEditSessionModal(session.Papers)
+                updateEditSessionModal(currentlySelectedSessionPapers)
                 renderSelectablePapers(allPapers)
             });
         }
@@ -122,20 +129,26 @@ function attachEditModalListeners(){
 }
 
 async function saveSession() {
-    const description = $('#sessionDescriptionInput').val()
-    const title = $('#sessionTitleInput').val()
+    try {
+        const description = $('#sessionDescriptionInput').val()
+        const title = $('#sessionTitleInput').val()
 
-    for (const paper of selectedPapers){
-        await assignPaperToSession(paper)
+        for (const paper of selectedPapers){
+            await assignPaperToSession(paper)
+        }
+
+        for (const paper of removedPapers) {
+            await unassignPaperFromSession(paper)
+        }
+
+        await updateSessionDetails(title, description)
+
+        currentlySelectedSession.Papers = currentlySelectedSessionPapers
+
+        populateAccordionData()
+    } catch (err) {
+        console.error(err)
     }
-
-    for (const paper of removedPapers) {
-        await removePaperFromSession(paper)
-    }
-
-    await updateSessionDetails(title, description)
-
-    populateAccordionData()
 }
 
 function renderAuthors(authors) {
@@ -169,6 +182,7 @@ async function updateSessionDetails(title, description){
         currentlySelectedSession.description = description
     } else {
         console.error("Failed to update session")
+        throw new Error('Failed to update session details')
     }
 }
 
@@ -186,11 +200,29 @@ async function assignPaperToSession(paper) {
         }
     });
 
-    if (res.ok) {
-        currentlySelectedSession.Papers.push(paper)
-        updateEditSessionModal(currentlySelectedSession.Papers)
+    if (res.ok) {  
+        currentlySelectedSessionPapers.push(paper)
     } else {
-        console.error('Failed to update the paper')
+        throw new Error('Failed to assign paper to session due to non-200 response code')
+    }
+}
+
+async function unassignPaperFromSession(paper) {
+    let data = {
+        "id": paper.id,
+        "SessionId": null
+    }
+
+    let res = await fetch('api/papers', {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: {
+            "Content-Type": 'application/json'
+        }
+    });
+
+    if (!res.ok) {
+        throw new Error('Received a non-200 response code while removing paper from session!')
     }
 }
 
@@ -206,18 +238,14 @@ function renderSelectablePapers(papers) {
     for (const paper of papers){
         $(`#paper-${paper.id}`).on('click', ()=>{
            addSelectedPaperToList(paper)
-           updateEditSessionModal(currentlySelectedSession.Papers)
+           updateEditSessionModal(currentlySelectedSessionPapers)
         })
     }
 }
 
-async function removePaperFromSession(paper) {
-    
-}
-
 function addSelectedPaperToList(paper) {
     // Check this paper has not already been added to our selected papers or existing papers
-    for (const selectedPaper of selectedPapers.concat(currentlySelectedSession.Papers)) {
+    for (const selectedPaper of selectedPapers.concat(currentlySelectedSessionPapers)) {
         if (selectedPaper.id === paper.id) {
             return
         }
@@ -235,7 +263,7 @@ function removeSelectedPaperFromList(paper) {
         return paper.id !== val.id
     })
 
-    currentlySelectedSession.Papers = currentlySelectedSession.Papers.filter(function (val) {
+    currentlySelectedSessionPapers = currentlySelectedSessionPapers.filter(function (val) {
         if (paper.id === val.id) {
             removedPapers.push(paper)
             return false
@@ -244,7 +272,7 @@ function removeSelectedPaperFromList(paper) {
         }
     })
 
-    updateEditSessionModal(currentlySelectedSession.Papers)
+    updateEditSessionModal(currentlySelectedSessionPapers)
 }
 
 function updateEditSessionModal(papers){
