@@ -76,15 +76,23 @@ function populateAccordionData() {
             <div class="row">`;
 
         for (let session of day['Sessions']){
-            accordionHTML += `<div class="col-2 card session-time">
+
+            let shortenedDescr = session.description
+
+            if (shortenedDescr.length >= 40) {
+                shortenedDescr = shortenedDescr.substring(0, 40) + '...'
+            }
+
+            accordionHTML += `<div class="col-3 card session-time">
             <div class="card-body">
-              <h5 class="card-title">${session['time']}</h5>
+              <h5 class="card-title">${session.time}</h5>
+              <p class="text-muted mb-0">${shortenedDescr}</p>
               <details class="papers-details">
                 <summary>Papers</summary>
                 <ul class="papers" id="materials-list-preview">`
             if(session.Papers){
                 for (let i = 0; i < session.Papers.length; i++){
-                    accordionHTML += `<li>${session.Papers[i]['title']}</li>`
+                    accordionHTML += `<li>${session.Papers[i].title}</li>`
                 }
             }
             accordionHTML += `</ul>
