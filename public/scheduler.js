@@ -11,18 +11,32 @@ let selectedPapers = []
 // Papers to be removed when a session save occurs
 let removedPapers = []
 
-function convertTime(time){
+function isNotWhiteSpace(text) {
+    let hasEverything = /\S/.test(text) && isNotUndefinedOrNull(text)
+    if (typeof text === "object") {
+        if (text.size === 0) {
+            hasEverything = false;
+        }
+    }
+    return hasEverything;
+}
+
+function isNotUndefinedOrNull(text) {
+    return text !== undefined && text !== null
+}
+
+function convertTime(time) {
     let splitTime = time.value.split(':'), hours, minutes, meridian;
     hours = splitTime[0];
     minutes = splitTime[1];
-    if(hours > 12){
+    if (hours > 12) {
         meridian = 'pm';
         hours -= 12;
     }
-    else if(hours == 0 || hours < 12){
+    else if (hours == 0 || hours < 12) {
         meridian = 'am';
     }
-    else{
+    else {
         meridian = 'pm';
     }
     return hours + ':' + minutes + ' ' + meridian;
@@ -46,13 +60,13 @@ async function getData() {
 }
 
 async function getSchedule() {
-    const res = (await fetch('api/days', {method: 'GET'}));
+    const res = (await fetch('api/days', { method: 'GET' }));
     const data = await res.json();
     return data;
 }
 
 async function getAllPapers() {
-    const res = (await fetch('api/papers', {method: 'GET'}));
+    const res = (await fetch('api/papers', { method: 'GET' }));
     const data = await res.json();
     return data;
 }
@@ -75,7 +89,7 @@ function populateAccordionData() {
 
             <div class="row">`;
 
-        for (let session of day['Sessions']){
+        for (let session of day['Sessions']) {
 
             let shortenedDescr = session.description
 
@@ -90,14 +104,14 @@ function populateAccordionData() {
               <details class="papers-details">
                 <summary>Papers</summary>
                 <ul class="papers" id="materials-list-preview">`
-            if(session.Papers){
-                for (let i = 0; i < session.Papers.length; i++){
+            if (session.Papers) {
+                for (let i = 0; i < session.Papers.length; i++) {
                     accordionHTML += `<li>${session.Papers[i].title}</li>`
                 }
             }
             accordionHTML += `</ul>
                 </details>
-                <button class="btn btn-primary test" id="edit-session-${session.id}" data-bs-toggle="modal" data-bs-target="#exampleModal">Edit Session</button>
+                <button class="btn btn-primary test" id="edit-session-${session.id}" data-bs-toggle="modal" data-bs-target="#editSessionModal">Edit Session</button>
                 </div>
             </div>`
         }
@@ -112,18 +126,21 @@ function populateAccordionData() {
     $('#accordionMain').html(accordionHTML);
     $('#collapseButtonMonday').trigger('click');
 
-    
+
     attachEditModalListeners()
 }
 
-function attachEditModalListeners(){
+function attachEditModalListeners() {
     for (const day of schedule) {
         for (const session of day.Sessions) {
-            $(`#edit-session-${session.id}`).on("click", function() {
+            $(`#edit-session-${session.id}`).on("click", function () {
+                $('#sessionTitleInput').removeClass('is-invalid')
+                $('#sessionDescriptionInput').removeClass('is-invalid')
+
                 $("#editSessionModalTitle").html(day.weekday + " " + session.time)
                 $("#sessionTitleInput").val(session.time)
                 $("#sessionDescriptionInput").val(session.description)
-                
+
                 selectedPapers = []
                 removedPapers = []
                 currentlySelectedSession = session
@@ -136,12 +153,34 @@ function attachEditModalListeners(){
     }
 }
 
+function validateSessionModal() {
+    const description = $('#sessionDescriptionInput').val()
+    const title = $('#sessionTitleInput').val()
+
+    if (!isNotWhiteSpace(description)){
+        $('#sessionDescriptionInput').addClass('is-invalid')
+    } else {
+        $('#sessionDescriptionInput').removeClass('is-invalid')
+    }
+
+    if (!isNotWhiteSpace(title)){
+        $('#sessionTitleInput').addClass('is-invalid')
+    } else {
+        $('#sessionTitleInput').removeClass('is-invalid')
+    }
+
+    return isNotWhiteSpace(description) && isNotWhiteSpace(title)
+}
+
 async function saveSession() {
     try {
+
+        if (!validateSessionModal()) return;
+
         const description = $('#sessionDescriptionInput').val()
         const title = $('#sessionTitleInput').val()
 
-        for (const paper of selectedPapers){
+        for (const paper of selectedPapers) {
             await assignPaperToSession(paper)
         }
 
@@ -154,6 +193,7 @@ async function saveSession() {
         currentlySelectedSession.Papers = currentlySelectedSessionPapers
 
         populateAccordionData()
+        $("#editSessionModal").modal('hide');
     } catch (err) {
         console.error(err)
     }
@@ -171,7 +211,7 @@ function renderAuthors(authors) {
     return authorString
 }
 
-async function updateSessionDetails(title, description){
+async function updateSessionDetails(title, description) {
 
     const body = {
         id: currentlySelectedSession.id,
@@ -190,7 +230,7 @@ async function updateSessionDetails(title, description){
     if (res.ok) {
         // Will update because it's pass by reference
         currentlySelectedSession.time = title,
-        currentlySelectedSession.description = description
+            currentlySelectedSession.description = description
     } else {
         console.error("Failed to update session")
         throw new Error('Failed to update session details')
@@ -211,7 +251,7 @@ async function assignPaperToSession(paper) {
         }
     });
 
-    if (res.ok) {  
+    if (res.ok) {
         currentlySelectedSessionPapers.push(paper)
     } else {
         throw new Error('Failed to assign paper to session due to non-200 response code')
@@ -246,10 +286,10 @@ function renderSelectablePapers(papers) {
 
     $("#paperSelect").html(paperListString);
 
-    for (const paper of papers){
-        $(`#paper-${paper.id}`).on('click', ()=>{
-           addSelectedPaperToList(paper)
-           updateEditSessionModal(currentlySelectedSessionPapers)
+    for (const paper of papers) {
+        $(`#paper-${paper.id}`).on('click', () => {
+            addSelectedPaperToList(paper)
+            updateEditSessionModal(currentlySelectedSessionPapers)
         })
     }
 }
@@ -286,14 +326,14 @@ function removeSelectedPaperFromList(paper) {
     updateEditSessionModal(currentlySelectedSessionPapers)
 }
 
-function updateEditSessionModal(papers){
+function updateEditSessionModal(papers) {
     let tempHTML = '';
 
     for (const paper of papers) {
         const authors = renderAuthors(paper.Authors)
 
-        tempHTML +=  
-        `<div class="card paper-card">
+        tempHTML +=
+            `<div class="card paper-card">
             <div class='card-button h-100' id='paper-card-${paper.id}'>
                 <div class="card-body">
                     <div class="row d-flex">
@@ -313,8 +353,8 @@ function updateEditSessionModal(papers){
     for (const paper of selectedPapers) {
         const authors = renderAuthors(paper.Authors)
 
-        tempHTML +=  
-        `<div class="card paper-card selected">
+        tempHTML +=
+            `<div class="card paper-card selected">
             <div class='card-button h-100' id='paper-card-selected-${paper.id}'>
                 <div class="card-body">
                     <div class="row">
@@ -334,20 +374,20 @@ function updateEditSessionModal(papers){
     $("#insertPapers").html(tempHTML);
 
     for (const paper of papers) {
-        $(`#paper-card-${paper.id}`).on('click', function(event){
+        $(`#paper-card-${paper.id}`).on('click', function (event) {
             event.stopPropagation()
             removeSelectedPaperFromList(paper)
         })
     }
 
     for (const paper of selectedPapers) {
-        $(`#paper-card-selected-${paper.id}`).on('click', function(event){
+        $(`#paper-card-selected-${paper.id}`).on('click', function (event) {
             event.stopPropagation()
             removeSelectedPaperFromList(paper)
         })
     }
-    
-    
+
+
 }
 
 //Adds session to appropriate accordian
@@ -371,17 +411,17 @@ $("#saveCreatedSession").on(`click`, async ()=>{
     populateAccordionData();
 });
 
-$("#searchSessionInput").on("input", function(event){
+$("#searchSessionInput").on("input", function (event) {
     let text = event.target.value
-    let filteredPapers = allPapers.filter((a)=>{return a.title.includes(text)})
+    let filteredPapers = allPapers.filter((a) => { return a.title.includes(text) })
     renderSelectablePapers(filteredPapers)
-} );
+});
 
-$("#saveSession").on("click", function(){
+$("#saveSession").on("click", function () {
     saveSession()
 })
 
-getData().then(()=>{
+getData().then(() => {
     populateAccordionData()
 });
 
