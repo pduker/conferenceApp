@@ -37,6 +37,8 @@ async function createSession (time, description, DayId) {
     DayId
   })
 
+  session.Papers = []
+
   return session
 }
 

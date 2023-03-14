@@ -390,6 +390,27 @@ function updateEditSessionModal(papers) {
 
 }
 
+//Adds session to appropriate accordian
+//TODO: Convert Time to 12HR format
+$("#saveCreatedSession").on(`click`, async ()=>{
+    //sets day, time  
+    let day = parseInt($("#sessionDay").val()); 
+    let startTime = $("#sessionStart").val();
+    let endTime = $("#sessionEnd").val();
+    let sessionTime = startTime + " - " + endTime;
+    
+    let newSession = {
+        "time": sessionTime,
+        "DayId": day,
+        "description": "TEMP DESC"
+    }
+
+    const sessionResp = await createSession(newSession);
+
+    schedule[day - 1]['Sessions'].push(sessionResp);
+    populateAccordionData();
+});
+
 $("#searchSessionInput").on("input", function (event) {
     let text = event.target.value
     let filteredPapers = allPapers.filter((a) => { return a.title.includes(text) })
