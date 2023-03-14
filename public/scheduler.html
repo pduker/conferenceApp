@@ -3,17 +3,27 @@
 
 <head>
   <meta charset="utf-8">
+  <title>Conference Scheduler</title>
   <link rel="stylesheet" href="styles.css">
-  <title>Login</title>
-  <script src="./utils/auth.js"></script>
+  <link rel="stylesheet" href="scheduler.css">
+
   <link rel="stylesheet" href="./css/bootstrap.min.css">
+  <link href="/css/fontawesome.css" rel="stylesheet">
+  <link href="/css/brands.css" rel="stylesheet">
+  <link href="/css/solid.css" rel="stylesheet">
+
+  <script src="./utils/auth.js"></script>
   <script src="./js/bootstrap.min.js"></script>
   <script src="./js/jquery.min.js"></script>
 </head>
 
 <body>
   <div class="container scheduler">
-    <h1>Create Schedule</h1>
+    <h1>Conference Scheduler</h1>
+    <p>
+      Build the conference schedule here. Below is each day as well as the sessions scheduled for each day.
+      You can edit the individual papers assigned in the session editor.
+    </p>
 
     <div class="accordion" id="accordionMain">
 
@@ -23,7 +33,7 @@
     Create Session
   </button>
 
-<!-- Modal -->
+    <!-- Modal -->
   <div class="modal fade bd-example-modal-lg" id="createSessionModal" tabindex="-1" role="dialog"
   aria-labelledby="createSessionModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
@@ -47,16 +57,78 @@
           <input id="sessionEnd" type="time">
         </div>
       </div>
-      <div class="input-group mb-3" id="insertPapers">
-
-      </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
         <button type="button" class="btn btn-primary" id="saveCreatedSession">Save Session</button>
       </div>
     </div>
   </div>
-</div>
+
+    <!-- Edit Session Modal -->
+    <div class="modal fade bd-example-modal-lg" id="exampleModal" tabindex="-1" role="dialog"
+      aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editSessionModalTitle">Modal title</h5>
+          </div>
+          <div class="modal-body">
+            <div class="card mb-4">
+              <div class="card-body">
+                <h4>Session Properties</h4>
+                <p class="text-muted">Set the session title and it's description.</p>
+                <hr/>
+
+                <div class="input-group p-2">
+                  <span class="input-group-text">Title</span>
+                  <input type="text" class="form-control" placeholder="Title"
+                  id="sessionTitleInput">
+                </div>
+                <div class="input-group p-2">
+                  <span class="input-group-text">Description</span>
+                  <textarea class="form-control" placeholder="..." rows="2"
+                  id="sessionDescriptionInput"></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-body">
+                <h4>Session Papers</h4>
+                <p class="text-muted">Add and remove papers assigned to this session below.</p>
+                <hr/>
+
+                <div class="input-group p-2">
+                  <span class="input-group-text">Search</span>
+                  <input type="text" class="form-control" placeholder="Paper title to search for" aria-label="" aria-describedby="basic-addon1"
+                  id="searchSessionInput">
+                </div>
+
+                <div class="paper-list-container mt-3 mb-3 p-2">
+                  <div class="list-group" id="paperSelect">
+
+                  </div>
+                </div>
+
+
+                <div class="session-papers-container">
+                  <div class="p-2">
+                    <h5>Selected Papers</h5>
+                    <hr/>
+                  </div>
+                  <div class="mb-3 p-2" id="insertPapers">
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="saveSession">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <script src='./scheduler.js'></script>
 </body>
