@@ -134,8 +134,8 @@ async function PopulateDatabase(){
         for (let session of sessions){
             let newSession = {
                 "time": session.time,
-                "DayId": dayID,
-                "description": "TEMP DESC"
+                "description": "TEMP DESC",
+                "DayId": dayID
             }
         
             await createSession(newSession);
