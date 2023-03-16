@@ -129,7 +129,7 @@ async function PopulateDatabase(){
         }
         currentDate[2]++;
         currentDay++;
-        currentDay = currentDay%6;
+        currentDay = currentDay%7;
         let dayID = await createDay(newDay);
         for (let session of sessions){
             let newSession = {
