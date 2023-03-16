@@ -64,7 +64,7 @@ async function duplicateSession (sessionId) {
 
   const { DayId, description, title, time } = session
 
-  const newSession = await createSession(title, time description, DayId)
+  const newSession = await createSession(title, time, description, DayId)
 
   return newSession
 }

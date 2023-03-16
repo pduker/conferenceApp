@@ -74,54 +74,77 @@ async function getAllPapers() {
 function populateAccordionData() {
 
     let accordionHTML = '';
-    for (const day of schedule) {
-        accordionHTML += `<div class="accordion-item collapsed">
-        <h2 class="accordion-header" id="heading${day['weekday']}">
-          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${day['weekday']}" id="collapseButton${day['weekday']}"
-            aria-expanded="true" aria-controls="collapse${day['weekday']}">
-            ${day['weekday']}
-          </button>
-        </h2>
 
-        <div id="collapse${day['weekday']}" class="accordion-collapse collapse" aria-labelledby="heading${day['weekday']}"
-          data-bs-parent="#accordionMain">
-          <div class="accordion-body">
-
-            <div class="row">`;
-
-        for (let session of day['Sessions']) {
-
-            let shortenedDescr = session.description
-
-            if (shortenedDescr.length >= 40) {
-                shortenedDescr = shortenedDescr.substring(0, 40) + '...'
-            }
-
-            accordionHTML += `<div class="col-3 card session-time">
-            <div class="card-body">
-              <h5 class="card-title">${session.time}</h5>
-              <p class="text-muted mb-0">${shortenedDescr}</p>
-              <details class="papers-details">
-                <summary>Papers</summary>
-                <ul class="papers" id="materials-list-preview">`
-            if (session.Papers) {
-                for (let i = 0; i < session.Papers.length; i++) {
-                    accordionHTML += `<li>${session.Papers[i].title}</li>`
-                }
-            }
-            accordionHTML += `</ul>
-                </details>
-                <button class="btn btn-primary test" id="edit-session-${session.id}" data-bs-toggle="modal" data-bs-target="#editSessionModal">Edit Session</button>
-                </div>
-            </div>`
-        }
-
-        accordionHTML += `</div>
+    // Show warning if there are no days scheduled
+    if (schedule.length === 0) {
+        accordionHTML += `
+        <div class='row'>
+            <div class='col-2'></div>
+            <div class='col-8'>
+                <div class="alert alert-warning" role="alert">
+                    <div class="row d-flex">
+                        <div class="col-2 d-flex justify-content-center align-items-center">
+                            <i class="fa-solid fa-triangle-exclamation fa-3x"></i>
+                        </div>
+                        <div class="col-10 d-flex justify-content-start align-items-center">
+                            No days appear to have been created yet. Please create some to get started scheduling!
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>`;
+            <div class='col-2'></div>
+        </div>
+        `
+    } else {
+        for (const day of schedule) {
+            accordionHTML += `<div class="accordion-item collapsed">
+            <h2 class="accordion-header" id="heading${day['weekday']}">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${day['weekday']}" id="collapseButton${day['weekday']}"
+                aria-expanded="true" aria-controls="collapse${day['weekday']}">
+                ${day['weekday']}
+            </button>
+            </h2>
 
-    };
+            <div id="collapse${day['weekday']}" class="accordion-collapse collapse" aria-labelledby="heading${day['weekday']}"
+            data-bs-parent="#accordionMain">
+            <div class="accordion-body">
+
+                <div class="row">`;
+
+            for (let session of day['Sessions']) {
+
+                let shortenedDescr = session.description
+
+                if (shortenedDescr.length >= 40) {
+                    shortenedDescr = shortenedDescr.substring(0, 40) + '...'
+                }
+
+                accordionHTML += `<div class="col-3 card session-time">
+                <div class="card-body">
+                <h5 class="card-title">${session.time}</h5>
+                <p class="text-muted mb-0">${shortenedDescr}</p>
+                <details class="papers-details">
+                    <summary>Papers</summary>
+                    <ul class="papers" id="materials-list-preview">`
+                if (session.Papers) {
+                    for (let i = 0; i < session.Papers.length; i++) {
+                        accordionHTML += `<li>${session.Papers[i].title}</li>`
+                    }
+                }
+                accordionHTML += `</ul>
+                    </details>
+                    <button class="btn btn-primary test" id="edit-session-${session.id}" data-bs-toggle="modal" data-bs-target="#editSessionModal">Edit Session</button>
+                    </div>
+                </div>`
+            }
+
+            accordionHTML += `</div>
+                    </div>
+                </div>
+            </div>`;
+
+        };
+    }
 
     $('#accordionMain').html(accordionHTML);
     $('#collapseButtonMonday').trigger('click');
