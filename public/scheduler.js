@@ -25,21 +25,32 @@ function isNotUndefinedOrNull(text) {
     return text !== undefined && text !== null
 }
 
-function convertTime(time) {
-    let splitTime = time.value.split(':'), hours, minutes, meridian;
-    hours = splitTime[0];
-    minutes = splitTime[1];
-    if (hours > 12) {
-        meridian = 'pm';
-        hours -= 12;
+function convertTo12HourString (time) {
+    // Set some arbitrary start date, the day does not matter only the time does and so we do this to get the time helper functions
+    return new Date(`1970-01-01T${time}Z`).toLocaleTimeString('en-US', { timeZone:'UTC',hour12:true,hour:'numeric',minute:'numeric'} )
+}
+
+function convertTo24HourString (time) {
+    const splitTime = time.split(" ") // get the 10:00 and PM of "10:00 PM"
+
+    if (splitTime[1] === "PM") {
+        const hoursAndMinutes = splitTime[0].split(":") // get the 10 and 00 of 10:00
+
+        let hours = parseInt(hoursAndMinutes[0])
+        let minutes = hoursAndMinutes[1]
+
+        let final
+
+        if (hours === 12) {
+            final = `${hours}:${minutes}`
+        } else {
+            final = `${hours + 12}:${minutes}`
+        }
+        
+        return final
+    } else {
+        return splitTime[0]
     }
-    else if (hours == 0 || hours < 12) {
-        meridian = 'am';
-    }
-    else {
-        meridian = 'pm';
-    }
-    return hours + ':' + minutes + ' ' + meridian;
 }
 
 async function createSession(session) {
@@ -121,7 +132,7 @@ function populateAccordionData() {
 
                 accordionHTML += `<div class="col-3 card session-time">
                 <div class="card-body">
-                <h5 class="card-title">${session.title} | ${session.time}</h5>
+                <h5 class="card-title">${session.title} | ${session.start} - ${session.end}</h5>
                 <p class="text-muted mb-0">${shortenedDescr}</p>
                 <details class="papers-details">
                     <summary>Papers</summary>
@@ -163,6 +174,8 @@ function attachEditModalListeners() {
                 $("#editSessionModalTitle").html(day.weekday + " " + session.title)
                 $("#sessionTitleInput").val(session.title)
                 $("#sessionDescriptionInput").val(session.description)
+                $("#sessionEditStartTimeInput").val(convertTo24HourString(session.start))
+                $("#sessionEditEndTimeInput").val(convertTo24HourString(session.end))
 
                 selectedPapers = []
                 removedPapers = []
@@ -202,6 +215,8 @@ async function saveSession() {
 
         const description = $('#sessionDescriptionInput').val()
         const title = $('#sessionTitleInput').val()
+        const start = convertTo12HourString($('#sessionEditStartTimeInput').val())
+        const end = convertTo12HourString($('#sessionEditEndTimeInput').val())
 
         for (const paper of selectedPapers) {
             await assignPaperToSession(paper)
@@ -211,7 +226,7 @@ async function saveSession() {
             await unassignPaperFromSession(paper)
         }
 
-        await updateSessionDetails(title, time, description)
+        await updateSessionDetails(title, start, end, description)
 
         currentlySelectedSession.Papers = currentlySelectedSessionPapers
 
@@ -234,11 +249,12 @@ function renderAuthors(authors) {
     return authorString
 }
 
-async function updateSessionDetails(title, time, description) {
+async function updateSessionDetails(title, start, end, description) {
 
     const body = {
         id: currentlySelectedSession.id,
-        time,
+        start,
+        end,
         title,
         description
     }
@@ -254,7 +270,8 @@ async function updateSessionDetails(title, time, description) {
     if (res.ok) {
         // Will update because it's pass by reference
         currentlySelectedSession.title = title
-        currentlySelectedSession.time = time
+        currentlySelectedSession.start = start
+        currentlySelectedSession.end = end
         currentlySelectedSession.description = description
     } else {
         console.error("Failed to update session")
@@ -419,17 +436,10 @@ function updateEditSessionModal(papers) {
 $("#saveCreatedSession").on(`click`, async ()=>{
     //sets day, time  
     const day = parseInt($("#sessionDay").val()); 
-    let startTime = $("#sessionStart").val();
-    let endTime = $("#sessionEnd").val();
+    const startTime = convertTo12HourString($("#sessionStart").val())
+    const endTime = convertTo12HourString($("#sessionEnd").val())
     const title = $("#createSessionTitleInput").val()
     const description = $("#createSessionDescriptionInput").val()
-
-    console.log(startTime)
-    console.log(endTime)
-
-    // Set some arbitrary start date, the day does not matter only the time does and so we do this to get the time helper functions
-    startTime = new Date(`1970-01-01T${startTime}Z`).toLocaleTimeString('en-US', { timeZone:'UTC',hour12:true,hour:'numeric',minute:'numeric'} )
-    endTime = new Date(`1970-01-01T${endTime}Z`).toLocaleTimeString('en-US', { timeZone:'UTC',hour12:true,hour:'numeric',minute:'numeric'} )
     
     const newSession = {
         DayId: day,
