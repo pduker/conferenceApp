@@ -415,19 +415,28 @@ function updateEditSessionModal(papers) {
 
 }
 
-//Adds session to appropriate accordian
-//TODO: Convert Time to 12HR format
+
 $("#saveCreatedSession").on(`click`, async ()=>{
     //sets day, time  
-    let day = parseInt($("#sessionDay").val()); 
+    const day = parseInt($("#sessionDay").val()); 
     let startTime = $("#sessionStart").val();
     let endTime = $("#sessionEnd").val();
-    let sessionTime = startTime + " - " + endTime;
+    const title = $("#createSessionTitleInput").val()
+    const description = $("#createSessionDescriptionInput").val()
+
+    console.log(startTime)
+    console.log(endTime)
+
+    // Set some arbitrary start date, the day does not matter only the time does and so we do this to get the time helper functions
+    startTime = new Date(`1970-01-01T${startTime}Z`).toLocaleTimeString('en-US', { timeZone:'UTC',hour12:true,hour:'numeric',minute:'numeric'} )
+    endTime = new Date(`1970-01-01T${endTime}Z`).toLocaleTimeString('en-US', { timeZone:'UTC',hour12:true,hour:'numeric',minute:'numeric'} )
     
-    let newSession = {
-        "time": sessionTime,
-        "DayId": day,
-        "description": "TEMP DESC"
+    const newSession = {
+        DayId: day,
+        start: startTime,
+        end: endTime,
+        description,
+        title
     }
 
     const sessionResp = await createSession(newSession);

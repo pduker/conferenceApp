@@ -104,7 +104,11 @@ const Sessions = db.define('Sessions', {
     type: DataTypes.STRING,
     allowNull: false
   },
-  time: {
+  start: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  end: {
     type: DataTypes.STRING,
     allowNull: false
   },

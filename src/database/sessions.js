@@ -30,10 +30,11 @@ async function getAllSessionsByDay (weekday) {
   return day
 }
 
-async function createSession (title, time, description, DayId) {
+async function createSession (title, start, end, description, DayId) {
   const session = await Sessions.create({
     title, 
-    time,
+    start,
+    end,
     description,
     DayId
   })
@@ -62,9 +63,9 @@ async function duplicateSession (sessionId) {
     throw new Error('Could not find a session that matched that ID')
   }
 
-  const { DayId, description, title, time } = session
+  const { DayId, description, title, start, end } = session
 
-  const newSession = await createSession(title, time, description, DayId)
+  const newSession = await createSession(title, start, end, description, DayId)
 
   return newSession
 }
