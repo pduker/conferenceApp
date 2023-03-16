@@ -57,31 +57,40 @@
               <p class="text-muted">Assign this new session to a specific day and time range.</p>
               <hr/>
 
-              <div class="row p-2">
-                <div class="col">
-                  <div class="input-group p-2">
-                    <span class="input-group-text">Day</span>
-                    <select class="form-select" aria-label="Select Day" id="sessionDay">
-                      <option selected>Select Day</option>
-                      <option value=1>Day 1</option>
-                      <option value=2>Day 2</option>
-                      <option value=3>Day 3</option>
-                      <option value=4>Day 4</option>
-                      <option value=5>Day 5</option>
-                    </select>
-                  </div>
-                </div>
+              <div class="input-group p-2">
+                <span class="input-group-text">Day</span>
+                <select class="form-select" aria-label="Select Day" id="sessionDay">
+                  <option selected>Select Day</option>
+                  <option value=1>Day 1</option>
+                  <option value=2>Day 2</option>
+                  <option value=3>Day 3</option>
+                  <option value=4>Day 4</option>
+                  <option value=5>Day 5</option>
+                </select>
               </div>
-              <div class="row mt-3 p-2">
+
+              <div class="input-group p-2">
+                <span class="input-group-text">Title</span>
+                <input type="text" class="form-control" placeholder="Session title"
+                id="createSessionTitleInput">
+              </div>
+
+              <div class="input-group p-2">
+                <span class="input-group-text">Description</span>
+                <textarea class="form-control" placeholder="..." rows="2"
+                id="createSessionDescriptionInput"></textarea>
+              </div>
+
+              <div class="row">
                 <div class="col-4">
                   <div class="input-group p-2">
-                    <span class="input-group-text">Start</span>
+                    <span class="input-group-text">Start Time</span>
                     <input style="box-shadow: 0" id="sessionStart" type="time">
                   </div>
                 </div>
                 <div class="col-4">
                   <div class="input-group p-2">
-                    <span class="input-group-text">End</span>
+                    <span class="input-group-text">End Time</span>
                     <input id="sessionEnd" type="time">
                   </div>
                 </div>

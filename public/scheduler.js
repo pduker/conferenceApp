@@ -121,7 +121,7 @@ function populateAccordionData() {
 
                 accordionHTML += `<div class="col-3 card session-time">
                 <div class="card-body">
-                <h5 class="card-title">${session.time}</h5>
+                <h5 class="card-title">${session.title} | ${session.time}</h5>
                 <p class="text-muted mb-0">${shortenedDescr}</p>
                 <details class="papers-details">
                     <summary>Papers</summary>
@@ -160,8 +160,8 @@ function attachEditModalListeners() {
                 $('#sessionTitleInput').removeClass('is-invalid')
                 $('#sessionDescriptionInput').removeClass('is-invalid')
 
-                $("#editSessionModalTitle").html(day.weekday + " " + session.time)
-                $("#sessionTitleInput").val(session.time)
+                $("#editSessionModalTitle").html(day.weekday + " " + session.title)
+                $("#sessionTitleInput").val(session.title)
                 $("#sessionDescriptionInput").val(session.description)
 
                 selectedPapers = []
@@ -211,7 +211,7 @@ async function saveSession() {
             await unassignPaperFromSession(paper)
         }
 
-        await updateSessionDetails(title, description)
+        await updateSessionDetails(title, time, description)
 
         currentlySelectedSession.Papers = currentlySelectedSessionPapers
 
@@ -234,11 +234,12 @@ function renderAuthors(authors) {
     return authorString
 }
 
-async function updateSessionDetails(title, description) {
+async function updateSessionDetails(title, time, description) {
 
     const body = {
         id: currentlySelectedSession.id,
-        time: title,
+        time,
+        title,
         description
     }
 
@@ -252,8 +253,9 @@ async function updateSessionDetails(title, description) {
 
     if (res.ok) {
         // Will update because it's pass by reference
-        currentlySelectedSession.time = title,
-            currentlySelectedSession.description = description
+        currentlySelectedSession.title = title
+        currentlySelectedSession.time = time
+        currentlySelectedSession.description = description
     } else {
         console.error("Failed to update session")
         throw new Error('Failed to update session details')
