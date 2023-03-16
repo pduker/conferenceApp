@@ -1,6 +1,6 @@
 const express = require('express')
 const { Sessions, Papers, Days } = require('../database/db')
-const { getAllSessions, createSession, updateSession, deleteSession } = require('../database/sessions')
+const { getAllSessions, createSession, updateSession, deleteSession, duplicateSession } = require('../database/sessions')
 
 const router = express.Router()
 
@@ -40,6 +40,20 @@ router.post('/', async function (req, res) {
     const session = await createSession(time, description, DayId)
 
     res.json(session)
+  } catch (err) {
+    console.error(err)
+    res.sendStatus(500)
+  }
+})
+
+router.post('/:id', async function (req, res) {
+  try {
+
+    const { id } = req.params
+
+    const newSession = await duplicateSession(id)
+
+    res.json(newSession)
   } catch (err) {
     console.error(err)
     res.sendStatus(500)
