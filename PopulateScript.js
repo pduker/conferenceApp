@@ -1,4 +1,4 @@
-const data = [
+const timeSlots = [
         {"time": "7:15am - 8:45am"},
         {"time": "9:00am - 10:30am"},
         {"time": "10:45am - 12:15pm"},
@@ -74,7 +74,7 @@ async function PopulateDatabase(){
         currentDay++;
         currentDay = currentDay%7;
         let dayID = await createDay(newDay);
-        for (const sessions of Object.entries(data)){
+        for (const sessions of Object.entries(timeSlots)){
             let tempTime = sessions.time.split('-');
             let newSession = {
                 "title": tempDay,
