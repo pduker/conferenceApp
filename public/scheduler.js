@@ -32,13 +32,11 @@ function convertTo12HourString (time) {
 
 function convertTo24HourString (time) {
     const splitTime = time.split(" ") // get the 10:00 and PM of "10:00 PM"
+    const hoursAndMinutes = splitTime[0].split(":") // get the 10 and 00 of 10:00
+    const hours = parseInt(hoursAndMinutes[0])
+    const minutes = hoursAndMinutes[1]
 
     if (splitTime[1] === "PM") {
-        const hoursAndMinutes = splitTime[0].split(":") // get the 10 and 00 of 10:00
-
-        let hours = parseInt(hoursAndMinutes[0])
-        let minutes = hoursAndMinutes[1]
-
         let final
 
         if (hours === 12) {
@@ -49,8 +47,7 @@ function convertTo24HourString (time) {
         
         return final
     } else {
-        console.log(splitTime[0])
-        return splitTime[0]
+        return `0${hours}:${minutes}`
     }
 }
 
@@ -77,7 +74,7 @@ async function createSession () {
         }
     })
     const newSession = await res.json();
-    
+
     newSession.Papers = []
 
     schedule[day - 1]['Sessions'].push(newSession);
