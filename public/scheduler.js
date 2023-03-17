@@ -158,6 +158,8 @@ function populateAccordionData() {
                 }
             }
 
+            accordionHTML += `<button class='btn btn-primary' id='edit-day-${day.id}' data-bs-toggle="modal" data-bs-target="#editDayModal">Edit Schedule Day</button>`
+
             accordionHTML += `</div>
                     </div>
                 </div>
@@ -171,6 +173,16 @@ function populateAccordionData() {
 
 
     attachEditModalListeners()
+    attachEditDayListeners()
+}
+
+function attachEditDayListeners(){
+    for (const day of schedule) {
+        $(`#edit-day-${day.id}`).on("click", function () {
+            $('#editDayWeekday').val(day.weekday)
+            $('#editDayDateInput').val(day.date)
+        });
+    }
 }
 
 function attachEditModalListeners() {
@@ -217,20 +229,20 @@ function validateEditSessionModal() {
     return isNotWhiteSpace(description) && isNotWhiteSpace(title)
 }
 
-function validateCreateDayModal() {
-    const weekday = $("#createDayWeekday").val()
-    const date = $("#createDayDateInput").val()
+function validateDayModal(type) {
+    const weekday = $(`#${type}DayWeekday`).val()
+    const date = $(`#${type}DayDateInput`).val()
 
     if (!isNotWhiteSpace(weekday) || weekday === 'Select Weekday'){
-        $('#createDayWeekday').addClass('is-invalid')
+        $(`#${type}DayWeekday`).addClass('is-invalid')
     } else {
-        $('#createDayWeekday').removeClass('is-invalid')
+        $(`#${type}DayWeekday`).removeClass('is-invalid')
     }
 
     if (!isNotWhiteSpace(date)){
-        $('#createDayDateInput').addClass('is-invalid')
+        $(`#${type}DayDateInput`).addClass('is-invalid')
     } else {
-        $('#createDayDateInput').removeClass('is-invalid')
+        $(`#${type}DayDateInput`).removeClass('is-invalid')
     }
 
     return (isNotWhiteSpace(weekday) && weekday !== 'Select Weekday') && isNotWhiteSpace(date)
@@ -272,7 +284,7 @@ async function createSession () {
 
 async function createDay () {
 
-    if (!validateCreateDayModal()) return;
+    if (!validateDayModal('create')) return;
 
     const weekday = $("#createDayWeekday").val();
     const date = $("#createDayDateInput").val();
@@ -321,6 +333,39 @@ async function saveSession() {
 
         populateAccordionData()
         $("#editSessionModal").modal('hide');
+    } catch (err) {
+        console.error(err)
+    }
+}
+
+async function saveDay() {
+    try {
+
+        if (!validateDayModal('edit')) return;
+
+        // The below code is commented out because there currently is no PUT endpoint for editing a day
+
+        // const weekday = $("#editDayWeekday").val();
+        // const date = $("#editDayDateInput").val();
+
+        // // We might need to add a day id to this body
+        // const body = {
+        //     date,
+        //     weekday
+        // };
+
+        // const res = await fetch('api/days', {
+        //     method: 'PUT',
+        //     body: JSON.stringify(body),
+        //     headers: {
+        //         "Content-Type": 'application/json'
+        //     }
+        // });
+
+        // REMOVE THE DAY FROM THE SCHEDULE OBJECT
+
+        populateAccordionData()
+        $("#editDayModal").modal('hide');
     } catch (err) {
         console.error(err)
     }
@@ -554,6 +599,10 @@ $("#searchSessionInput").on("input", function (event) {
     let filteredPapers = allPapers.filter((a) => { return a.title.includes(text) })
     renderSelectablePapers(filteredPapers)
 });
+
+$("#saveDay").on("click", function () {
+    saveDay()
+})
 
 $("#saveSession").on("click", function () {
     saveSession()
