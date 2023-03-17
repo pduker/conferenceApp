@@ -9,7 +9,7 @@ const timeSlots = [
 ];
 
 async function createSession(session) {
-    let res = await fetch('api/sessions', {
+    let res = await fetch('http://localhost:8082/api/sessions', {
         method: 'POST',
         body: JSON.stringify(session),
         headers: {
@@ -21,7 +21,7 @@ async function createSession(session) {
 }
 
 async function createDay(day){
-    let res = await fetch('api/days', {
+    let res = await fetch('http://localhost:8082/api/days', {
         method: 'POST',
         body: JSON.stringify(day),
         headers: {
@@ -64,7 +64,7 @@ async function PopulateDatabase(){
     let currentDay = new Date().getDay();
 
     for (let temp = 0; temp < 5; temp++) {
-        let tempDay = determineDay(currentDay);
+         let tempDay = determineDay(currentDay);
         let tempDate = currentDate[1] + '-' + currentDate[2] + '-' + currentDate[0];
         let newDay = {
             "weekday": tempDay,
@@ -72,18 +72,21 @@ async function PopulateDatabase(){
         }
         currentDate[2]++;
         currentDay++;
-        currentDay = currentDay%7;
-        let dayID = await createDay(newDay);
-        for (const sessions of Object.entries(timeSlots)){
+        currentDay = currentDay%7; 
+        console.log("terraria")
+        let dayID = await createDay(newDay); 
+        for (const sessions of timeSlots){
             let tempSessionTime = sessions.time.split('-');
             let tempNewSession = {
-                "title": tempDay,
+                "DayId": dayID.ID,
                 "start":tempSessionTime[0],
                 "end": tempSessionTime[1],
                 "description": "TEMP DESC",
-                "DayId": dayID.id
+                "title": tempDay
             }
             await createSession(tempNewSession);
         }
     }
 }
+
+PopulateDatabase();
