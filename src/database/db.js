@@ -100,7 +100,15 @@ const Days = db.define('Days', {
 })
 
 const Sessions = db.define('Sessions', {
-  time: {
+  title: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  start: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  end: {
     type: DataTypes.STRING,
     allowNull: false
   },
