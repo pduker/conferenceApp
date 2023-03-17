@@ -71,6 +71,8 @@ async function getAllPapers() {
 function populateAccordionData() {
 
     let accordionHTML = '';
+    // sort schedule days by date
+    schedule = schedule?.sort((a, b) => new Date(a.date) < new Date(b.date) ? -1 : 1)
 
     // Show warning if there are no days scheduled
     if (schedule.length === 0) {
