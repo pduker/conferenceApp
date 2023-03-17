@@ -1,120 +1,12 @@
-const data = {
-    "Monday": [
-        {
-            "time": "7:15am - 8:45am"
-        },
-        {
-            "time": "9:00am - 10:30am"
-        },
-        {
-            "time": "10:45am - 12:15pm"
-        },
-        {
-            "time": "12:30pm - 2:00pm"
-        },
-        {
-            "time": "2:15pm - 3:45pm"
-        },
-        {
-            "time": "4:00pm - 5:30pm"
-        },
-        {
-            "time": "7:30pm - 9:00pm"
-        }
-    ],
-    "Tuesday": [
-        {
-            "time": "7:15am - 8:45am"
-        },
-        {
-            "time": "9:00am - 10:30am"
-        },
-        {
-            "time": "10:45am - 12:15pm"
-        },
-        {
-            "time": "12:30pm - 2:00pm"
-        },
-        {
-            "time": "2:15pm - 3:45pm"
-        },
-        {
-            "time": "4:00pm - 5:30pm"
-        },
-        {
-            "time": "7:30pm - 9:00pm"
-        }
-    ],
-    "Wednesday": [
-        {
-            "time": "7:15am - 8:45am"
-        },
-        {
-            "time": "9:00am - 10:30am"
-        },
-        {
-            "time": "10:45am - 12:15pm"
-        },
-        {
-            "time": "12:30pm - 2:00pm"
-        },
-        {
-            "time": "2:15pm - 3:45pm"
-        },
-        {
-            "time": "4:00pm - 5:30pm"
-        },
-        {
-            "time": "7:30pm - 9:00pm"
-        }
-    ],
-    "Thursday": [
-        {
-            "time": "7:15am - 8:45am"
-        },
-        {
-            "time": "9:00am - 10:30am"
-        },
-        {
-            "time": "10:45am - 12:15pm"
-        },
-        {
-            "time": "12:30pm - 2:00pm"
-        },
-        {
-            "time": "2:15pm - 3:45pm"
-        },
-        {
-            "time": "4:00pm - 5:30pm"
-        },
-        {
-            "time": "7:30pm - 9:00pm"
-        }
-    ],
-    "Friday": [
-        {
-            "time": "7:15am - 8:45am"
-        },
-        {
-            "time": "9:00am - 10:30am"
-        },
-        {
-            "time": "10:45am - 12:15pm"
-        },
-        {
-            "time": "12:30pm - 2:00pm"
-        },
-        {
-            "time": "2:15pm - 3:45pm"
-        },
-        {
-            "time": "4:00pm - 5:30pm"
-        },
-        {
-            "time": "7:30pm - 9:00pm"
-        }
-    ]
-};
+const data = [
+        {"time": "7:15am - 8:45am"},
+        {"time": "9:00am - 10:30am"},
+        {"time": "10:45am - 12:15pm"},
+        {"time": "12:30pm - 2:00pm"},
+        {"time": "2:15pm - 3:45pm"},
+        {"time": "4:00pm - 5:30pm"},
+        {"time": "7:30pm - 9:00pm"}
+];
 
 async function createSession(session) {
     let res = await fetch('api/sessions', {
@@ -171,9 +63,9 @@ async function PopulateDatabase(){
     let currentDate = new Date().toJSON().slice(0, 10).split('-');
     let currentDay = new Date().getDay();
 
-    for (const [sessions] of Object.entries(data)) {
+    for (let temp = 0; temp < 5; temp++) {
         let tempDay = determineDay(currentDay);
-        let tempDate = currentDate[1] + '-' + currentDate[2] + '-' + currentDate[3];
+        let tempDate = currentDate[1] + '-' + currentDate[2] + '-' + currentDate[0];
         let newDay = {
             "weekday": tempDay,
             "date" : tempDate
@@ -182,8 +74,8 @@ async function PopulateDatabase(){
         currentDay++;
         currentDay = currentDay%7;
         let dayID = await createDay(newDay);
-        for (let session of sessions){
-            let tempTime = session.time.split('-');
+        for (const sessions of Object.entries(data)){
+            let tempTime = sessions.time.split('-');
             let newSession = {
                 "title": tempDay,
                 "start":tempTime[0],
