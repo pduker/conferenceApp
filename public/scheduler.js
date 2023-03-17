@@ -51,36 +51,6 @@ function convertTo24HourString (time) {
     }
 }
 
-async function createSession () {
-    const day = parseInt($("#sessionDay").val()); 
-    const startTime = convertTo12HourString($("#sessionStart").val())
-    const endTime = convertTo12HourString($("#sessionEnd").val())
-    const title = $("#createSessionTitleInput").val()
-    const description = $("#createSessionDescriptionInput").val()
-    
-    const body = {
-        DayId: day,
-        start: startTime,
-        end: endTime,
-        description,
-        title
-    }
-
-    const res = await fetch('api/sessions', {
-        method: 'POST',
-        body: JSON.stringify(body),
-        headers: {
-            "Content-Type": 'application/json'
-        }
-    })
-    const newSession = await res.json();
-
-    newSession.Papers = []
-
-    schedule[day - 1]['Sessions'].push(newSession);
-    populateAccordionData();
-}
-
 async function getData() {
     schedule = await getSchedule()
     allPapers = await getAllPapers()
@@ -223,6 +193,40 @@ function validateSessionModal() {
 
     return isNotWhiteSpace(description) && isNotWhiteSpace(title)
 }
+
+async function createSession () {
+    const rawDay = $("#sessionDay").val(); 
+    const startTime = convertTo12HourString($("#sessionStart").val())
+    const endTime = convertTo12HourString($("#sessionEnd").val())
+    const title = $("#createSessionTitleInput").val()
+    const description = $("#createSessionDescriptionInput").val()
+
+    const dayIdAndIndex = rawDay.split("-")
+    
+    const body = {
+        DayId: parseInt(dayIdAndIndex[0]),
+        start: startTime,
+        end: endTime,
+        description,
+        title
+    }
+
+    const res = await fetch('api/sessions', {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+            "Content-Type": 'application/json'
+        }
+    })
+    const newSession = await res.json();
+
+    newSession.Papers = []
+
+    schedule[dayIdAndIndex[1]]['Sessions'].push(newSession);
+
+    populateAccordionData();
+}
+
 
 async function saveSession() {
     try {
@@ -384,6 +388,17 @@ function removeSelectedPaperFromList(paper) {
     updateEditSessionModal(currentlySelectedSessionPapers)
 }
 
+function updateCreateSessionModal() {
+    let optionsHTML = '<option selected>Select Day</option>'
+
+    for (let i = 0; i < schedule.length; i++) {
+        const day = schedule[i]
+        optionsHTML += `<option value="${day.id}-${i}">${day.weekday}</option>`
+    }
+
+    $("#sessionDay").html(optionsHTML)
+}
+
 function updateEditSessionModal(papers) {
     let tempHTML = '';
 
@@ -464,6 +479,7 @@ $("#saveSession").on("click", function () {
 })
 
 getData().then(() => {
+    updateCreateSessionModal()
     populateAccordionData()
 });
 
