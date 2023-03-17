@@ -108,31 +108,52 @@ function populateAccordionData() {
 
                 <div class="row">`;
 
-            for (let session of day['Sessions']) {
-
-                let shortenedDescr = session.description
-
-                if (shortenedDescr.length >= 40) {
-                    shortenedDescr = shortenedDescr.substring(0, 40) + '...'
-                }
-
-                accordionHTML += `<div class="col-3 card session-time">
-                <div class="card-body">
-                <h5 class="card-title">${session.title} | ${session.start} - ${session.end}</h5>
-                <p class="text-muted mb-0">${shortenedDescr}</p>
-                <details class="papers-details">
-                    <summary>Papers</summary>
-                    <ul class="papers" id="materials-list-preview">`
-                if (session.Papers) {
-                    for (let i = 0; i < session.Papers.length; i++) {
-                        accordionHTML += `<li>${session.Papers[i].title}</li>`
-                    }
-                }
-                accordionHTML += `</ul>
-                    </details>
-                    <button class="btn btn-primary test" id="edit-session-${session.id}" data-bs-toggle="modal" data-bs-target="#editSessionModal">Edit Session</button>
+            // Show warning if there are no sessions scheduled
+            if (day['Sessions']?.length === 0){
+                accordionHTML += `
+                <div class='row'>
+                    <div class='col-2'></div>
+                    <div class='col-8'>
+                        <div class="alert alert-warning" role="alert">
+                            <div class="row d-flex">
+                                <div class="col-2 d-flex justify-content-center align-items-center">
+                                    <i class="fa-solid fa-triangle-exclamation fa-3x"></i>
+                                </div>
+                                <div class="col-10 d-flex justify-content-start align-items-center">
+                                    No sessions appear to have been created for this day yet. Please create some.
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                    <div class='col-2'></div>
                 </div>`
+            } else {
+                for (let session of day['Sessions']) {
+
+                    let shortenedDescr = session.description
+
+                    if (shortenedDescr.length >= 40) {
+                        shortenedDescr = shortenedDescr.substring(0, 40) + '...'
+                    }
+
+                    accordionHTML += `<div class="col-3 card session-time">
+                    <div class="card-body">
+                    <h5 class="card-title">${session.title} | ${session.start} - ${session.end}</h5>
+                    <p class="text-muted mb-0">${shortenedDescr}</p>
+                    <details class="papers-details">
+                        <summary>Papers</summary>
+                        <ul class="papers" id="materials-list-preview">`
+                    if (session.Papers) {
+                        for (let i = 0; i < session.Papers.length; i++) {
+                            accordionHTML += `<li>${session.Papers[i].title}</li>`
+                        }
+                    }
+                    accordionHTML += `</ul>
+                        </details>
+                        <button class="btn btn-primary test" id="edit-session-${session.id}" data-bs-toggle="modal" data-bs-target="#editSessionModal">Edit Session</button>
+                        </div>
+                    </div>`
+                }
             }
 
             accordionHTML += `</div>
@@ -227,6 +248,30 @@ async function createSession () {
     populateAccordionData();
 }
 
+
+async function createDay () {
+    const weekday = $("#createDayWeekday").val();
+    const date = $("#createDayDateInput").val();
+
+    const body = {
+        date,
+        weekday
+    };
+
+    const res = await fetch('api/days', {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+            "Content-Type": 'application/json'
+        }
+    });
+    const newDay = await res.json();
+
+    newDay.Sessions = [];
+    schedule.push(newDay);
+    populateAccordionData();
+}
+
 async function saveSession() {
     try {
 
@@ -254,29 +299,6 @@ async function saveSession() {
     } catch (err) {
         console.error(err)
     }
-}
-
-async function createDay () {
-    const weekday = $("#createDayWeekday").val();
-    const date = $("#createDayDateInput").val();
-   
-    const body = {
-        date,
-        weekday
-    };
-
-    const res = await fetch('api/days', {
-        method: 'POST',
-        body: JSON.stringify(body),
-        headers: {
-            "Content-Type": 'application/json'
-        }
-    });
-    const newDay = await res.json();
-
-    newDay.Sessions = [];
-    schedule.push(newDay);
-    populateAccordionData();
 }
 
 function renderAuthors(authors) {
