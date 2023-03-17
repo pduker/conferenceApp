@@ -150,7 +150,7 @@ function determineDay(Tempday){
           day = "Monday";
           break;
         case 2:
-           day = "Tuesday";
+          day = "Tuesday";
           break;
         case 3:
           day = "Wednesday";
@@ -183,8 +183,11 @@ async function PopulateDatabase(){
         currentDay = currentDay%7;
         let dayID = await createDay(newDay);
         for (let session of sessions){
+            let tempTime = session.time.split('-');
             let newSession = {
-                "time": session.time,
+                "title": tempDay,
+                "start":tempTime[0],
+                "end": tempTime[1],
                 "description": "TEMP DESC",
                 "DayId": dayID.id
             }
