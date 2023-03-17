@@ -25,33 +25,30 @@ function isNotUndefinedOrNull(text) {
     return text !== undefined && text !== null
 }
 
-function convertTime(time) {
-    let splitTime = time.value.split(':'), hours, minutes, meridian;
-    hours = splitTime[0];
-    minutes = splitTime[1];
-    if (hours > 12) {
-        meridian = 'pm';
-        hours -= 12;
-    }
-    else if (hours == 0 || hours < 12) {
-        meridian = 'am';
-    }
-    else {
-        meridian = 'pm';
-    }
-    return hours + ':' + minutes + ' ' + meridian;
+function convertTo12HourString (time) {
+    // Set some arbitrary start date, the day does not matter only the time does and so we do this to get the time helper functions
+    return new Date(`1970-01-01T${time}Z`).toLocaleTimeString('en-US', { timeZone:'UTC',hour12:true,hour:'numeric',minute:'numeric'} )
 }
 
-async function createSession(session) {
-    let res = await fetch('api/sessions', {
-        method: 'POST',
-        body: JSON.stringify(session),
-        headers: {
-            "Content-Type": 'application/json'
+function convertTo24HourString (time) {
+    const splitTime = time.split(" ") // get the 10:00 and PM of "10:00 PM"
+    const hoursAndMinutes = splitTime[0].split(":") // get the 10 and 00 of 10:00
+    const hours = parseInt(hoursAndMinutes[0]) // convert hours to a number (for offsets)
+    const minutes = hoursAndMinutes[1] // get the minutes (still a string since we don't need to offset this)
+
+    if (splitTime[1] === "PM") {
+        let final
+
+        if (hours === 12) {
+            final = `${hours}:${minutes}`
+        } else {
+            final = `${hours + 12}:${minutes}`
         }
-    });
-    const data = await res.json();
-    return data;
+        
+        return final
+    } else {
+        return `0${hours}:${minutes}` // Needs to be in full 24HR format still so we have a leading 0
+    }
 }
 
 async function getData() {
@@ -74,54 +71,77 @@ async function getAllPapers() {
 function populateAccordionData() {
 
     let accordionHTML = '';
-    for (const day of schedule) {
-        accordionHTML += `<div class="accordion-item collapsed">
-        <h2 class="accordion-header" id="heading${day['weekday']}">
-          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${day['weekday']}" id="collapseButton${day['weekday']}"
-            aria-expanded="true" aria-controls="collapse${day['weekday']}">
-            ${day['weekday']}
-          </button>
-        </h2>
 
-        <div id="collapse${day['weekday']}" class="accordion-collapse collapse" aria-labelledby="heading${day['weekday']}"
-          data-bs-parent="#accordionMain">
-          <div class="accordion-body">
-
-            <div class="row">`;
-
-        for (let session of day['Sessions']) {
-
-            let shortenedDescr = session.description
-
-            if (shortenedDescr.length >= 40) {
-                shortenedDescr = shortenedDescr.substring(0, 40) + '...'
-            }
-
-            accordionHTML += `<div class="col-3 card session-time">
-            <div class="card-body">
-              <h5 class="card-title">${session.time}</h5>
-              <p class="text-muted mb-0">${shortenedDescr}</p>
-              <details class="papers-details">
-                <summary>Papers</summary>
-                <ul class="papers" id="materials-list-preview">`
-            if (session.Papers) {
-                for (let i = 0; i < session.Papers.length; i++) {
-                    accordionHTML += `<li>${session.Papers[i].title}</li>`
-                }
-            }
-            accordionHTML += `</ul>
-                </details>
-                <button class="btn btn-primary test" id="edit-session-${session.id}" data-bs-toggle="modal" data-bs-target="#editSessionModal">Edit Session</button>
-                </div>
-            </div>`
-        }
-
-        accordionHTML += `</div>
+    // Show warning if there are no days scheduled
+    if (schedule.length === 0) {
+        accordionHTML += `
+        <div class='row'>
+            <div class='col-2'></div>
+            <div class='col-8'>
+                <div class="alert alert-warning" role="alert">
+                    <div class="row d-flex">
+                        <div class="col-2 d-flex justify-content-center align-items-center">
+                            <i class="fa-solid fa-triangle-exclamation fa-3x"></i>
+                        </div>
+                        <div class="col-10 d-flex justify-content-start align-items-center">
+                            No days appear to have been created yet. Please create some to get started scheduling!
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>`;
+            <div class='col-2'></div>
+        </div>
+        `
+    } else {
+        for (const day of schedule) {
+            accordionHTML += `<div class="accordion-item collapsed">
+            <h2 class="accordion-header" id="heading${day['weekday']}">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${day['weekday']}" id="collapseButton${day['weekday']}"
+                aria-expanded="true" aria-controls="collapse${day['weekday']}">
+                ${day['weekday']}
+            </button>
+            </h2>
 
-    };
+            <div id="collapse${day['weekday']}" class="accordion-collapse collapse" aria-labelledby="heading${day['weekday']}"
+            data-bs-parent="#accordionMain">
+            <div class="accordion-body">
+
+                <div class="row">`;
+
+            for (let session of day['Sessions']) {
+
+                let shortenedDescr = session.description
+
+                if (shortenedDescr.length >= 40) {
+                    shortenedDescr = shortenedDescr.substring(0, 40) + '...'
+                }
+
+                accordionHTML += `<div class="col-3 card session-time">
+                <div class="card-body">
+                <h5 class="card-title">${session.title} | ${session.start} - ${session.end}</h5>
+                <p class="text-muted mb-0">${shortenedDescr}</p>
+                <details class="papers-details">
+                    <summary>Papers</summary>
+                    <ul class="papers" id="materials-list-preview">`
+                if (session.Papers) {
+                    for (let i = 0; i < session.Papers.length; i++) {
+                        accordionHTML += `<li>${session.Papers[i].title}</li>`
+                    }
+                }
+                accordionHTML += `</ul>
+                    </details>
+                    <button class="btn btn-primary test" id="edit-session-${session.id}" data-bs-toggle="modal" data-bs-target="#editSessionModal">Edit Session</button>
+                    </div>
+                </div>`
+            }
+
+            accordionHTML += `</div>
+                    </div>
+                </div>
+            </div>`;
+
+        };
+    }
 
     $('#accordionMain').html(accordionHTML);
     $('#collapseButtonMonday').trigger('click');
@@ -137,9 +157,11 @@ function attachEditModalListeners() {
                 $('#sessionTitleInput').removeClass('is-invalid')
                 $('#sessionDescriptionInput').removeClass('is-invalid')
 
-                $("#editSessionModalTitle").html(day.weekday + " " + session.time)
-                $("#sessionTitleInput").val(session.time)
+                $("#editSessionModalTitle").html(day.weekday + " " + session.title)
+                $("#sessionTitleInput").val(session.title)
                 $("#sessionDescriptionInput").val(session.description)
+                $("#sessionEditStartTimeInput").val(convertTo24HourString(session.start))
+                $("#sessionEditEndTimeInput").val(convertTo24HourString(session.end))
 
                 selectedPapers = []
                 removedPapers = []
@@ -172,6 +194,40 @@ function validateSessionModal() {
     return isNotWhiteSpace(description) && isNotWhiteSpace(title)
 }
 
+async function createSession () {
+    const rawDay = $("#sessionDay").val(); 
+    const startTime = convertTo12HourString($("#sessionStart").val())
+    const endTime = convertTo12HourString($("#sessionEnd").val())
+    const title = $("#createSessionTitleInput").val()
+    const description = $("#createSessionDescriptionInput").val()
+
+    const dayIdAndIndex = rawDay.split("-")
+    
+    const body = {
+        DayId: parseInt(dayIdAndIndex[0]),
+        start: startTime,
+        end: endTime,
+        description,
+        title
+    }
+
+    const res = await fetch('api/sessions', {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+            "Content-Type": 'application/json'
+        }
+    })
+    const newSession = await res.json();
+
+    newSession.Papers = []
+
+    schedule[dayIdAndIndex[1]]['Sessions'].push(newSession);
+
+    populateAccordionData();
+}
+
+
 async function saveSession() {
     try {
 
@@ -179,6 +235,8 @@ async function saveSession() {
 
         const description = $('#sessionDescriptionInput').val()
         const title = $('#sessionTitleInput').val()
+        const start = convertTo12HourString($('#sessionEditStartTimeInput').val())
+        const end = convertTo12HourString($('#sessionEditEndTimeInput').val())
 
         for (const paper of selectedPapers) {
             await assignPaperToSession(paper)
@@ -188,7 +246,7 @@ async function saveSession() {
             await unassignPaperFromSession(paper)
         }
 
-        await updateSessionDetails(title, description)
+        await updateSessionDetails(title, start, end, description)
 
         currentlySelectedSession.Papers = currentlySelectedSessionPapers
 
@@ -211,11 +269,13 @@ function renderAuthors(authors) {
     return authorString
 }
 
-async function updateSessionDetails(title, description) {
+async function updateSessionDetails(title, start, end, description) {
 
     const body = {
         id: currentlySelectedSession.id,
-        time: title,
+        start,
+        end,
+        title,
         description
     }
 
@@ -229,8 +289,10 @@ async function updateSessionDetails(title, description) {
 
     if (res.ok) {
         // Will update because it's pass by reference
-        currentlySelectedSession.time = title,
-            currentlySelectedSession.description = description
+        currentlySelectedSession.title = title
+        currentlySelectedSession.start = start
+        currentlySelectedSession.end = end
+        currentlySelectedSession.description = description
     } else {
         console.error("Failed to update session")
         throw new Error('Failed to update session details')
@@ -326,6 +388,17 @@ function removeSelectedPaperFromList(paper) {
     updateEditSessionModal(currentlySelectedSessionPapers)
 }
 
+function updateCreateSessionModal() {
+    let optionsHTML = '<option selected>Select Day</option>'
+
+    for (let i = 0; i < schedule.length; i++) {
+        const day = schedule[i]
+        optionsHTML += `<option value="${day.id}-${i}">${day.weekday}</option>`
+    }
+
+    $("#sessionDay").html(optionsHTML)
+}
+
 function updateEditSessionModal(papers) {
     let tempHTML = '';
 
@@ -390,26 +463,10 @@ function updateEditSessionModal(papers) {
 
 }
 
-//Adds session to appropriate accordian
-//TODO: Convert Time to 12HR format
-$("#saveCreatedSession").on(`click`, async ()=>{
-    //sets day, time  
-    let day = parseInt($("#sessionDay").val()); 
-    let startTime = $("#sessionStart").val();
-    let endTime = $("#sessionEnd").val();
-    let sessionTime = startTime + " - " + endTime;
-    
-    let newSession = {
-        "time": sessionTime,
-        "DayId": day,
-        "description": "TEMP DESC"
-    }
 
-    const sessionResp = await createSession(newSession);
-
-    schedule[day - 1]['Sessions'].push(sessionResp);
-    populateAccordionData();
-});
+$("#saveCreatedSession").on(`click`, function () {
+    createSession()
+})
 
 $("#searchSessionInput").on("input", function (event) {
     let text = event.target.value
@@ -422,6 +479,7 @@ $("#saveSession").on("click", function () {
 })
 
 getData().then(() => {
+    updateCreateSessionModal()
     populateAccordionData()
 });
 
