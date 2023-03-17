@@ -116,33 +116,6 @@ const data = {
     ]
 };
 
-async function PopulateDatabase(){
-    let currentDate = new Date().toJSON().slice(0, 10).split('-');
-    let currentDay = new Date().getDay();
-
-    for (const [day, sessions] of Object.entries(data)) {
-        let tempDay = determineDay(currentDay);
-        let tempDate = currentDate[1] + '-' + currentDate[2] + '-' + currentDate[3];
-        let newDay = {
-            "weekday": tempDay,
-            "date" : tempDate
-        }
-        currentDate[2]++;
-        currentDay++;
-        currentDay = currentDay%7;
-        let dayID = await createDay(newDay);
-        for (let session of sessions){
-            let newSession = {
-                "time": session.time,
-                "description": "TEMP DESC",
-                "DayId": dayID
-            }
-        
-            await createSession(newSession);
-        }
-    }
-}
-
 async function createSession(session) {
     let res = await fetch('api/sessions', {
         method: 'POST',
@@ -192,4 +165,30 @@ function determineDay(Tempday){
           day = "Saturday";
     }
     return(day);
+}
+
+async function PopulateDatabase(){
+    let currentDate = new Date().toJSON().slice(0, 10).split('-');
+    let currentDay = new Date().getDay();
+
+    for (const [sessions] of Object.entries(data)) {
+        let tempDay = determineDay(currentDay);
+        let tempDate = currentDate[1] + '-' + currentDate[2] + '-' + currentDate[3];
+        let newDay = {
+            "weekday": tempDay,
+            "date" : tempDate
+        }
+        currentDate[2]++;
+        currentDay++;
+        currentDay = currentDay%7;
+        let dayID = await createDay(newDay);
+        for (let session of sessions){
+            let newSession = {
+                "time": session.time,
+                "description": "TEMP DESC",
+                "DayId": dayID.id
+            }
+            await createSession(newSession);
+        }
+    }
 }
