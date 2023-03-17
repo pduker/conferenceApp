@@ -49,20 +49,39 @@ function convertTo24HourString (time) {
         
         return final
     } else {
+        console.log(splitTime[0])
         return splitTime[0]
     }
 }
 
-async function createSession(session) {
-    let res = await fetch('api/sessions', {
+async function createSession () {
+    const day = parseInt($("#sessionDay").val()); 
+    const startTime = convertTo12HourString($("#sessionStart").val())
+    const endTime = convertTo12HourString($("#sessionEnd").val())
+    const title = $("#createSessionTitleInput").val()
+    const description = $("#createSessionDescriptionInput").val()
+    
+    const body = {
+        DayId: day,
+        start: startTime,
+        end: endTime,
+        description,
+        title
+    }
+
+    const res = await fetch('api/sessions', {
         method: 'POST',
-        body: JSON.stringify(session),
+        body: JSON.stringify(body),
         headers: {
             "Content-Type": 'application/json'
         }
-    });
-    const data = await res.json();
-    return data;
+    })
+    const newSession = await res.json();
+    
+    newSession.Papers = []
+
+    schedule[day - 1]['Sessions'].push(newSession);
+    populateAccordionData();
 }
 
 async function getData() {
@@ -433,27 +452,9 @@ function updateEditSessionModal(papers) {
 }
 
 
-$("#saveCreatedSession").on(`click`, async ()=>{
-    //sets day, time  
-    const day = parseInt($("#sessionDay").val()); 
-    const startTime = convertTo12HourString($("#sessionStart").val())
-    const endTime = convertTo12HourString($("#sessionEnd").val())
-    const title = $("#createSessionTitleInput").val()
-    const description = $("#createSessionDescriptionInput").val()
-    
-    const newSession = {
-        DayId: day,
-        start: startTime,
-        end: endTime,
-        description,
-        title
-    }
-
-    const sessionResp = await createSession(newSession);
-
-    schedule[day - 1]['Sessions'].push(sessionResp);
-    populateAccordionData();
-});
+$("#saveCreatedSession").on(`click`, function () {
+    createSession()
+})
 
 $("#searchSessionInput").on("input", function (event) {
     let text = event.target.value
