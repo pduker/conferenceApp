@@ -227,7 +227,6 @@ async function createSession () {
     populateAccordionData();
 }
 
-
 async function saveSession() {
     try {
 
@@ -255,6 +254,29 @@ async function saveSession() {
     } catch (err) {
         console.error(err)
     }
+}
+
+async function createDay () {
+    const weekday = $("#createDayWeekday").val();
+    const date = $("#createDayDateInput").val();
+   
+    const body = {
+        date,
+        weekday
+    };
+
+    const res = await fetch('api/days', {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+            "Content-Type": 'application/json'
+        }
+    });
+    const newDay = await res.json();
+
+    newDay.Sessions = [];
+    schedule.push(newDay);
+    populateAccordionData();
 }
 
 function renderAuthors(authors) {
@@ -466,6 +488,10 @@ function updateEditSessionModal(papers) {
 
 $("#saveCreatedSession").on(`click`, function () {
     createSession()
+})
+
+$("#saveCreatedDay").on(`click`, function () {
+    createDay()
 })
 
 $("#searchSessionInput").on("input", function (event) {
