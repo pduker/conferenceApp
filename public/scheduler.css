@@ -50,3 +50,11 @@
 .scheduler {
   padding: 20px;
 }
+
+input[type=time] {
+  border: 1px solid var(--bs-border-color-translucent);
+  border-top-right-radius: 0.375rem;
+  border-bottom-right-radius: 0.375rem;
+  color: #212529;
+  padding: 5px;
+}

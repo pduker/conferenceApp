@@ -33,8 +33,8 @@ function convertTo12HourString (time) {
 function convertTo24HourString (time) {
     const splitTime = time.split(" ") // get the 10:00 and PM of "10:00 PM"
     const hoursAndMinutes = splitTime[0].split(":") // get the 10 and 00 of 10:00
-    const hours = parseInt(hoursAndMinutes[0])
-    const minutes = hoursAndMinutes[1]
+    const hours = parseInt(hoursAndMinutes[0]) // convert hours to a number (for offsets)
+    const minutes = hoursAndMinutes[1] // get the minutes (still a string since we don't need to offset this)
 
     if (splitTime[1] === "PM") {
         let final
@@ -47,7 +47,7 @@ function convertTo24HourString (time) {
         
         return final
     } else {
-        return `0${hours}:${minutes}`
+        return `0${hours}:${minutes}` // Needs to be in full 24HR format still so we have a leading 0
     }
 }
 
