@@ -75,15 +75,15 @@ async function PopulateDatabase(){
         currentDay = currentDay%7;
         let dayID = await createDay(newDay);
         for (const sessions of Object.entries(timeSlots)){
-            let tempTime = sessions.time.split('-');
-            let newSession = {
+            let tempSessionTime = sessions.time.split('-');
+            let tempNewSession = {
                 "title": tempDay,
-                "start":tempTime[0],
-                "end": tempTime[1],
+                "start":tempSessionTime[0],
+                "end": tempSessionTime[1],
                 "description": "TEMP DESC",
                 "DayId": dayID.id
             }
-            await createSession(newSession);
+            await createSession(tempNewSession);
         }
     }
 }
