@@ -98,7 +98,7 @@ function populateAccordionData() {
             <h2 class="accordion-header" id="heading${day['weekday']}">
             <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${day['weekday']}" id="collapseButton${day['weekday']}"
                 aria-expanded="true" aria-controls="collapse${day['weekday']}">
-                ${day['weekday']}
+                ${day['weekday']} | ${day['date']}
             </button>
             </h2>
 
@@ -196,7 +196,7 @@ function attachEditModalListeners() {
     }
 }
 
-function validateSessionModal() {
+function validateEditSessionModal() {
     const description = $('#sessionDescriptionInput').val()
     const title = $('#sessionTitleInput').val()
 
@@ -213,6 +213,25 @@ function validateSessionModal() {
     }
 
     return isNotWhiteSpace(description) && isNotWhiteSpace(title)
+}
+
+function validateCreateDayModal() {
+    const weekday = $("#createDayWeekday").val()
+    const date = $("#createDayDateInput").val()
+
+    if (!isNotWhiteSpace(weekday) || weekday === 'Select Weekday'){
+        $('#createDayWeekday').addClass('is-invalid')
+    } else {
+        $('#createDayWeekday').removeClass('is-invalid')
+    }
+
+    if (!isNotWhiteSpace(date)){
+        $('#createDayDateInput').addClass('is-invalid')
+    } else {
+        $('#createDayDateInput').removeClass('is-invalid')
+    }
+
+    return (isNotWhiteSpace(weekday) && weekday !== 'Select Weekday') && isNotWhiteSpace(date)
 }
 
 async function createSession () {
@@ -250,6 +269,9 @@ async function createSession () {
 
 
 async function createDay () {
+
+    if (!validateCreateDayModal()) return;
+
     const weekday = $("#createDayWeekday").val();
     const date = $("#createDayDateInput").val();
 
@@ -270,12 +292,13 @@ async function createDay () {
     newDay.Sessions = [];
     schedule.push(newDay);
     populateAccordionData();
+    $("#createDayModal").modal('hide');
 }
 
 async function saveSession() {
     try {
 
-        if (!validateSessionModal()) return;
+        if (!validateEditSessionModal()) return;
 
         const description = $('#sessionDescriptionInput').val()
         const title = $('#sessionTitleInput').val()
@@ -514,6 +537,14 @@ $("#saveCreatedSession").on(`click`, function () {
 
 $("#saveCreatedDay").on(`click`, function () {
     createDay()
+})
+
+$('#createDayBtn').on('click', function() {
+    // Clear fields and remove invalid validation
+    $('#createDayWeekday')[0].selectedIndex = 0
+    $('#createDayDateInput').val('')
+    $('#createDayWeekday').removeClass('is-invalid')
+    $('#createDayDateInput').removeClass('is-invalid')
 })
 
 $("#searchSessionInput").on("input", function (event) {
