@@ -2,6 +2,9 @@ let numTimeslots = 0;
 let schedule;
 let allPapers;
 
+
+// Reference to the actual currently selected day (WRITING TO THIS IS REFLECTED AS THE DATABASE RECORD)
+let currentlySelectedDay = {}
 // Reference to the actual currently selected session (WRITING TO THIS IS REFLECTED AS THE DATABASE RECORD)
 let currentlySelectedSession = {}
 // A shallow copy of the session papers to allow for on-the-fly editing before writing changes to sessions
@@ -169,7 +172,7 @@ function populateAccordionData() {
     }
 
     $('#accordionMain').html(accordionHTML);
-    $('#collapseButtonMonday').trigger('click');
+    $(`#collapseButton${schedule[0].weekday}`).trigger('click');
 
 
     attachEditModalListeners()
@@ -179,6 +182,7 @@ function populateAccordionData() {
 function attachEditDayListeners(){
     for (const day of schedule) {
         $(`#edit-day-${day.id}`).on("click", function () {
+            currentlySelectedDay = day
             $('#editDayWeekday').val(day.weekday)
             $('#editDayDateInput').val(day.date)
         });
@@ -340,29 +344,35 @@ async function saveSession() {
 
 async function saveDay() {
     try {
-
         if (!validateDayModal('edit')) return;
 
-        // The below code is commented out because there currently is no PUT endpoint for editing a day
+        const weekday = $("#editDayWeekday").val();
+        const date = $("#editDayDateInput").val();
 
-        // const weekday = $("#editDayWeekday").val();
-        // const date = $("#editDayDateInput").val();
+        await updateDayDetails(weekday, date);
 
-        // // We might need to add a day id to this body
-        // const body = {
-        //     date,
-        //     weekday
-        // };
+        populateAccordionData()
+        $("#editDayModal").modal('hide');
+    } catch (err) {
+        console.error(err)
+    }
+}
 
-        // const res = await fetch('api/days', {
-        //     method: 'PUT',
-        //     body: JSON.stringify(body),
-        //     headers: {
-        //         "Content-Type": 'application/json'
-        //     }
-        // });
+async function deleteDay() {
+    try {
 
-        // REMOVE THE DAY FROM THE SCHEDULE OBJECT
+        const res = await fetch(`api/days?dayId=${currentlySelectedDay.id}`, {
+            method: 'DELETE'
+        });
+
+        if (res.ok){
+            // day deleted successfully
+            schedule = schedule.filter((day)=> {if (day.id !== currentlySelectedDay.id) return day})
+            currentlySelectedDay = {}
+        } else {
+            console.error("Failed to delete day")
+            throw new Error('Failed to delete day')
+        }
 
         populateAccordionData()
         $("#editDayModal").modal('hide');
@@ -412,6 +422,32 @@ async function updateSessionDetails(title, start, end, description) {
         throw new Error('Failed to update session details')
     }
 }
+
+async function updateDayDetails(weekday, date) {
+
+    const body = {
+        date,
+        weekday,
+        id: currentlySelectedDay.id
+    };
+
+    const res = await fetch('api/days', {
+        method: 'PUT',
+        body: JSON.stringify(body),
+        headers: {
+            "Content-Type": 'application/json'
+        }
+    });
+    
+    if (res.ok) {
+        currentlySelectedDay.weekday = weekday
+        currentlySelectedDay.date = date
+    } else {
+        console.error("Failed to update day")
+        throw new Error('Failed to update day details')
+    }
+}
+
 
 async function assignPaperToSession(paper) {
     let data = {
@@ -602,6 +638,10 @@ $("#searchSessionInput").on("input", function (event) {
 
 $("#saveDay").on("click", function () {
     saveDay()
+})
+
+$("#deleteDay").on("click", function () {
+    deleteDay()
 })
 
 $("#saveSession").on("click", function () {
