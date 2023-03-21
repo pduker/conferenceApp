@@ -176,6 +176,7 @@ function populateAccordionData() {
         $(`#collapseButton-day-${schedule[0].id}`).trigger('click');
 
 
+    updateCreateSessionModal()
     attachEditModalListeners()
     attachEditDayListeners()
 }
@@ -663,7 +664,6 @@ $('#createDayDateInput').on('change', (event)=>{
 })
 
 getData().then(() => {
-    updateCreateSessionModal()
     populateAccordionData()
 });
 
