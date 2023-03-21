@@ -483,4 +483,20 @@ getData().then(() => {
     populateAccordionData()
 });
 
-
+$("#deleteSession").on("click", async function () {
+    let result = confirm("Are you sure you want to delete the session?")
+    if(result){
+        const res = await fetch(`api/sessions/${currentlySelectedSession.id}`, {
+            method: 'DELETE',
+            headers: {
+                "Content-Type": 'application/json'
+            }
+        });
+        for(const day of schedule){ 
+            day.Sessions = day.Sessions.filter(function (sess) {
+                return currentlySelectedSession.id !== sess.id
+            })
+        }
+        populateAccordionData();
+    }
+});
