@@ -172,7 +172,8 @@ function populateAccordionData() {
     }
 
     $('#accordionMain').html(accordionHTML);
-    $(`#collapseButton-day-${schedule[0].id}`).trigger('click');
+    if (schedule[0])
+        $(`#collapseButton-day-${schedule[0].id}`).trigger('click');
 
 
     attachEditModalListeners()
@@ -641,7 +642,8 @@ $("#saveDay").on("click", function () {
 })
 
 $("#deleteDay").on("click", function () {
-    deleteDay()
+    if (confirm('Are you sure you would like to delete this day? This will also delete all of the sessions under the day.'))
+        deleteDay()
 })
 
 $("#saveSession").on("click", function () {
