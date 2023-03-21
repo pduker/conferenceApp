@@ -32,12 +32,12 @@
     <div class="row mb-4">
       <div class="col-auto">
         <button class="btn btn-primary test" id="createDayBtn" data-bs-toggle="modal" data-bs-target="#createDayModal">
-          <i class="fa-solid fa-plus mr-4"></i> Create Day
+          <i class="fa-solid fa-plus mx-1"></i> Create Day
         </button>
       </div>
       <div class="col-auto">
         <button class="btn btn-primary test" id="createSessionBtn" data-bs-toggle="modal" data-bs-target="#createSessionModal">
-          <i class="fa-solid fa-plus mr-4"></i> Create Session
+          <i class="fa-solid fa-plus mx-1"></i> Create Session
         </button>
       </div>
     </div>
@@ -57,8 +57,8 @@
         <div class="modal-body">
           <div class="card mb-4">
             <div class="card-body">
-              <h4>Create New Day</h4>
-              <p class="text-muted">TESTING</p>
+              <h4>Create Day</h4>
+              <p class="text-muted">Create a new conference day. Select a weekday and a date for this particular day.</p>
               <hr/>
               <!-- JUST ASK FOR DAY OF WEEK AND DATE -->
               <div class="input-group p-2">
@@ -87,7 +87,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary" id="saveCreatedDay">Save Day</button>
+          <button type="button" class="btn btn-primary" id="saveCreatedDay"><i class="fa-solid fa-floppy-disk mx-1"></i> Save</button>
         </div>
       </div>
     </div>
@@ -148,7 +148,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="saveCreatedSession">Save Session</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="saveCreatedSession"><i class="fa-solid fa-floppy-disk mx-1"></i> Save</button>
         </div>
       </div>
     </div>
@@ -165,8 +165,8 @@
         <div class="modal-body">
           <div class="card mb-4">
             <div class="card-body">
-              <h4>Edit Day Details</h4>
-              <p class="text-muted">TESTING</p>
+              <h4>Edit Day</h4>
+              <p class="text-muted">Change and configure Day details here.</p>
               <hr/>
               <div class="input-group p-2">
                 <span class="input-group-text">Weekday</span>
@@ -193,9 +193,9 @@
 
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-danger" id="deleteDay">Delete Day</button>
+          <button type="button" class="btn btn-danger" id="deleteDay"><i class="fa-solid fa-trash-can mx-1"></i> Delete</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary" id="saveDay">Save Day</button>
+          <button type="button" class="btn btn-primary" id="saveDay"><i class="fa-solid fa-floppy-disk mx-1"></i> Save</button>
         </div>
       </div>
     </div>
@@ -276,9 +276,9 @@
             </div>
           </div>
           <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="deleteSession"><i class="fa-solid fa-trash-can mx-1"></i> Delete</button>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="deleteSession">Delete Session</button>
-            <button type="button" class="btn btn-primary" id="saveSession">Save</button>
+            <button type="button" class="btn btn-primary" id="saveSession"><i class="fa-solid fa-floppy-disk mx-1"></i> Save</button>
           </div>
         </div>
       </div>
