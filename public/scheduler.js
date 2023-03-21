@@ -650,6 +650,18 @@ $("#saveSession").on("click", function () {
     saveSession()
 })
 
+$('#editDayDateInput').on('change', (event)=>{
+    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    const dayOfWeek = (new Date(event.target.value)).getDay();
+    $('#editDayWeekday').val(days[dayOfWeek]);
+})
+
+$('#createDayDateInput').on('change', (event)=>{
+    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    const dayOfWeek = (new Date(event.target.value)).getDay();
+    $('#createDayWeekday').val(days[dayOfWeek]);
+})
+
 getData().then(() => {
     updateCreateSessionModal()
     populateAccordionData()
