@@ -61,24 +61,16 @@
               <p class="text-muted">Create a new conference day. Select a weekday and a date for this particular day.</p>
               <hr/>
               <!-- JUST ASK FOR DAY OF WEEK AND DATE -->
-              <div class="input-group p-2">
-                <span class="input-group-text">Weekday</span>
-                <select class="form-select" aria-label="Select Weekday" id="createDayWeekday">
-                    <option selected>Select Weekday</option>
-                    <option value="Sunday">Sunday</option>
-                    <option value="Monday">Monday</option>
-                    <option value="Tuesday">Tuesday</option>
-                    <option value="Wednesday">Wednesday</option>
-                    <option value="Thursday">Thursday</option>
-                    <option value="Friday">Friday</option>
-                    <option value="Saturday">Saturday</option>
-                </select>
-              </div>
 
               <div class="input-group p-2">
                 <span class="input-group-text">Date</span>
                 <input type="date" class="form-control"
                 id="createDayDateInput">
+              </div>
+
+              <div class="input-group p-2">
+                <span class="input-group-text">Weekday</span>
+                <input type="text" class='form-control' id="createDayWeekday" disabled>
               </div>
 
             </div>
@@ -168,24 +160,16 @@
               <h4>Edit Day</h4>
               <p class="text-muted">Change and configure Day details here.</p>
               <hr/>
-              <div class="input-group p-2">
-                <span class="input-group-text">Weekday</span>
-                <select class="form-select" aria-label="Select Weekday" id="editDayWeekday">
-                    <option selected>Select Weekday</option>
-                    <option value="Sunday">Sunday</option>
-                    <option value="Monday">Monday</option>
-                    <option value="Tuesday">Tuesday</option>
-                    <option value="Wednesday">Wednesday</option>
-                    <option value="Thursday">Thursday</option>
-                    <option value="Friday">Friday</option>
-                    <option value="Saturday">Saturday</option>
-                </select>
-              </div>
-
+              
               <div class="input-group p-2">
                 <span class="input-group-text">Date</span>
                 <input type="date" class="form-control"
                 id="editDayDateInput">
+              </div>
+
+              <div class="input-group p-2">
+                <span class="input-group-text">Weekday</span>
+                <input type="text" class='form-control' id="editDayWeekday" disabled>
               </div>
 
             </div>
