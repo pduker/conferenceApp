@@ -31,6 +31,15 @@ server.use('/api/sessions', sessionRoutes)
 
 server.use('/api/days', dayRoutes)
 
+server.get('/api/papers/export', async function (req, res) {
+    try {
+        
+    } catch (err) {
+        console.error(err)
+        res.sendStatus(500)
+    }
+})
+
 server.get('/api/papers', async function (req, res) {
     try {
         const { SessionId } = req.query
