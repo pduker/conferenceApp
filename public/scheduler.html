@@ -30,19 +30,70 @@
     </div>
 
     <div class="row mb-4">
-      <div class="col-3">
+      <div class="col-auto">
+        <button class="btn btn-primary test" id="createDayBtn" data-bs-toggle="modal" data-bs-target="#createDayModal">
+          <i class="fa-solid fa-plus mr-4"></i> Create Day
+        </button>
+      </div>
+      <div class="col-auto">
         <button class="btn btn-primary test" id="createSessionBtn" data-bs-toggle="modal" data-bs-target="#createSessionModal">
           <i class="fa-solid fa-plus mr-4"></i> Create Session
         </button>
       </div>
-      <div class="col-9"></div>
     </div>
 
     <div class="accordion" id="accordionMain">
 
     </div>
 
-    <!-- Modal -->
+  <!-- Create Day Modal -->
+  <div class="modal fade bd-example-modal-lg" id="createDayModal" tabindex="-1" role="dialog"
+  aria-labelledby="createDayModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="createDayModalLabel">Create Day</h5>
+        </div>
+        <div class="modal-body">
+          <div class="card mb-4">
+            <div class="card-body">
+              <h4>Create New Day</h4>
+              <p class="text-muted">TESTING</p>
+              <hr/>
+              <!-- JUST ASK FOR DAY OF WEEK AND DATE -->
+              <div class="input-group p-2">
+                <span class="input-group-text">Weekday</span>
+                <select class="form-select" aria-label="Select Weekday" id="createDayWeekday">
+                    <option selected>Select Weekday</option>
+                    <option value="Sunday">Sunday</option>
+                    <option value="Monday">Monday</option>
+                    <option value="Tuesday">Tuesday</option>
+                    <option value="Wednesday">Wednesday</option>
+                    <option value="Thursday">Thursday</option>
+                    <option value="Friday">Friday</option>
+                    <option value="Saturday">Saturday</option>
+                </select>
+              </div>
+
+              <div class="input-group p-2">
+                <span class="input-group-text">Date</span>
+                <input type="date" class="form-control"
+                id="createDayDateInput">
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="saveCreatedDay">Save Day</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Session Modal -->
   <div class="modal fade bd-example-modal-lg" id="createSessionModal" tabindex="-1" role="dialog"
   aria-labelledby="createSessionModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
@@ -77,19 +128,18 @@
               </div>
 
               <div class="row">
-                <div class="col-4">
+                <div class="col-auto">
                   <div class="input-group p-2">
                     <span class="input-group-text">Start Time</span>
                     <input style="box-shadow: 0" id="sessionStart" type="time">
                   </div>
                 </div>
-                <div class="col-4">
+                <div class="col-auto">
                   <div class="input-group p-2">
                     <span class="input-group-text">End Time</span>
                     <input id="sessionEnd" type="time">
                   </div>
                 </div>
-                <div class="col-4"></div>
               </div>
 
             </div>
@@ -99,6 +149,53 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
           <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="saveCreatedSession">Save Session</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Day Modal -->
+  <div class="modal fade bd-example-modal-lg" id="editDayModal" tabindex="-1" role="dialog"
+  aria-labelledby="editDayModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editDayModalLabel">Edit Day</h5>
+        </div>
+        <div class="modal-body">
+          <div class="card mb-4">
+            <div class="card-body">
+              <h4>Edit Day Details</h4>
+              <p class="text-muted">TESTING</p>
+              <hr/>
+              <div class="input-group p-2">
+                <span class="input-group-text">Weekday</span>
+                <select class="form-select" aria-label="Select Weekday" id="editDayWeekday">
+                    <option selected>Select Weekday</option>
+                    <option value="Sunday">Sunday</option>
+                    <option value="Monday">Monday</option>
+                    <option value="Tuesday">Tuesday</option>
+                    <option value="Wednesday">Wednesday</option>
+                    <option value="Thursday">Thursday</option>
+                    <option value="Friday">Friday</option>
+                    <option value="Saturday">Saturday</option>
+                </select>
+              </div>
+
+              <div class="input-group p-2">
+                <span class="input-group-text">Date</span>
+                <input type="date" class="form-control"
+                id="editDayDateInput">
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" id="deleteDay">Delete Day</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="saveDay">Save Day</button>
         </div>
       </div>
     </div>

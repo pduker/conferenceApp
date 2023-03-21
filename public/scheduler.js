@@ -2,6 +2,9 @@ let numTimeslots = 0;
 let schedule;
 let allPapers;
 
+
+// Reference to the actual currently selected day (WRITING TO THIS IS REFLECTED AS THE DATABASE RECORD)
+let currentlySelectedDay = {}
 // Reference to the actual currently selected session (WRITING TO THIS IS REFLECTED AS THE DATABASE RECORD)
 let currentlySelectedSession = {}
 // A shallow copy of the session papers to allow for on-the-fly editing before writing changes to sessions
@@ -71,6 +74,8 @@ async function getAllPapers() {
 function populateAccordionData() {
 
     let accordionHTML = '';
+    // sort schedule days by date
+    schedule = schedule?.sort((a, b) => new Date(a.date) < new Date(b.date) ? -1 : 1)
 
     // Show warning if there are no days scheduled
     if (schedule.length === 0) {
@@ -95,45 +100,68 @@ function populateAccordionData() {
     } else {
         for (const day of schedule) {
             accordionHTML += `<div class="accordion-item collapsed">
-            <h2 class="accordion-header" id="heading${day['weekday']}">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${day['weekday']}" id="collapseButton${day['weekday']}"
-                aria-expanded="true" aria-controls="collapse${day['weekday']}">
-                ${day['weekday']}
+            <h2 class="accordion-header" id="heading-day-${day.id}">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-day-${day.id}" id="collapseButton-day-${day.id}"
+                aria-expanded="true" aria-controls="collapse-day-${day.id}">
+                ${day['weekday']} | ${day['date']}
             </button>
             </h2>
 
-            <div id="collapse${day['weekday']}" class="accordion-collapse collapse" aria-labelledby="heading${day['weekday']}"
+            <div id="collapse-day-${day.id}" class="accordion-collapse collapse" aria-labelledby="heading-day-${day.id}"
             data-bs-parent="#accordionMain">
             <div class="accordion-body">
 
                 <div class="row">`;
 
-            for (let session of day['Sessions']) {
-
-                let shortenedDescr = session.description
-
-                if (shortenedDescr.length >= 40) {
-                    shortenedDescr = shortenedDescr.substring(0, 40) + '...'
-                }
-
-                accordionHTML += `<div class="col-3 card session-time">
-                <div class="card-body">
-                <h5 class="card-title">${session.title} | ${session.start} - ${session.end}</h5>
-                <p class="text-muted mb-0">${shortenedDescr}</p>
-                <details class="papers-details">
-                    <summary>Papers</summary>
-                    <ul class="papers" id="materials-list-preview">`
-                if (session.Papers) {
-                    for (let i = 0; i < session.Papers.length; i++) {
-                        accordionHTML += `<li>${session.Papers[i].title}</li>`
-                    }
-                }
-                accordionHTML += `</ul>
-                    </details>
-                    <button class="btn btn-primary test" id="edit-session-${session.id}" data-bs-toggle="modal" data-bs-target="#editSessionModal">Edit Session</button>
+            // Show warning if there are no sessions scheduled
+            if (day['Sessions']?.length === 0){
+                accordionHTML += `
+                <div class='row'>
+                    <div class='col-2'></div>
+                    <div class='col-8'>
+                        <div class="alert alert-warning" role="alert">
+                            <div class="row d-flex">
+                                <div class="col-2 d-flex justify-content-center align-items-center">
+                                    <i class="fa-solid fa-triangle-exclamation fa-3x"></i>
+                                </div>
+                                <div class="col-10 d-flex justify-content-start align-items-center">
+                                    No sessions appear to have been created for this day yet. Please create some.
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                    <div class='col-2'></div>
                 </div>`
+            } else {
+                for (let session of day['Sessions']) {
+
+                    let shortenedDescr = session.description
+
+                    if (shortenedDescr.length >= 40) {
+                        shortenedDescr = shortenedDescr.substring(0, 40) + '...'
+                    }
+
+                    accordionHTML += `<div class="col-3 card session-time">
+                    <div class="card-body">
+                    <h5 class="card-title">${session.title} | ${session.start} - ${session.end}</h5>
+                    <p class="text-muted mb-0">${shortenedDescr}</p>
+                    <details class="papers-details">
+                        <summary>Papers</summary>
+                        <ul class="papers" id="materials-list-preview">`
+                    if (session.Papers) {
+                        for (let i = 0; i < session.Papers.length; i++) {
+                            accordionHTML += `<li>${session.Papers[i].title}</li>`
+                        }
+                    }
+                    accordionHTML += `</ul>
+                        </details>
+                        <button class="btn btn-primary test" id="edit-session-${session.id}" data-bs-toggle="modal" data-bs-target="#editSessionModal">Edit Session</button>
+                        </div>
+                    </div>`
+                }
             }
+
+            accordionHTML += `<button class='btn btn-primary' id='edit-day-${day.id}' data-bs-toggle="modal" data-bs-target="#editDayModal">Edit Schedule Day</button>`
 
             accordionHTML += `</div>
                     </div>
@@ -144,10 +172,21 @@ function populateAccordionData() {
     }
 
     $('#accordionMain').html(accordionHTML);
-    $('#collapseButtonMonday').trigger('click');
+    $(`#collapseButton-day-${schedule[0].id}`).trigger('click');
 
 
     attachEditModalListeners()
+    attachEditDayListeners()
+}
+
+function attachEditDayListeners(){
+    for (const day of schedule) {
+        $(`#edit-day-${day.id}`).on("click", function () {
+            currentlySelectedDay = day
+            $('#editDayWeekday').val(day.weekday)
+            $('#editDayDateInput').val(day.date)
+        });
+    }
 }
 
 function attachEditModalListeners() {
@@ -175,7 +214,7 @@ function attachEditModalListeners() {
     }
 }
 
-function validateSessionModal() {
+function validateEditSessionModal() {
     const description = $('#sessionDescriptionInput').val()
     const title = $('#sessionTitleInput').val()
 
@@ -192,6 +231,25 @@ function validateSessionModal() {
     }
 
     return isNotWhiteSpace(description) && isNotWhiteSpace(title)
+}
+
+function validateDayModal(type) {
+    const weekday = $(`#${type}DayWeekday`).val()
+    const date = $(`#${type}DayDateInput`).val()
+
+    if (!isNotWhiteSpace(weekday) || weekday === 'Select Weekday'){
+        $(`#${type}DayWeekday`).addClass('is-invalid')
+    } else {
+        $(`#${type}DayWeekday`).removeClass('is-invalid')
+    }
+
+    if (!isNotWhiteSpace(date)){
+        $(`#${type}DayDateInput`).addClass('is-invalid')
+    } else {
+        $(`#${type}DayDateInput`).removeClass('is-invalid')
+    }
+
+    return (isNotWhiteSpace(weekday) && weekday !== 'Select Weekday') && isNotWhiteSpace(date)
 }
 
 async function createSession () {
@@ -228,10 +286,37 @@ async function createSession () {
 }
 
 
+async function createDay () {
+
+    if (!validateDayModal('create')) return;
+
+    const weekday = $("#createDayWeekday").val();
+    const date = $("#createDayDateInput").val();
+
+    const body = {
+        date,
+        weekday
+    };
+
+    const res = await fetch('api/days', {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+            "Content-Type": 'application/json'
+        }
+    });
+    const newDay = await res.json();
+
+    newDay.Sessions = [];
+    schedule.push(newDay);
+    populateAccordionData();
+    $("#createDayModal").modal('hide');
+}
+
 async function saveSession() {
     try {
 
-        if (!validateSessionModal()) return;
+        if (!validateEditSessionModal()) return;
 
         const description = $('#sessionDescriptionInput').val()
         const title = $('#sessionTitleInput').val()
@@ -252,6 +337,45 @@ async function saveSession() {
 
         populateAccordionData()
         $("#editSessionModal").modal('hide');
+    } catch (err) {
+        console.error(err)
+    }
+}
+
+async function saveDay() {
+    try {
+        if (!validateDayModal('edit')) return;
+
+        const weekday = $("#editDayWeekday").val();
+        const date = $("#editDayDateInput").val();
+
+        await updateDayDetails(weekday, date);
+
+        populateAccordionData()
+        $("#editDayModal").modal('hide');
+    } catch (err) {
+        console.error(err)
+    }
+}
+
+async function deleteDay() {
+    try {
+
+        const res = await fetch(`api/days?dayId=${currentlySelectedDay.id}`, {
+            method: 'DELETE'
+        });
+
+        if (res.ok){
+            // day deleted successfully
+            schedule = schedule.filter((day)=> {if (day.id !== currentlySelectedDay.id) return day})
+            currentlySelectedDay = {}
+        } else {
+            console.error("Failed to delete day")
+            throw new Error('Failed to delete day')
+        }
+
+        populateAccordionData()
+        $("#editDayModal").modal('hide');
     } catch (err) {
         console.error(err)
     }
@@ -298,6 +422,32 @@ async function updateSessionDetails(title, start, end, description) {
         throw new Error('Failed to update session details')
     }
 }
+
+async function updateDayDetails(weekday, date) {
+
+    const body = {
+        date,
+        weekday,
+        id: currentlySelectedDay.id
+    };
+
+    const res = await fetch('api/days', {
+        method: 'PUT',
+        body: JSON.stringify(body),
+        headers: {
+            "Content-Type": 'application/json'
+        }
+    });
+    
+    if (res.ok) {
+        currentlySelectedDay.weekday = weekday
+        currentlySelectedDay.date = date
+    } else {
+        console.error("Failed to update day")
+        throw new Error('Failed to update day details')
+    }
+}
+
 
 async function assignPaperToSession(paper) {
     let data = {
@@ -468,11 +618,31 @@ $("#saveCreatedSession").on(`click`, function () {
     createSession()
 })
 
+$("#saveCreatedDay").on(`click`, function () {
+    createDay()
+})
+
+$('#createDayBtn').on('click', function() {
+    // Clear fields and remove invalid validation
+    $('#createDayWeekday')[0].selectedIndex = 0
+    $('#createDayDateInput').val('')
+    $('#createDayWeekday').removeClass('is-invalid')
+    $('#createDayDateInput').removeClass('is-invalid')
+})
+
 $("#searchSessionInput").on("input", function (event) {
     let text = event.target.value
     let filteredPapers = allPapers.filter((a) => { return a.title.includes(text) })
     renderSelectablePapers(filteredPapers)
 });
+
+$("#saveDay").on("click", function () {
+    saveDay()
+})
+
+$("#deleteDay").on("click", function () {
+    deleteDay()
+})
 
 $("#saveSession").on("click", function () {
     saveSession()
