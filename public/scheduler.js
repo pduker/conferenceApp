@@ -100,14 +100,14 @@ function populateAccordionData() {
     } else {
         for (const day of schedule) {
             accordionHTML += `<div class="accordion-item collapsed">
-            <h2 class="accordion-header" id="heading${day['weekday']}">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${day['weekday']}" id="collapseButton${day['weekday']}"
-                aria-expanded="true" aria-controls="collapse${day['weekday']}">
+            <h2 class="accordion-header" id="heading-day-${day.id}">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-day-${day.id}" id="collapseButton-day-${day.id}"
+                aria-expanded="true" aria-controls="collapse-day-${day.id}">
                 ${day['weekday']} | ${day['date']}
             </button>
             </h2>
 
-            <div id="collapse${day['weekday']}" class="accordion-collapse collapse" aria-labelledby="heading${day['weekday']}"
+            <div id="collapse-day-${day.id}" class="accordion-collapse collapse" aria-labelledby="heading-day-${day.id}"
             data-bs-parent="#accordionMain">
             <div class="accordion-body">
 
@@ -172,7 +172,7 @@ function populateAccordionData() {
     }
 
     $('#accordionMain').html(accordionHTML);
-    $(`#collapseButton${schedule[0].weekday}`).trigger('click');
+    $(`#collapseButton-day-${schedule[0].id}`).trigger('click');
 
 
     attachEditModalListeners()
