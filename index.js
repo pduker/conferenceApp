@@ -153,7 +153,10 @@ server.get('/scheduler', async function (req, res) {
     }
 })
 
+//server.use('/webfonts', express.static(path.join(__dirname, 'node_modules/@forttawesome/fontawesome-free/webfonts')))
 server.use('/css', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/css')))
+server.use('/css', express.static(path.join(__dirname, 'node_modules/@fortawesome/fontawesome-free/css')))
+server.use('/js', express.static(path.join(__dirname, 'node_modules/@forttawesome/fontawesome-free/js')))
 server.use('/js', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/js')))
 server.use('/js', express.static(path.join(__dirname, 'node_modules/jquery/dist')))
 server.use(express.static("public"))

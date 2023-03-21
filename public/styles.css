@@ -104,16 +104,10 @@ details.root {
     background-color: var(--sub-background);
     border: var(--border-size) solid var(--border);
     overflow-y: scroll; 
-    max-height: 40vh;
+    max-height: 350px;
     overflow-x: hidden;
 }
 
 .session-time {
     margin: 1rem;
 }
-
-.scheduler > .row {
-    overflow-x: auto;
-    white-space: nowrap;
-    flex-wrap: nowrap;
-  }

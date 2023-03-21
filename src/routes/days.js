@@ -1,5 +1,5 @@
 const express = require('express')
-const { getAllDays, createDay } = require('../database/days')
+const { getAllDays, createDay, updateDay, deleteDay } = require('../database/days')
 const { Sessions, Papers, Days } = require('../database/db')
 const { getAllSessions } = require('../database/sessions')
 
@@ -33,5 +33,36 @@ router.post('/', async function (req, res) {
     res.sendStatus(500)
   }
 })
+
+router.put('/', async function (req, res) {
+  try {
+    const newDay = req.body
+
+    await updateDay(newDay)
+
+    res.sendStatus(200)
+  } catch (err) {
+    console.error(err)
+    res.sendStatus(500)
+  }
+})
+
+router.delete('/', async function (req, res) {
+  try {
+    const { dayId } = req.query
+
+    if (!dayId) {
+      res.status(400).send('Missing required parameters!')
+    }
+
+    await deleteDay(dayId)
+
+    res.sendStatus(200)
+  } catch (err) {
+    console.error(err)
+    res.sendStatus(500)
+  }
+})
+
 
 module.exports = router

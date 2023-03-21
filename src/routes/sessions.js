@@ -1,6 +1,6 @@
 const express = require('express')
 const { Sessions, Papers, Days } = require('../database/db')
-const { getAllSessions, createSession, updateSession, deleteSession } = require('../database/sessions')
+const { getAllSessions, createSession, updateSession, deleteSession, duplicateSession } = require('../database/sessions')
 
 const router = express.Router()
 
@@ -30,14 +30,14 @@ router.put('/', async function (req, res) {
 
 router.post('/', async function (req, res) {
   try {
-    const {time, DayId, description} = req.body
+    const {title, start, end, DayId, description} = req.body
 
-    if (!time || !DayId || !description) {
+    if (!title || !start || !end || !DayId || !description) {
       res.status(400).send('Bad request, missing required fields')
       return
     }
 
-    const session = await createSession(time, description, DayId)
+    const session = await createSession(title, start, end, description, DayId)
 
     res.json(session)
   } catch (err) {
@@ -46,15 +46,25 @@ router.post('/', async function (req, res) {
   }
 })
 
-router.delete('/', async function (req, res) {
+router.post('/:id', async function (req, res) {
   try {
-    const { sessionId } = req.query
 
-    if (!sessionId) {
-      res.status(400).send('Missing required parameters!')
-    }
+    const { id } = req.params
 
-    await deleteSession(sessionId)
+    const newSession = await duplicateSession(id)
+
+    res.json(newSession)
+  } catch (err) {
+    console.error(err)
+    res.sendStatus(500)
+  }
+})
+
+router.delete('/:id', async function (req, res) {
+  try {
+    const { id } = req.params
+
+    await deleteSession(id)
 
     res.sendStatus(200)
   } catch (err) {

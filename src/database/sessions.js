@@ -30,12 +30,16 @@ async function getAllSessionsByDay (weekday) {
   return day
 }
 
-async function createSession (time, description, DayId) {
+async function createSession (title, start, end, description, DayId) {
   const session = await Sessions.create({
-    time,
+    title, 
+    start,
+    end,
     description,
     DayId
   })
+
+  session.Papers = []
 
   return session
 }
@@ -50,6 +54,20 @@ async function updateSession (newSession) {
   updateChangedFields(currSession, newSession)
 
   await currSession.save()
+}
+
+async function duplicateSession (sessionId) {
+  const session = await Sessions.findByPk(sessionId)
+
+  if (!session) {
+    throw new Error('Could not find a session that matched that ID')
+  }
+
+  const { DayId, description, title, start, end } = session
+
+  const newSession = await createSession(title, start, end, description, DayId)
+
+  return newSession
 }
 
 async function deleteSession (sessionId) {
@@ -67,5 +85,6 @@ module.exports = {
   getAllSessionsByDay,
   createSession,
   updateSession,
+  duplicateSession,
   deleteSession
 }

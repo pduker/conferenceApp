@@ -1,0 +1,60 @@
+.session-papers-container {
+  background-color: #f8f8f8;
+  border: 1px solid var(--bs-border-color-translucent);
+  padding: 5px;
+  border-radius: 0.375rem;
+}
+
+#insertPapers{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  flex-wrap: wrap;
+  overflow-y: scroll; 
+  max-height: 40vh;
+  overflow-x: hidden;
+}
+
+.card.paper-card {
+  margin: 8px;
+}
+
+.card.paper-card.selected {
+  background-color: #c9ffb4;
+}
+
+.card-button {
+  text-decoration: none;
+  color: inherit;
+}
+
+.card-button:hover {
+  text-decoration: none;
+  color: inherit;
+  background-color: rgba(0, 145, 255, 0.201);
+  border-radius: 0.375rem;
+  transition: 0.3s;
+}
+
+.paper-list-container {
+  height: 180px;
+  overflow: scroll;
+}
+
+.scheduler > .row {
+  overflow-x: auto;
+  white-space: nowrap;
+  flex-wrap: nowrap;
+}
+
+.scheduler {
+  padding: 20px;
+}
+
+input[type=time] {
+  border: 1px solid var(--bs-border-color-translucent);
+  border-top-right-radius: 0.375rem;
+  border-bottom-right-radius: 0.375rem;
+  color: #212529;
+  padding: 5px;
+}
