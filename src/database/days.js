@@ -1,4 +1,5 @@
 const { Days, Sessions, Papers, Authors, SuppMaterials } = require('./db')
+const { deleteSession } = require('./sessions')
 const { updateChangedFields } = require('./utils')
 
 async function getAllDays() {
@@ -40,10 +41,16 @@ async function updateDay (newDay) {
 }
 
 async function deleteDay (dayId) {
-  const day = await Days.findByPk(dayId)
+  const day = await Days.findByPk(dayId, {include: [{ model: Sessions}]})
 
   if (!day) {
     throw new Error('Could not find a day that matched that ID')
+  }
+
+  if(day.Sessions){
+   for(let session of day.Sessions){
+    await deleteSession(session.id)
+   }
   }
 
   await day.destroy()
