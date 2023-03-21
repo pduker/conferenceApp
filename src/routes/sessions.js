@@ -60,15 +60,11 @@ router.post('/:id', async function (req, res) {
   }
 })
 
-router.delete('/', async function (req, res) {
+router.delete('/:id', async function (req, res) {
   try {
-    const { sessionId } = req.query
+    const { id } = req.params
 
-    if (!sessionId) {
-      res.status(400).send('Missing required parameters!')
-    }
-
-    await deleteSession(sessionId)
+    await deleteSession(id)
 
     res.sendStatus(200)
   } catch (err) {
