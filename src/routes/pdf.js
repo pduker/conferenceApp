@@ -1,5 +1,5 @@
 const express = require('express')
-const { PDFTeX } = require('texlive')
+const textlive = require('texlive')
 
 const router = express.Router()
 
