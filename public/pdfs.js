@@ -6,7 +6,8 @@ $('#savePDF').on('click', async function() {
     headers: {
       'Content-Type': 'application/json'
     }
-  })
-  const test = await res.text();
-  console.log(test);
+  }).then(res => res.blob()).then( blob => {
+    const file = window.URL.createObjectURL(blob);
+    window.open(file);
+  });
 })
