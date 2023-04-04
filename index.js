@@ -32,7 +32,7 @@ server.use('/api/sessions', sessionRoutes)
 
 server.use('/api/days', dayRoutes)
 
-server.use('/api/pdfs', pdfRoutes)
+server.use('/api/pdf', pdfRoutes)
 
 server.get('/api/papers', async function (req, res) {
     try {

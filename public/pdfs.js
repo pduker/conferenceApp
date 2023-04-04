@@ -1,12 +1,12 @@
-$('#savePDF').on('click', function() {console.log(schedule)})
-
-let pdftex = new PDFTeX();
-let latex_code = "" +
-  "\\documentclass{article}" +
-  "\\begin{document}" +
-  "\\LaTeX is great!" +
-  "$E = mc^2$" +
-  "\\end{document}";
-
-pdftex.compile(latex_code)
-      .then(function(pdf) { window.open(pdf) });
+$('#savePDF').on('click', async function() {
+  console.log(schedule)
+  const res = await fetch('api/pdf', {
+    method:  'POST',
+    body: JSON.stringify(schedule), 
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  const test = await res.text();
+  console.log(test);
+})

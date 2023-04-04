@@ -1,25 +1,27 @@
 const express = require('express')
-const textlive = require('texlive')
+const PDFDocument = require('pdfkit')
+const fs = require('fs')
 
 const router = express.Router()
 
 router.post('/', async function (req, res) {
   try {
-    const { weekday, date } = req.body
+    let doc = new PDFDocument({bufferPages: true})
+    
+    doc.pipe(res);
+    doc.font('Times-Roman')
+     .fontSize(12)
+     .text(`this is test text`);
 
-    if (!weekday || !date) {
-      res.status(400).send('Bad request, missing required fields')
-      return
-    }
-
-    const day = await createDay(weekday, date)
-
-    res.json(day)
-  } catch (err) {
-    console.error(err)
-    res.sendStatus(500)
+    res.type('application/pdf');
+    res.attachment("test.pdf");
+    doc.end();
   }
-})
+  catch (err) {
+    console.error(err);
+    res.sendStatus(500);
+  }
+});
 
 
 module.exports = router
