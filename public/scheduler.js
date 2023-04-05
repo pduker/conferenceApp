@@ -195,16 +195,16 @@ function attachEditModalListeners() {
     for (const day of schedule) {
         for (const session of day.Sessions) {
             $(`#edit-session-${session.id}`).on("click", function () {
-                $('#sessionTitleInput').removeClass('is-invalid')
-                $('#sessionDescriptionInput').removeClass('is-invalid')
+                $('#createSessionTitleInput').removeClass('is-invalid')
+                $('#createSessionDescriptionInput').removeClass('is-invalid')
 
                 $("#editSessionModalTitle").html(day.weekday + " " + session.title)
-                $("#sessionTitleInput").val(session.title)
-                $("#sessionDescriptionInput").val(session.description)
-                $("#sessionChairInput").val(session.chair)
-                $("#sessionRoomInput").val(session.room)
-                $("#sessionEditStartTimeInput").val(convertTo24HourString(session.start))
-                $("#sessionEditEndTimeInput").val(convertTo24HourString(session.end))
+                $("#editSessionTitleInput").val(session.title)
+                $("#editSessionDescriptionInput").val(session.description)
+                $("#editSessionChairInput").val(session.chair)
+                $("#editSessionRoomInput").val(session.room)
+                $("#editSessionStartTimeInput").val(convertTo24HourString(session.start))
+                $("#editSessionEndTimeInput").val(convertTo24HourString(session.end))
 
                 selectedPapers = []
                 removedPapers = []
@@ -223,6 +223,8 @@ function validateSessionModal(type) {
     const title = $(`#${type}SessionTitleInput`).val()
     const chair = $(`#${type}SessionChairInput`).val()
     const room = $(`#${type}SessionRoomInput`).val()
+    const startTime = $(`#${type}SessionStartTime`).val()
+    const endTime = $(`#${type}SessionEndTime`).val()
 
     if (!isNotWhiteSpace(description)){
         $(`#${type}SessionDescriptionInput`).addClass('is-invalid')
@@ -246,6 +248,18 @@ function validateSessionModal(type) {
         $(`#${type}SessionRoomInput`).addClass('is-invalid')
     } else {
         $(`#${type}SessionRoomInput`).removeClass('is-invalid')
+    }
+
+    if (!isNotWhiteSpace(startTime)){
+        $(`#${type}SessionStartTime`).addClass('is-invalid')
+    } else {
+        $(`#${type}SessionStartTime`).removeClass('is-invalid')
+    }
+
+    if (!isNotWhiteSpace(endTime)){
+        $(`#${type}SessionEndTime`).addClass('is-invalid')
+    } else {
+        $(`#${type}SessionEndTime`).removeClass('is-invalid')
     }
 
     return isNotWhiteSpace(description) && isNotWhiteSpace(title)
@@ -425,7 +439,7 @@ function renderAuthors(authors) {
     return authorString
 }
 
-async function updateSessionDetails(title, start, end, description) {
+async function updateSessionDetails(title, start, end, description, chair, room) {
 
     const body = {
         id: currentlySelectedSession.id,
