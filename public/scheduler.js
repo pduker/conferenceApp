@@ -89,7 +89,7 @@ function populateAccordionData() {
                             <i class="fa-solid fa-triangle-exclamation fa-3x"></i>
                         </div>
                         <div class="col-10 d-flex justify-content-start align-items-center">
-                            No days appear to have been created yet. Please create some to get started scheduling!
+                            No days appear to have been created yet. You can create some with the "Create Day" button above.
                         </div>
                     </div>
                 </div>
@@ -125,7 +125,7 @@ function populateAccordionData() {
                                     <i class="fa-solid fa-triangle-exclamation fa-3x"></i>
                                 </div>
                                 <div class="col-10 d-flex justify-content-start align-items-center">
-                                    No sessions appear to have been created for this day yet. Please create some.
+                                    No sessions have been created for this day yet. Create a new session to get started.
                                 </div>
                             </div>
                         </div>
@@ -262,7 +262,7 @@ function validateSessionModal(type) {
         $(`#${type}SessionEndTime`).removeClass('is-invalid')
     }
 
-    return isNotWhiteSpace(description) && isNotWhiteSpace(title)
+    return isNotWhiteSpace(description) && isNotWhiteSpace(title) && isNotWhiteSpace(chair) && isNotWhiteSpace(room)
 }
 
 function validateDayModal(type) {
@@ -589,7 +589,7 @@ function removeSelectedPaperFromList(paper) {
 }
 
 function updateCreateSessionModal() {
-    let optionsHTML = '<option selected>Select Day</option>'
+    let optionsHTML = '<option disabled selected value="">Select Day</option>'
 
     for (let i = 0; i < schedule.length; i++) {
         const day = schedule[i]
