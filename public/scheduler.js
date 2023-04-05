@@ -201,6 +201,8 @@ function attachEditModalListeners() {
                 $("#editSessionModalTitle").html(day.weekday + " " + session.title)
                 $("#sessionTitleInput").val(session.title)
                 $("#sessionDescriptionInput").val(session.description)
+                $("#sessionChairInput").val(session.chair)
+                $("#sessionRoomInput").val(session.room)
                 $("#sessionEditStartTimeInput").val(convertTo24HourString(session.start))
                 $("#sessionEditEndTimeInput").val(convertTo24HourString(session.end))
 
@@ -216,20 +218,34 @@ function attachEditModalListeners() {
     }
 }
 
-function validateEditSessionModal() {
-    const description = $('#sessionDescriptionInput').val()
-    const title = $('#sessionTitleInput').val()
+function validateSessionModal(type) {
+    const description = $(`#${type}SessionDescriptionInput`).val()
+    const title = $(`#${type}SessionTitleInput`).val()
+    const chair = $(`#${type}SessionChairInput`).val()
+    const room = $(`#${type}SessionRoomInput`).val()
 
     if (!isNotWhiteSpace(description)){
-        $('#sessionDescriptionInput').addClass('is-invalid')
+        $(`#${type}SessionDescriptionInput`).addClass('is-invalid')
     } else {
-        $('#sessionDescriptionInput').removeClass('is-invalid')
+        $(`#${type}SessionDescriptionInput`).removeClass('is-invalid')
     }
 
     if (!isNotWhiteSpace(title)){
-        $('#sessionTitleInput').addClass('is-invalid')
+        $(`#${type}SessionTitleInput`).addClass('is-invalid')
     } else {
-        $('#sessionTitleInput').removeClass('is-invalid')
+        $(`#${type}SessionTitleInput`).removeClass('is-invalid')
+    }
+
+    if (!isNotWhiteSpace(chair)){
+        $(`#${type}SessionChairInput`).addClass('is-invalid')
+    } else {
+        $(`#${type}SessionChairInput`).removeClass('is-invalid')
+    }
+
+    if (!isNotWhiteSpace(room)){
+        $(`#${type}SessionRoomInput`).addClass('is-invalid')
+    } else {
+        $(`#${type}SessionRoomInput`).removeClass('is-invalid')
     }
 
     return isNotWhiteSpace(description) && isNotWhiteSpace(title)
@@ -255,36 +271,48 @@ function validateDayModal(type) {
 }
 
 async function createSession () {
-    const rawDay = $("#sessionDay").val(); 
-    const startTime = convertTo12HourString($("#sessionStart").val())
-    const endTime = convertTo12HourString($("#sessionEnd").val())
-    const title = $("#createSessionTitleInput").val()
-    const description = $("#createSessionDescriptionInput").val()
+    try {
 
-    const dayIdAndIndex = rawDay.split("-")
-    
-    const body = {
-        DayId: parseInt(dayIdAndIndex[0]),
-        start: startTime,
-        end: endTime,
-        description,
-        title
-    }
+        if (!validateSessionModal('create')) { return }
 
-    const res = await fetch('api/sessions', {
-        method: 'POST',
-        body: JSON.stringify(body),
-        headers: {
-            "Content-Type": 'application/json'
+        const rawDay = $("#createSessionDay").val(); 
+        const startTime = convertTo12HourString($("#createSessionStartTime").val())
+        const endTime = convertTo12HourString($("#createSessionEndTime").val())
+        const title = $("#createSessionTitleInput").val()
+        const description = $("#createSessionDescriptionInput").val()
+        const chair = $('#createSessionChairInput').val()
+        const room = $('#createSessionRoomInput').val()
+
+        const dayIdAndIndex = rawDay.split("-")
+        
+        const body = {
+            DayId: parseInt(dayIdAndIndex[0]),
+            start: startTime,
+            end: endTime,
+            description,
+            title,
+            chair,
+            room
         }
-    })
-    const newSession = await res.json();
 
-    newSession.Papers = []
+        const res = await fetch('api/sessions', {
+            method: 'POST',
+            body: JSON.stringify(body),
+            headers: {
+                "Content-Type": 'application/json'
+            }
+        })
+        const newSession = await res.json();
 
-    schedule[dayIdAndIndex[1]]['Sessions'].push(newSession);
+        newSession.Papers = []
 
-    populateAccordionData();
+        schedule[dayIdAndIndex[1]]['Sessions'].push(newSession);
+
+        populateAccordionData();
+        $("#createSessionModal").modal('hide');
+    } catch (err) {
+        console.error(err)
+    }
 }
 
 
@@ -318,12 +346,14 @@ async function createDay () {
 async function saveSession() {
     try {
 
-        if (!validateEditSessionModal()) return;
+        if (!validateSessionModal('edit')) return;
 
-        const description = $('#sessionDescriptionInput').val()
-        const title = $('#sessionTitleInput').val()
-        const start = convertTo12HourString($('#sessionEditStartTimeInput').val())
-        const end = convertTo12HourString($('#sessionEditEndTimeInput').val())
+        const description = $('#editSessionDescriptionInput').val()
+        const title = $('#editSessionTitleInput').val()
+        const chair = $('#editSessionChairInput').val()
+        const room = $('#editSessionRoomInput').val()
+        const start = convertTo12HourString($('#editSessionStartTimeInput').val())
+        const end = convertTo12HourString($('#editSessionEndTimeInput').val())
 
         for (const paper of selectedPapers) {
             await assignPaperToSession(paper)
@@ -333,7 +363,7 @@ async function saveSession() {
             await unassignPaperFromSession(paper)
         }
 
-        await updateSessionDetails(title, start, end, description)
+        await updateSessionDetails(title, start, end, description, chair, room)
 
         currentlySelectedSession.Papers = currentlySelectedSessionPapers
 
@@ -402,7 +432,9 @@ async function updateSessionDetails(title, start, end, description) {
         start,
         end,
         title,
-        description
+        description,
+        chair,
+        room
     }
 
     let res = await fetch('api/sessions', {
@@ -417,6 +449,8 @@ async function updateSessionDetails(title, start, end, description) {
         // Will update because it's pass by reference
         currentlySelectedSession.title = title
         currentlySelectedSession.start = start
+        currentlySelectedSession.chair = chair
+        currentlySelectedSession.room = room
         currentlySelectedSession.end = end
         currentlySelectedSession.description = description
     } else {
@@ -548,7 +582,7 @@ function updateCreateSessionModal() {
         optionsHTML += `<option value="${day.id}-${i}">${day.weekday}</option>`
     }
 
-    $("#sessionDay").html(optionsHTML)
+    $("#createSessionDay").html(optionsHTML)
 }
 
 function updateEditSessionModal(papers) {
