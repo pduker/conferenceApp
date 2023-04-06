@@ -55,23 +55,6 @@ function convertTo24HourString (time) {
     }
 }
 
-async function getData() {
-    schedule = await getSchedule()
-    allPapers = await getAllPapers()
-}
-
-async function getSchedule() {
-    const res = (await fetch('api/days', { method: 'GET' }));
-    const data = await res.json();
-    return data;
-}
-
-async function getAllPapers() {
-    const res = (await fetch('api/papers', { method: 'GET' }));
-    const data = await res.json();
-    return data;
-}
-
 function populateAccordionData() {
 
     let accordionHTML = '';
@@ -219,89 +202,6 @@ function attachEditModalListeners() {
     }
 }
 
-function validateSessionModal(type) {
-    const description = $(`#${type}SessionDescriptionInput`).val()
-    const title = $(`#${type}SessionTitleInput`).val()
-    const chair = $(`#${type}SessionChairInput`).val()
-    const room = $(`#${type}SessionRoomInput`).val()
-    const startTime = $(`#${type}SessionStartTime`).val()
-    const endTime = $(`#${type}SessionEndTime`).val()
-    let day
-
-    if (type === "create") {
-        day = $("#createSessionDay").val();
-    }
-
-    if (!isNotWhiteSpace(description)){
-        $(`#${type}SessionDescriptionInput`).addClass('is-invalid')
-    } else {
-        $(`#${type}SessionDescriptionInput`).removeClass('is-invalid')
-    }
-
-    if (!isNotWhiteSpace(title)){
-        $(`#${type}SessionTitleInput`).addClass('is-invalid')
-    } else {
-        $(`#${type}SessionTitleInput`).removeClass('is-invalid')
-    }
-
-    if (!isNotWhiteSpace(chair)){
-        $(`#${type}SessionChairInput`).addClass('is-invalid')
-    } else {
-        $(`#${type}SessionChairInput`).removeClass('is-invalid')
-    }
-
-    if (!isNotWhiteSpace(room)){
-        $(`#${type}SessionRoomInput`).addClass('is-invalid')
-    } else {
-        $(`#${type}SessionRoomInput`).removeClass('is-invalid')
-    }
-
-    if (!isNotWhiteSpace(startTime)){
-        $(`#${type}SessionStartTime`).addClass('is-invalid')
-    } else {
-        $(`#${type}SessionStartTime`).removeClass('is-invalid')
-    }
-
-    if (!isNotWhiteSpace(endTime)){
-        $(`#${type}SessionEndTime`).addClass('is-invalid')
-    } else {
-        $(`#${type}SessionEndTime`).removeClass('is-invalid')
-    }
-
-    if (type === "create") {
-        console.log(day)
-        if (!isNotWhiteSpace(day) || day === 'Select Day'){
-            console.log(day)
-            $(`#${type}SessionDay`).addClass('is-invalid')
-        } else {
-            $(`#${type}SessionDay`).removeClass('is-invalid')
-        }
-
-        return isNotWhiteSpace(day) && isNotWhiteSpace(description) && isNotWhiteSpace(title) && isNotWhiteSpace(chair) && isNotWhiteSpace(room)
-    } else {
-        return isNotWhiteSpace(description) && isNotWhiteSpace(title) && isNotWhiteSpace(chair) && isNotWhiteSpace(room)
-    }
-}
-
-function validateDayModal(type) {
-    const weekday = $(`#${type}DayWeekday`).val()
-    const date = $(`#${type}DayDateInput`).val()
-
-    if (!isNotWhiteSpace(weekday) || weekday === 'Select Weekday'){
-        $(`#${type}DayWeekday`).addClass('is-invalid')
-    } else {
-        $(`#${type}DayWeekday`).removeClass('is-invalid')
-    }
-
-    if (!isNotWhiteSpace(date)){
-        $(`#${type}DayDateInput`).addClass('is-invalid')
-    } else {
-        $(`#${type}DayDateInput`).removeClass('is-invalid')
-    }
-
-    return (isNotWhiteSpace(weekday) && weekday !== 'Select Weekday') && isNotWhiteSpace(date)
-}
-
 async function createSession () {
     try {
 
@@ -444,29 +344,6 @@ async function saveDay() {
     }
 }
 
-async function deleteDay() {
-    try {
-
-        const res = await fetch(`api/days?dayId=${currentlySelectedDay.id}`, {
-            method: 'DELETE'
-        });
-
-        if (res.ok){
-            // day deleted successfully
-            schedule = schedule.filter((day)=> {if (day.id !== currentlySelectedDay.id) return day})
-            currentlySelectedDay = {}
-        } else {
-            console.error("Failed to delete day")
-            throw new Error('Failed to delete day')
-        }
-
-        populateAccordionData()
-        $("#editDayModal").modal('hide');
-    } catch (err) {
-        console.error(err)
-    }
-}
-
 function renderAuthors(authors) {
     let authorString = ""
 
@@ -477,106 +354,6 @@ function renderAuthors(authors) {
     }
 
     return authorString
-}
-
-async function updateSessionDetails(title, start, end, description, chair, room) {
-
-    const body = {
-        id: currentlySelectedSession.id,
-        start,
-        end,
-        title,
-        description,
-        chair,
-        room
-    }
-
-    let res = await fetch('api/sessions', {
-        method: 'PUT',
-        body: JSON.stringify(body),
-        headers: {
-            "Content-Type": 'application/json'
-        }
-    });
-
-    if (res.ok) {
-        // Will update because it's pass by reference
-        currentlySelectedSession.title = title
-        currentlySelectedSession.start = start
-        currentlySelectedSession.chair = chair
-        currentlySelectedSession.room = room
-        currentlySelectedSession.end = end
-        currentlySelectedSession.description = description
-    } else {
-        console.error("Failed to update session")
-        throw new Error('Failed to update session details')
-    }
-}
-
-async function updateDayDetails(weekday, date) {
-
-    const body = {
-        date,
-        weekday,
-        id: currentlySelectedDay.id
-    };
-
-    const res = await fetch('api/days', {
-        method: 'PUT',
-        body: JSON.stringify(body),
-        headers: {
-            "Content-Type": 'application/json'
-        }
-    });
-    
-    if (res.ok) {
-        currentlySelectedDay.weekday = weekday
-        currentlySelectedDay.date = date
-    } else {
-        console.error("Failed to update day")
-        throw new Error('Failed to update day details')
-    }
-}
-
-
-async function assignPaperToSession(paper) {
-    let data = {
-        "id": paper.id,
-        "SessionId": currentlySelectedSession.id
-    }
-
-    let res = await fetch('api/papers', {
-        method: 'PUT',
-        body: JSON.stringify(data),
-        headers: {
-            "Content-Type": 'application/json'
-        }
-    });
-
-    if (res.ok) {
-        currentlySelectedSessionPapers.push(paper)
-    } else {
-        throw new Error('Failed to assign paper to session due to non-200 response code')
-    }
-}
-
-async function unassignPaperFromSession(paper) {
-    let data = {
-        "id": paper.id,
-        "SessionId": null
-    }
-
-    let res = await fetch('api/papers', {
-        method: 'PUT',
-        body: JSON.stringify(data),
-        headers: {
-            "Content-Type": 'application/json'
-        }
-    });
-
-    if (!res.ok) {
-        throw new Error('Received a non-200 response code while removing paper from session!')
-    }
 }
 
 function renderSelectablePapers(papers) {
