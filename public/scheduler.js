@@ -225,6 +225,11 @@ function validateSessionModal(type) {
     const room = $(`#${type}SessionRoomInput`).val()
     const startTime = $(`#${type}SessionStartTime`).val()
     const endTime = $(`#${type}SessionEndTime`).val()
+    let day
+
+    if (type === "create") {
+        day = $("#createSessionDay").val();
+    }
 
     if (!isNotWhiteSpace(description)){
         $(`#${type}SessionDescriptionInput`).addClass('is-invalid')
@@ -262,7 +267,19 @@ function validateSessionModal(type) {
         $(`#${type}SessionEndTime`).removeClass('is-invalid')
     }
 
-    return isNotWhiteSpace(description) && isNotWhiteSpace(title) && isNotWhiteSpace(chair) && isNotWhiteSpace(room)
+    if (type === "create") {
+        console.log(day)
+        if (!isNotWhiteSpace(day) || day === 'Select Day'){
+            console.log(day)
+            $(`#${type}SessionDay`).addClass('is-invalid')
+        } else {
+            $(`#${type}SessionDay`).removeClass('is-invalid')
+        }
+
+        return isNotWhiteSpace(day) && isNotWhiteSpace(description) && isNotWhiteSpace(title) && isNotWhiteSpace(chair) && isNotWhiteSpace(room)
+    } else {
+        return isNotWhiteSpace(description) && isNotWhiteSpace(title) && isNotWhiteSpace(chair) && isNotWhiteSpace(room)
+    }
 }
 
 function validateDayModal(type) {
@@ -328,7 +345,6 @@ async function createSession () {
         console.error(err)
     }
 }
-
 
 async function createDay () {
 
@@ -589,11 +605,11 @@ function removeSelectedPaperFromList(paper) {
 }
 
 function updateCreateSessionModal() {
-    let optionsHTML = '<option disabled selected value="">Select Day</option>'
+    let optionsHTML = '<option selected value="">Select Day</option>'
 
     for (let i = 0; i < schedule.length; i++) {
         const day = schedule[i]
-        optionsHTML += `<option value="${day.id}-${i}">${day.weekday}</option>`
+        optionsHTML += `<option value="${day.id}-${i}">${day.weekday} | ${day.date}</option>`
     }
 
     $("#createSessionDay").html(optionsHTML)
