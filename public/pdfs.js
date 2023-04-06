@@ -1,5 +1,12 @@
 $('#savePDF').on('click', async function() {
-  console.log(schedule)
+  if (!isScheduleEmpty()) {
+    renderPDF();
+  } else {
+    alert('You must add days before exporting to PDF.');
+  }
+})
+
+async function renderPDF() {
   const res = await fetch('api/pdf', {
     method:  'POST',
     body: JSON.stringify(schedule), 
@@ -10,4 +17,8 @@ $('#savePDF').on('click', async function() {
     const file = window.URL.createObjectURL(blob);
     window.open(file);
   });
-})
+}
+
+function isScheduleEmpty() {
+  return !schedule.length
+}
