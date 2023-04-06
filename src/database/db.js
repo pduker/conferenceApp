@@ -115,6 +115,14 @@ const Sessions = db.define('Sessions', {
   description: {
     type: DataTypes.STRING,
     allowNull: false
+  },
+  chair: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  room: {
+    type: DataTypes.STRING,
+    allowNull: false
   }
 })
 
