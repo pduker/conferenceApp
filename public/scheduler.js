@@ -255,6 +255,9 @@ function validateDayModal(type) {
 }
 
 async function createSession () {
+
+    if(!validateCreateSessionModal()) return;
+
     const rawDay = $("#sessionDay").val(); 
     const startTime = convertTo12HourString($("#sessionStart").val())
     const endTime = convertTo12HourString($("#sessionEnd").val())
@@ -287,6 +290,45 @@ async function createSession () {
     populateAccordionData();
 }
 
+function validateCreateSessionModal(){
+    const day = $("#sessionDay").val();
+    const title = $("#createSessionTitleInput").val();
+    const description = $("#createSessionDescriptionInput").val();
+    const startTime = convertTo12HourString($("#sessionStart").val());
+    const endTime = convertTo12HourString($("#sessionEnd").val())
+
+    if (!isNotWhiteSpace(day) || day === 'Select Day'){
+        $("#sessionDay").addClass('is-invalid')
+    } else {
+        $("#sessionDay").removeClass('is-invalid')
+    }
+
+    if (!isNotWhiteSpace(title) || title === 'Session Title'){
+        $("#createSessionTitleInput").addClass('is-invalid')
+    } else {
+        $("#createSessionTitleInput").removeClass('is-invalid')
+    }
+
+    if (!isNotWhiteSpace(description) || description === '...'){
+        $("#createSessionDescriptionInput").addClass('is-invalid')
+    } else {
+        $("#createSessionDescriptionInput").removeClass('is-invalid')
+    }
+
+    if (!isNotWhiteSpace(startTime) || startTime === '--:-- --'){
+        $("#sessionStart").addClass('is-invalid')
+    } else {
+        $("#sessionStart").removeClass('is-invalid')
+    }
+
+    if (!isNotWhiteSpace(endTime) || endTime === '--:-- --'){
+        $("#sessionEnd").addClass('is-invalid')
+    } else {
+        $("#sessionEnd").removeClass('is-invalid')
+    }
+
+    return isNotWhiteSpace(day) && isNotWhiteSpace(title) && isNotWhiteSpace(description) && isNotWhiteSpace(startTime) && isNotWhiteSpace(endTime);
+}
 
 async function createDay () {
 
