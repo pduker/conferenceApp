@@ -19,6 +19,16 @@ async function getAllDays() {
   return days
 }
 
+async function getSingularDay(dayId){
+  const day = await Days.findByPk(dayId, {include: [{ model: Sessions}]})
+
+  if(!day){
+    throw new Error('Could not find the Day that matched that ID')
+  }
+
+  return day;
+}
+
 async function createDay(weekday, date) {
   const day = await Days.create({
     weekday,
@@ -59,6 +69,7 @@ async function deleteDay (dayId) {
 
 module.exports = {
   getAllDays,
+  getSingularDay,
   createDay,
   updateDay,
   deleteDay

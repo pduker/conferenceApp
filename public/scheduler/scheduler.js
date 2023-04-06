@@ -72,6 +72,17 @@ async function getData() {
     return data;
   }
 
+  async function getDay(dayId){
+    const res = await fetch(`api/days/${dayId}`, {
+        method: 'GET',
+        headers: {
+            "Content-Type": 'application/json'
+            }
+    });
+    let data = await res.json();
+    return data;
+  }
+
 function populateAccordionData() {
 
     let accordionHTML = '';
@@ -162,13 +173,13 @@ function populateAccordionData() {
                 }
             }
 
-            accordionHTML += `<button class='btn btn-primary' id='edit-day-${day.id}' data-bs-toggle="modal" data-bs-target="#editDayModal">Edit Schedule Day</button>`
+            accordionHTML += `<button class="btn btn-secondary" id='edit-day-${day.id}' data-bs-toggle="modal" data-bs-target="#editDayModal">Edit Schedule Day</button>`
+            accordionHTML += `<button class="btn btn-secondary" id='duplicate-day-${day.id}'>Duplicate Timeslots</button>`
 
             accordionHTML += `</div>
                     </div>
                 </div>
             </div>`;
-
         };
     }
 
@@ -180,6 +191,50 @@ function populateAccordionData() {
     updateCreateSessionModal()
     attachEditModalListeners()
     attachEditDayListeners()
+    attachDuplicateDayListeners()
+}
+
+function attachDuplicateDayListeners(){
+    for (const day of schedule) {
+        $(`#duplicate-day-${day.id}`).on("click" , function(){
+            duplicateDay(day.id);
+        })
+    }
+}
+
+//need to create the route for the particular day
+async function duplicateDay(dayID){
+    const selectedDay = await getDay(dayID);
+    const body = {
+        date: selectedDay.date,
+        weekday: selectedDay.weekday
+    };
+
+    console.log(selectedDay.session)
+    const duplicatedDay = await createDay(body);
+    let sessions = [];
+    for(session of selectedDay.Sessions){
+        console.log(session.start)
+        let tempNewSession = {
+            "DayId": duplicatedDay.id,
+            "start":session.start,
+            "end": session.end,
+            "description": "TEMP DESC",
+            "title": "Temporary Title",
+            "chair": "Temporary Chair",
+            "room": "Temporary Room"
+        }
+
+        const newSession = await createSession(tempNewSession);
+
+        newSession.Papers = []
+
+        sessions.push(newSession)
+    }
+    duplicatedDay.Sessions = sessions;
+    schedule.push(duplicatedDay);
+    populateAccordionData();
+    $("#createDayModal").modal('hide');    
 }
 
 function attachEditDayListeners(){
@@ -219,7 +274,18 @@ function attachEditModalListeners() {
     }
 }
 
-async function createSession () {
+async function createSession(session) {
+    let res = await fetch('api/sessions', {
+        method: 'POST',
+        body: JSON.stringify(session),
+        headers: {
+            "Content-Type": 'application/json'
+        }
+    });
+    return await res.json();
+}
+
+async function saveCreateSession () {
     try {
 
         if (!validateSessionModal('create')) { return }
@@ -244,14 +310,7 @@ async function createSession () {
             room
         }
 
-        const res = await fetch('api/sessions', {
-            method: 'POST',
-            body: JSON.stringify(body),
-            headers: {
-                "Content-Type": 'application/json'
-            }
-        })
-        const newSession = await res.json();
+        const newSession = await createSession(body);
 
         newSession.Papers = []
 
@@ -264,7 +323,18 @@ async function createSession () {
     }
 }
 
-async function createDay () {
+async function createDay(day){
+    let res = await fetch(`api/days`, {
+        method: 'POST',
+        body: JSON.stringify(day),
+        headers: {
+            "Content-Type": 'application/json'
+        }
+    });
+    return await res.json();
+}
+
+async function saveCreateDay () {
 
     if (!validateDayModal('create')) return;
 
@@ -276,14 +346,7 @@ async function createDay () {
         weekday
     };
 
-    const res = await fetch('api/days', {
-        method: 'POST',
-        body: JSON.stringify(body),
-        headers: {
-            "Content-Type": 'application/json'
-        }
-    });
-    const newDay = await res.json();
+    const newDay = await createDay(body);
     console.log(newDay);
 
     let sessions = [];
@@ -493,17 +556,15 @@ function updateEditSessionModal(papers) {
             removeSelectedPaperFromList(paper)
         })
     }
-
-
 }
 
 
 $("#saveCreatedSession").on(`click`, function () {
-    createSession()
+    saveCreateSession()
 })
 
 $("#saveCreatedDay").on(`click`, function () {
-    createDay()
+    saveCreateDay()
 })
 
 $('#createDayBtn').on('click', function() {
