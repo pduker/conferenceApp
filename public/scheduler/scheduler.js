@@ -55,6 +55,23 @@ function convertTo24HourString (time) {
     }
 }
 
+async function getData() {
+    schedule = await getSchedule()
+    allPapers = await getAllPapers()
+  }
+  
+  async function getSchedule() {
+    const res = (await fetch('api/days', { method: 'GET' }));
+    const data = await res.json();
+    return data;
+  }
+  
+  async function getAllPapers() {
+    const res = (await fetch('api/papers', { method: 'GET' }));
+    const data = await res.json();
+    return data;
+  }
+
 function populateAccordionData() {
 
     let accordionHTML = '';
