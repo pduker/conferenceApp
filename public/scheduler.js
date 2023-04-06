@@ -1,6 +1,7 @@
 let numTimeslots = 0;
 let schedule;
 let allPapers;
+const presetSessions = ['10:15am - 12:00pm'];
 
 
 // Reference to the actual currently selected day (WRITING TO THIS IS REFLECTED AS THE DATABASE RECORD)
@@ -366,11 +367,34 @@ async function createDay () {
         }
     });
     const newDay = await res.json();
+    console.log(newDay);
 
-    newDay.Sessions = [];
+    let sessions = [];
+    for (let i = 0; i < presetSessions.length; i++){
+        const isChecked = $(`#presetSession${i}`)[0].checked;
+        if (isChecked){
+            const numSessions = $(`#presetSession${i}Num`)[0].value;
+            for (let j = 0; j < numSessions; j++){
+                const times = presetSessions[i].split('-');
+                const session = {
+                    start: times[0],
+                    end: times[1],
+                    description: 'temporary description',
+                    title: 'temporary title'
+                }
+                sessions.push(session);
+
+                // ADD THE SESSION TO THE DATABASE - CALL A CREATE SESSION FUNCTION
+            }
+        }
+    }
+
+    console.log(sessions);
+
+    newDay.Sessions = sessions;
     schedule.push(newDay);
     populateAccordionData();
-    $("#createDayModal").modal('hide');
+    $("#createDayModal").modal('hide');    
 }
 
 async function saveSession() {
@@ -694,7 +718,44 @@ $('#createDayBtn').on('click', function() {
     $('#createDayDateInput').val('')
     $('#createDayWeekday').removeClass('is-invalid')
     $('#createDayDateInput').removeClass('is-invalid')
-})
+
+    let modalHtml = $('#createDayModalBody').html();
+    if (modalHtml.includes('Preset Session Times'))
+        return;
+
+    modalHtml += `<h5 class='mt-3'>Preset Session Times</h5>`
+    
+    let i = 0;
+    for(session of presetSessions){
+        modalHtml += `<div class="row p-2">
+            <div class="col-auto">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="presetSession${i}">
+                    <label class="form-check-label" for="flexCheckDefault">
+                    ${session}
+                    </label>
+                </div>
+            </div>
+
+            <div class="col-auto">
+                <input type="number" value='1' id='presetSession${i}Num' disabled>
+            </div>
+        </div>`;
+        i++;
+    }
+    
+
+    $('#createDayModalBody').html(modalHtml);
+
+    for(let j = 0; j < i; j++){
+        $(`#presetSession${j}`).on('change', (e)=>{
+            const value = e.target.checked;
+            $(`#presetSession${j}Num`).attr('disabled', !value);
+        });
+    }
+
+    addCreateDayInputListener();
+});
 
 $("#searchSessionInput").on("input", function (event) {
     let text = event.target.value
@@ -716,16 +777,21 @@ $("#saveSession").on("click", function () {
 })
 
 $('#editDayDateInput').on('change', (event)=>{
-    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-    const dayOfWeek = (new Date(event.target.value)).getDay();
-    $('#editDayWeekday').val(days[dayOfWeek]);
+    $('#editDayWeekday').val(getWeekday(event));
 })
 
-$('#createDayDateInput').on('change', (event)=>{
+function addCreateDayInputListener() {
+    $('#createDayDateInput').on('change', (event)=>{
+        $('#createDayWeekday').val(getWeekday(event));
+    });
+}
+addCreateDayInputListener();
+
+function getWeekday(event){
     const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     const dayOfWeek = (new Date(event.target.value)).getDay();
-    $('#createDayWeekday').val(days[dayOfWeek]);
-})
+    return days[dayOfWeek];
+}
 
 getData().then(() => {
     populateAccordionData()
