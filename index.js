@@ -15,6 +15,7 @@ const authRoutes = require('./src/routes/auth')
 const sessionRoutes = require('./src/routes/sessions')
 const dayRoutes = require('./src/routes/days')
 const pdfRoutes = require('./src/routes/pdf')
+const { getAllSessions } = require('./src/database/sessions')
 
 const server = express()
 
@@ -32,15 +33,6 @@ server.use('/api/sessions', sessionRoutes)
 
 server.use('/api/days', dayRoutes)
 
-server.get('/api/sessions/export', async function (req, res) {
-    try {
-        exportSessionYaml(null)
-        res.sendStatus(200)
-    } catch (err) {
-        console.error(err)
-        res.sendStatus(500)
-    }
-})
 server.use('/api/pdf', pdfRoutes)
 
 server.get('/api/papers', async function (req, res) {

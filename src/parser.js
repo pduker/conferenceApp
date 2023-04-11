@@ -3,6 +3,7 @@ const fs = require('fs')
 const path = require('path')
 const { removeSpaces } = require('./utils')
 const yaml = require('js-yaml')
+const JSZip = require('jszip');
 
 /**
  * Deletes the file at the specified path
@@ -71,28 +72,37 @@ function exportYAML(title, authors, abstract, suppMats) {
 }
 
 function exportSessionYaml(sessions){
-  let title = 'Best Papers'
-  let slug = title.replace(/\s+/g, '-').toLowerCase()
-  let filePath = path.join(__dirname, '../tmp/yaml/sessions', `${slug}.yaml`)
-  const sessionYaml = {
-    sessiontype:"",
-    title,
-    slug,
-    room: 2,
-    time: 2,
-    link: "",
-    slack: "",
-    zoom: "",
-    chair:{name:"",
-          institution:"",
-          format: ""},
-    papers:['Paper1', 'Paper2'],
-    respondent: {name: null}
+  const zip = new JSZip();
+  for(const session of sessions){
+    let title = session.title
+    let slug = title.replace(/\s+/g, '-').toLowerCase()
+    let filePath = path.join(__dirname, '../tmp/yaml/sessions', `${slug}.yaml`)
+    let paperTitles = []
+    for(const paper of session.Papers){
+      paperTitles.push(paper.title)
+    }
+    const sessionYaml = {
+      sessiontype:"",
+      title,
+      slug,
+      room: session.room,
+      time: `${session.start} - ${session.end}`,
+      link: "",
+      slack: "",
+      zoom: "",
+      chair:{name:session.chair  ,
+            institution:"",
+            format: ""},
+      papers:paperTitles,
+      respondent: {name: null}
+    }
+  const doc = yaml.dump(sessionYaml)
+  zip.file(`${slug}.yaml`, doc);
+  fs.writeFileSync(filePath, doc.toString())
 
   }
-  
-  const doc = yaml.dump(sessionYaml)
-  fs.writeFileSync(filePath, doc.toString())
+  zip.generateNodeStream({ type: 'nodebuffer', streamFiles: true })
+        .pipe(fs.createWriteStream(path.join(__dirname, '../tmp/yaml','sessions.zip')))
 }
 
 module.exports = {
