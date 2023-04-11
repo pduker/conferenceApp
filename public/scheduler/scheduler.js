@@ -608,3 +608,7 @@ $("#deleteSession").on("click", async function () {
         populateAccordionData();
     }
 });
+
+$('#exportZip').on('click', function (e) {  
+    downloadZip()
+});
