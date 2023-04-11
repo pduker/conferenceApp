@@ -8,19 +8,44 @@ router.post('/', async function (req, res) {
     schedule = req.body
     let doc = new PDFDocument({bufferPages: true})
     doc.pipe(res);
-    doc.image('../static/SMT_Logo.png', 430, 15, {align: 'center'})
+    // doc.image('../static/SMT_Logo.png', 430, 15, {align: 'center'})
     for (day in schedule) {
-      doc.font('Times-Roman')
+      if (parseInt(day) != 0) {
+        doc.text(' ', {paragraphGap:9})
+      }
+      doc.font('Helvetica-Bold')
       .fontSize(14)
-      .text(JSON.stringify(day));
-      for (session in day) {
-        doc.font('Times-Roman')
-        .fontSize(11)
-        .text(JSON.stringify(session));
-        for (paper in session) {
-          doc.font('Times-Roman')
+      .text(schedule[day]['weekday'].toUpperCase(), {paragraphGap:12})
+      // add spacing and line between day and sessions
+      let sessions = schedule[day]['Sessions']
+      for (let session in sessions) {
+        // add spacing and line between sessions
+        if (session) {
+          doc.font('Helvetica-Bold')
           .fontSize(11)
-          .text(JSON.stringify(paper));
+          .text(sessions[session]['title'].toUpperCase())
+          doc.font('Helvetica')
+          .fontSize(11)
+          .text(sessions[session]['chair'] + ', Chair', {paragraphGap:9})
+          let papers = schedule[day]['Sessions'][session]['Papers']
+          for (let paper in papers) {
+            // add spacing between papers
+            doc.font('Helvetica-Bold')
+            .fontSize(11)
+            .text(papers[paper]['title'])
+            let authors = ""
+            let author_list = schedule[day]['Sessions'][session]['Papers'][paper]['Authors']
+            for (let author in author_list) {
+              if (parseInt(author) != 0) {
+                authors += ", "
+              }
+              authors += author_list[author]['name']
+              + ` (${author_list[author]['institution']})`
+            }
+            doc.font('Helvetica')
+            .fontSize(11)
+            .text(authors, {paragraphGap:9})
+          }
         }
       }
     }
