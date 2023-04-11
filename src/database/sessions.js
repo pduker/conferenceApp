@@ -30,12 +30,14 @@ async function getAllSessionsByDay (weekday) {
   return day
 }
 
-async function createSession (title, start, end, description, DayId) {
+async function createSession (title, start, end, description, chair, room, DayId) {
   const session = await Sessions.create({
     title, 
     start,
     end,
     description,
+    room,
+    chair,
     DayId
   })
 

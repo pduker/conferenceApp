@@ -1,6 +1,7 @@
 let numTimeslots = 0;
 let schedule;
 let allPapers;
+const presetSessions = ['10:15am - 12:00pm'];
 
 
 // Reference to the actual currently selected day (WRITING TO THIS IS REFLECTED AS THE DATABASE RECORD)
@@ -57,19 +58,19 @@ function convertTo24HourString (time) {
 async function getData() {
     schedule = await getSchedule()
     allPapers = await getAllPapers()
-}
-
-async function getSchedule() {
+  }
+  
+  async function getSchedule() {
     const res = (await fetch('api/days', { method: 'GET' }));
     const data = await res.json();
     return data;
-}
-
-async function getAllPapers() {
+  }
+  
+  async function getAllPapers() {
     const res = (await fetch('api/papers', { method: 'GET' }));
     const data = await res.json();
     return data;
-}
+  }
 
 function populateAccordionData() {
 
@@ -89,7 +90,7 @@ function populateAccordionData() {
                             <i class="fa-solid fa-triangle-exclamation fa-3x"></i>
                         </div>
                         <div class="col-10 d-flex justify-content-start align-items-center">
-                            No days appear to have been created yet. Please create some to get started scheduling!
+                            No days appear to have been created yet. You can create some with the "Create Day" button above.
                         </div>
                     </div>
                 </div>
@@ -125,7 +126,7 @@ function populateAccordionData() {
                                     <i class="fa-solid fa-triangle-exclamation fa-3x"></i>
                                 </div>
                                 <div class="col-10 d-flex justify-content-start align-items-center">
-                                    No sessions appear to have been created for this day yet. Please create some.
+                                    No sessions have been created for this day yet. Create a new session to get started.
                                 </div>
                             </div>
                         </div>
@@ -176,6 +177,7 @@ function populateAccordionData() {
         $(`#collapseButton-day-${schedule[0].id}`).trigger('click');
 
 
+    updateCreateSessionModal()
     attachEditModalListeners()
     attachEditDayListeners()
 }
@@ -194,14 +196,16 @@ function attachEditModalListeners() {
     for (const day of schedule) {
         for (const session of day.Sessions) {
             $(`#edit-session-${session.id}`).on("click", function () {
-                $('#sessionTitleInput').removeClass('is-invalid')
-                $('#sessionDescriptionInput').removeClass('is-invalid')
+                $('#createSessionTitleInput').removeClass('is-invalid')
+                $('#createSessionDescriptionInput').removeClass('is-invalid')
 
                 $("#editSessionModalTitle").html(day.weekday + " " + session.title)
-                $("#sessionTitleInput").val(session.title)
-                $("#sessionDescriptionInput").val(session.description)
-                $("#sessionEditStartTimeInput").val(convertTo24HourString(session.start))
-                $("#sessionEditEndTimeInput").val(convertTo24HourString(session.end))
+                $("#editSessionTitleInput").val(session.title)
+                $("#editSessionDescriptionInput").val(session.description)
+                $("#editSessionChairInput").val(session.chair)
+                $("#editSessionRoomInput").val(session.room)
+                $("#editSessionStartTimeInput").val(convertTo24HourString(session.start))
+                $("#editSessionEndTimeInput").val(convertTo24HourString(session.end))
 
                 selectedPapers = []
                 removedPapers = []
@@ -215,77 +219,50 @@ function attachEditModalListeners() {
     }
 }
 
-function validateEditSessionModal() {
-    const description = $('#sessionDescriptionInput').val()
-    const title = $('#sessionTitleInput').val()
-
-    if (!isNotWhiteSpace(description)){
-        $('#sessionDescriptionInput').addClass('is-invalid')
-    } else {
-        $('#sessionDescriptionInput').removeClass('is-invalid')
-    }
-
-    if (!isNotWhiteSpace(title)){
-        $('#sessionTitleInput').addClass('is-invalid')
-    } else {
-        $('#sessionTitleInput').removeClass('is-invalid')
-    }
-
-    return isNotWhiteSpace(description) && isNotWhiteSpace(title)
-}
-
-function validateDayModal(type) {
-    const weekday = $(`#${type}DayWeekday`).val()
-    const date = $(`#${type}DayDateInput`).val()
-
-    if (!isNotWhiteSpace(weekday) || weekday === 'Select Weekday'){
-        $(`#${type}DayWeekday`).addClass('is-invalid')
-    } else {
-        $(`#${type}DayWeekday`).removeClass('is-invalid')
-    }
-
-    if (!isNotWhiteSpace(date)){
-        $(`#${type}DayDateInput`).addClass('is-invalid')
-    } else {
-        $(`#${type}DayDateInput`).removeClass('is-invalid')
-    }
-
-    return (isNotWhiteSpace(weekday) && weekday !== 'Select Weekday') && isNotWhiteSpace(date)
-}
-
 async function createSession () {
-    const rawDay = $("#sessionDay").val(); 
-    const startTime = convertTo12HourString($("#sessionStart").val())
-    const endTime = convertTo12HourString($("#sessionEnd").val())
-    const title = $("#createSessionTitleInput").val()
-    const description = $("#createSessionDescriptionInput").val()
+    try {
 
-    const dayIdAndIndex = rawDay.split("-")
-    
-    const body = {
-        DayId: parseInt(dayIdAndIndex[0]),
-        start: startTime,
-        end: endTime,
-        description,
-        title
-    }
+        if (!validateSessionModal('create')) { return }
 
-    const res = await fetch('api/sessions', {
-        method: 'POST',
-        body: JSON.stringify(body),
-        headers: {
-            "Content-Type": 'application/json'
+        const rawDay = $("#createSessionDay").val(); 
+        const startTime = convertTo12HourString($("#createSessionStartTime").val())
+        const endTime = convertTo12HourString($("#createSessionEndTime").val())
+        const title = $("#createSessionTitleInput").val()
+        const description = $("#createSessionDescriptionInput").val()
+        const chair = $('#createSessionChairInput').val()
+        const room = $('#createSessionRoomInput').val()
+
+        const dayIdAndIndex = rawDay.split("-")
+        
+        const body = {
+            DayId: parseInt(dayIdAndIndex[0]),
+            start: startTime,
+            end: endTime,
+            description,
+            title,
+            chair,
+            room
         }
-    })
-    const newSession = await res.json();
 
-    newSession.Papers = []
+        const res = await fetch('api/sessions', {
+            method: 'POST',
+            body: JSON.stringify(body),
+            headers: {
+                "Content-Type": 'application/json'
+            }
+        })
+        const newSession = await res.json();
 
-    schedule[dayIdAndIndex[1]]['Sessions'].push(newSession);
+        newSession.Papers = []
 
-    populateAccordionData();
+        schedule[dayIdAndIndex[1]]['Sessions'].push(newSession);
+
+        populateAccordionData();
+        $("#createSessionModal").modal('hide');
+    } catch (err) {
+        console.error(err)
+    }
 }
-
 
 async function createDay () {
 
@@ -307,22 +284,47 @@ async function createDay () {
         }
     });
     const newDay = await res.json();
+    console.log(newDay);
 
-    newDay.Sessions = [];
+    let sessions = [];
+    for (let i = 0; i < presetSessions.length; i++){
+        const isChecked = $(`#presetSession${i}`)[0].checked;
+        if (isChecked){
+            const numSessions = $(`#presetSession${i}Num`)[0].value;
+            for (let j = 0; j < numSessions; j++){
+                const times = presetSessions[i].split('-');
+                const session = {
+                    start: times[0],
+                    end: times[1],
+                    description: 'temporary description',
+                    title: 'temporary title'
+                }
+                sessions.push(session);
+
+                // ADD THE SESSION TO THE DATABASE - CALL A CREATE SESSION FUNCTION
+            }
+        }
+    }
+
+    console.log(sessions);
+
+    newDay.Sessions = sessions;
     schedule.push(newDay);
     populateAccordionData();
-    $("#createDayModal").modal('hide');
+    $("#createDayModal").modal('hide');    
 }
 
 async function saveSession() {
     try {
 
-        if (!validateEditSessionModal()) return;
+        if (!validateSessionModal('edit')) return;
 
-        const description = $('#sessionDescriptionInput').val()
-        const title = $('#sessionTitleInput').val()
-        const start = convertTo12HourString($('#sessionEditStartTimeInput').val())
-        const end = convertTo12HourString($('#sessionEditEndTimeInput').val())
+        const description = $('#editSessionDescriptionInput').val()
+        const title = $('#editSessionTitleInput').val()
+        const chair = $('#editSessionChairInput').val()
+        const room = $('#editSessionRoomInput').val()
+        const start = convertTo12HourString($('#editSessionStartTimeInput').val())
+        const end = convertTo12HourString($('#editSessionEndTimeInput').val())
 
         for (const paper of selectedPapers) {
             await assignPaperToSession(paper)
@@ -332,7 +334,7 @@ async function saveSession() {
             await unassignPaperFromSession(paper)
         }
 
-        await updateSessionDetails(title, start, end, description)
+        await updateSessionDetails(title, start, end, description, chair, room)
 
         currentlySelectedSession.Papers = currentlySelectedSessionPapers
 
@@ -359,29 +361,6 @@ async function saveDay() {
     }
 }
 
-async function deleteDay() {
-    try {
-
-        const res = await fetch(`api/days?dayId=${currentlySelectedDay.id}`, {
-            method: 'DELETE'
-        });
-
-        if (res.ok){
-            // day deleted successfully
-            schedule = schedule.filter((day)=> {if (day.id !== currentlySelectedDay.id) return day})
-            currentlySelectedDay = {}
-        } else {
-            console.error("Failed to delete day")
-            throw new Error('Failed to delete day')
-        }
-
-        populateAccordionData()
-        $("#editDayModal").modal('hide');
-    } catch (err) {
-        console.error(err)
-    }
-}
-
 function renderAuthors(authors) {
     let authorString = ""
 
@@ -392,102 +371,6 @@ function renderAuthors(authors) {
     }
 
     return authorString
-}
-
-async function updateSessionDetails(title, start, end, description) {
-
-    const body = {
-        id: currentlySelectedSession.id,
-        start,
-        end,
-        title,
-        description
-    }
-
-    let res = await fetch('api/sessions', {
-        method: 'PUT',
-        body: JSON.stringify(body),
-        headers: {
-            "Content-Type": 'application/json'
-        }
-    });
-
-    if (res.ok) {
-        // Will update because it's pass by reference
-        currentlySelectedSession.title = title
-        currentlySelectedSession.start = start
-        currentlySelectedSession.end = end
-        currentlySelectedSession.description = description
-    } else {
-        console.error("Failed to update session")
-        throw new Error('Failed to update session details')
-    }
-}
-
-async function updateDayDetails(weekday, date) {
-
-    const body = {
-        date,
-        weekday,
-        id: currentlySelectedDay.id
-    };
-
-    const res = await fetch('api/days', {
-        method: 'PUT',
-        body: JSON.stringify(body),
-        headers: {
-            "Content-Type": 'application/json'
-        }
-    });
-    
-    if (res.ok) {
-        currentlySelectedDay.weekday = weekday
-        currentlySelectedDay.date = date
-    } else {
-        console.error("Failed to update day")
-        throw new Error('Failed to update day details')
-    }
-}
-
-
-async function assignPaperToSession(paper) {
-    let data = {
-        "id": paper.id,
-        "SessionId": currentlySelectedSession.id
-    }
-
-    let res = await fetch('api/papers', {
-        method: 'PUT',
-        body: JSON.stringify(data),
-        headers: {
-            "Content-Type": 'application/json'
-        }
-    });
-
-    if (res.ok) {
-        currentlySelectedSessionPapers.push(paper)
-    } else {
-        throw new Error('Failed to assign paper to session due to non-200 response code')
-    }
-}
-
-async function unassignPaperFromSession(paper) {
-    let data = {
-        "id": paper.id,
-        "SessionId": null
-    }
-
-    let res = await fetch('api/papers', {
-        method: 'PUT',
-        body: JSON.stringify(data),
-        headers: {
-            "Content-Type": 'application/json'
-        }
-    });
-
-    if (!res.ok) {
-        throw new Error('Received a non-200 response code while removing paper from session!')
-    }
 }
 
 function renderSelectablePapers(papers) {
@@ -540,14 +423,14 @@ function removeSelectedPaperFromList(paper) {
 }
 
 function updateCreateSessionModal() {
-    let optionsHTML = '<option selected>Select Day</option>'
+    let optionsHTML = '<option selected value="">Select Day</option>'
 
     for (let i = 0; i < schedule.length; i++) {
         const day = schedule[i]
-        optionsHTML += `<option value="${day.id}-${i}">${day.weekday}</option>`
+        optionsHTML += `<option value="${day.id}-${i}">${day.weekday} | ${day.date}</option>`
     }
 
-    $("#sessionDay").html(optionsHTML)
+    $("#createSessionDay").html(optionsHTML)
 }
 
 function updateEditSessionModal(papers) {
@@ -629,7 +512,44 @@ $('#createDayBtn').on('click', function() {
     $('#createDayDateInput').val('')
     $('#createDayWeekday').removeClass('is-invalid')
     $('#createDayDateInput').removeClass('is-invalid')
-})
+
+    let modalHtml = $('#createDayModalBody').html();
+    if (modalHtml.includes('Preset Session Times'))
+        return;
+
+    modalHtml += `<h5 class='mt-3'>Preset Session Times</h5>`
+    
+    let i = 0;
+    for(session of presetSessions){
+        modalHtml += `<div class="row p-2">
+            <div class="col-auto">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="presetSession${i}">
+                    <label class="form-check-label" for="flexCheckDefault">
+                    ${session}
+                    </label>
+                </div>
+            </div>
+
+            <div class="col-auto">
+                <input type="number" value='1' id='presetSession${i}Num' disabled>
+            </div>
+        </div>`;
+        i++;
+    }
+    
+
+    $('#createDayModalBody').html(modalHtml);
+
+    for(let j = 0; j < i; j++){
+        $(`#presetSession${j}`).on('change', (e)=>{
+            const value = e.target.checked;
+            $(`#presetSession${j}Num`).attr('disabled', !value);
+        });
+    }
+
+    addCreateDayInputListener();
+});
 
 $("#searchSessionInput").on("input", function (event) {
     let text = event.target.value
@@ -650,8 +570,24 @@ $("#saveSession").on("click", function () {
     saveSession()
 })
 
+$('#editDayDateInput').on('change', (event)=>{
+    $('#editDayWeekday').val(getWeekday(event));
+})
+
+function addCreateDayInputListener() {
+    $('#createDayDateInput').on('change', (event)=>{
+        $('#createDayWeekday').val(getWeekday(event));
+    });
+}
+addCreateDayInputListener();
+
+function getWeekday(event){
+    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    const dayOfWeek = (new Date(event.target.value)).getDay();
+    return days[dayOfWeek];
+}
+
 getData().then(() => {
-    updateCreateSessionModal()
     populateAccordionData()
 });
 

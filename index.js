@@ -14,6 +14,7 @@ const { createPaper, getAllPapers, getPaperByTitle, getAllPapersBySession, updat
 const authRoutes = require('./src/routes/auth')
 const sessionRoutes = require('./src/routes/sessions')
 const dayRoutes = require('./src/routes/days')
+const pdfRoutes = require('./src/routes/pdf')
 
 const server = express()
 
@@ -40,6 +41,7 @@ server.get('/api/sessions/export', async function (req, res) {
         res.sendStatus(500)
     }
 })
+server.use('/api/pdf', pdfRoutes)
 
 server.get('/api/papers', async function (req, res) {
     try {
@@ -156,12 +158,12 @@ server.get('/scheduler', async function (req, res) {
     }
 })
 
-//server.use('/webfonts', express.static(path.join(__dirname, 'node_modules/@forttawesome/fontawesome-free/webfonts')))
 server.use('/css', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/css')))
 server.use('/css', express.static(path.join(__dirname, 'node_modules/@fortawesome/fontawesome-free/css')))
 server.use('/js', express.static(path.join(__dirname, 'node_modules/@forttawesome/fontawesome-free/js')))
 server.use('/js', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/js')))
 server.use('/js', express.static(path.join(__dirname, 'node_modules/jquery/dist')))
+server.use('/js', express.static(path.join(__dirname, 'node_modules/texlive')))
 server.use(express.static("public"))
 
 // Protected authenticated routing from here on

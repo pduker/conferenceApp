@@ -30,14 +30,14 @@ router.put('/', async function (req, res) {
 
 router.post('/', async function (req, res) {
   try {
-    const {title, start, end, DayId, description} = req.body
+    const {title, start, end, DayId, description, chair, room} = req.body
 
-    if (!title || !start || !end || !DayId || !description) {
+    if (!title || !start || !end || !DayId || !description || !chair || !room) {
       res.status(400).send('Bad request, missing required fields')
       return
     }
 
-    const session = await createSession(title, start, end, description, DayId)
+    const session = await createSession(title, start, end, description, chair, room, DayId)
 
     res.json(session)
   } catch (err) {
