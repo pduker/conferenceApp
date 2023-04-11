@@ -56,7 +56,7 @@ async function parseDocx (inputFilePath, outputFilePath) {
  */
 function exportYAML(title, authors, abstract, suppMats) {
   const safeTitle = removeSpaces(title)
-  let filePath = path.join(__dirname, '../tmp/yaml', `${safeTitle}.yaml`)
+  let filePath = path.join(__dirname, '../tmp/yaml/papers', `${safeTitle}.yaml`)
   
   const uploadedPaper = {
     authors: Object.values(authors),
@@ -70,8 +70,34 @@ function exportYAML(title, authors, abstract, suppMats) {
   fs.writeFileSync(filePath, doc.toString())
 }
 
+function exportSessionYaml(sessions){
+  let title = 'Best Papers'
+  let slug = title.replace(/\s+/g, '-').toLowerCase()
+  let filePath = path.join(__dirname, '../tmp/yaml/sessions', `${slug}.yaml`)
+  const sessionYaml = {
+    sessiontype:"",
+    title,
+    slug,
+    room: 2,
+    time: 2,
+    link: "",
+    slack: "",
+    zoom: "",
+    chair:{name:"",
+          institution:"",
+          format: ""},
+    papers:['Paper1', 'Paper2'],
+    respondent: {name: null}
+
+  }
+  
+  const doc = yaml.dump(sessionYaml)
+  fs.writeFileSync(filePath, doc.toString())
+}
+
 module.exports = {
   parseDocx,
   deleteFile,
-  exportYAML
+  exportYAML,
+  exportSessionYaml
 }

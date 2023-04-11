@@ -8,7 +8,7 @@ const yaml = require('js-yaml')
 const uploadMiddleware = multer({ storage: multer.diskStorage({ destination: "./tmp"}) })
 const authMiddleware = require('./src/auth/middleware')
 
-const { parseDocx, deleteFile, exportYAML } = require("./src/parser.js")
+const { parseDocx, deleteFile, exportYAML, exportSessionYaml } = require("./src/parser.js")
 const { buildAuthorsMap, initializeServer, parseSuppMats } = require("./src/utils")
 const { createPaper, getAllPapers, getPaperByTitle, getAllPapersBySession, updatePaper } = require("./src/database/papers")
 const authRoutes = require('./src/routes/auth')
@@ -31,9 +31,10 @@ server.use('/api/sessions', sessionRoutes)
 
 server.use('/api/days', dayRoutes)
 
-server.get('/api/papers/export', async function (req, res) {
+server.get('/api/sessions/export', async function (req, res) {
     try {
-        
+        exportSessionYaml(null)
+        res.sendStatus(200)
     } catch (err) {
         console.error(err)
         res.sendStatus(500)
@@ -94,6 +95,8 @@ server.post("/api/papers", uploadMiddleware.any(), async function (req, res) {
         const suppMats = parseSuppMats(req.files, req.body)
 
         await createPaper(title, authors, abstractHTML, suppMats)
+
+        await exportYAML(title, authors, abstractHTML, suppMats)
 
         await deleteFile(outputFilePath)
         await deleteFile(inputFilePath)
