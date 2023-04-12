@@ -81,3 +81,17 @@ function validateDayModal(type) {
 
   return (isNotWhiteSpace(weekday) && weekday !== 'Select Weekday') && isNotWhiteSpace(date)
 }
+
+function resetSessionValidation(type) {
+    $(`#${type}SessionTitleInput`).removeClass('is-invalid')
+    $(`#${type}SessionDescriptionInput`).removeClass('is-invalid')
+    $(`#${type}SessionChairInput`).removeClass('is-invalid')
+    $(`#${type}SessionRoomInput`).removeClass('is-invalid')
+    $(`#${type}SessionStartTime`).removeClass('is-invalid')
+    $(`#${type}SessionEndTime`).removeClass('is-invalid')
+}
+
+function resetDayValidation(type) {
+    $(`#${type}DayWeekday`).removeClass('is-invalid')
+    $(`#${type}DayDateInput`).removeClass('is-invalid')
+}
