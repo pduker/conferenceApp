@@ -202,7 +202,6 @@ function attachDuplicateDayListeners(){
     }
 }
 
-//need to create the route for the particular day
 async function duplicateDay(dayID){
     const selectedDay = await getDay(dayID);
     const body = {
@@ -210,13 +209,11 @@ async function duplicateDay(dayID){
         weekday: selectedDay.weekday
     };
 
-    console.log(selectedDay.session)
-    const duplicatedDay = await createDay(body);
+    const newDay = await createDay(body);
     let sessions = [];
     for(session of selectedDay.Sessions){
-        console.log(session.start)
         let tempNewSession = {
-            "DayId": duplicatedDay.id,
+            "DayId": newDay.id,
             "start":session.start,
             "end": session.end,
             "description": "TEMP DESC",
@@ -225,14 +222,12 @@ async function duplicateDay(dayID){
             "room": "Temporary Room"
         }
 
-        const newSession = await createSession(tempNewSession);
-
+        let newSession = await createSession(tempNewSession);
         newSession.Papers = []
-
         sessions.push(newSession)
     }
-    duplicatedDay.Sessions = sessions;
-    schedule.push(duplicatedDay);
+    newDay.Sessions = sessions;
+    schedule.push(newDay);
     populateAccordionData();
     $("#createDayModal").modal('hide');    
 }

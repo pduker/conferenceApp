@@ -81,7 +81,10 @@ async function PopulateDatabase(){
                 "start":tempSessionTime[0],
                 "end": tempSessionTime[1],
                 "description": "TEMP DESC",
-                "title": tempDay
+                "title": tempDay,
+                "chair": "Temporary Chair",
+                "room": "Temporary Room"
+
             }
             await createSession(tempNewSession);
         }
