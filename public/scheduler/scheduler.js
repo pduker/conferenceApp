@@ -114,6 +114,7 @@ function populateAccordionData() {
 
                 <div class="row">`;
 
+
             // Show warning if there are no sessions scheduled
             if (day['Sessions']?.length === 0){
                 accordionHTML += `
@@ -162,7 +163,16 @@ function populateAccordionData() {
                 }
             }
 
-            accordionHTML += `<button class='btn btn-primary' id='edit-day-${day.id}' data-bs-toggle="modal" data-bs-target="#editDayModal">Edit Schedule Day</button>`
+            // Day action button row
+            accordionHTML += `
+            <div class="row">
+                <div class='col-auto p-1'>
+                    <button class='btn btn-primary day-button' id='edit-day-${day.id}' data-bs-toggle="modal" data-bs-target="#editDayModal">
+                        <i class="fa-solid fa-pencil mx-1"></i> Edit Day
+                    </button>
+                </div>
+            </div>
+            `
 
             accordionHTML += `</div>
                     </div>
