@@ -2,7 +2,8 @@ const { Sequelize, DataTypes } = require('sequelize')
 
 const db = new Sequelize({
   dialect: 'sqlite',
-  storage: './main.db'
+  storage: './main.db',
+  logging: false
 })
 
 // Define our Security table schema here
