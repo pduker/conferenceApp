@@ -125,6 +125,7 @@ function populateAccordionData() {
 
                 <div class="row">`;
 
+
             // Show warning if there are no sessions scheduled
             if (day['Sessions']?.length === 0){
                 accordionHTML += `
@@ -175,6 +176,21 @@ function populateAccordionData() {
 
             accordionHTML += `<button class="btn btn-secondary" id='edit-day-${day.id}' data-bs-toggle="modal" data-bs-target="#editDayModal">Edit Schedule Day</button>`
             accordionHTML += `<button class="btn btn-secondary" id='duplicate-day-${day.id}'>Duplicate Timeslots</button>`
+            // Day action button row
+            accordionHTML += `
+            <div class="row">
+                <div class='col-auto p-1'>
+                    <button class='btn btn-primary day-button' id='edit-day-${day.id}' data-bs-toggle="modal" data-bs-target="#editDayModal">
+                        <i class="fa-solid fa-pencil mx-1"></i> Edit Day
+                    </button>
+                </div>
+                <div class='col-auto p-1'>
+                    <button class="btn btn-secondary" id='duplicate-day-${day.id}'>
+                        <i class="fa-solid fa-clone mx-1"></i> Clone Day
+                    </button>
+                </div>
+            </div>
+            `
 
             accordionHTML += `</div>
                     </div>
@@ -562,12 +578,20 @@ $("#saveCreatedDay").on(`click`, function () {
     saveCreateDay()
 })
 
-$('#createDayBtn').on('click', function() {
-    // Clear fields and remove invalid validation
-    $('#createDayWeekday')[0].selectedIndex = 0
-    $('#createDayDateInput').val('')
-    $('#createDayWeekday').removeClass('is-invalid')
-    $('#createDayDateInput').removeClass('is-invalid')
+$("#createSessionBtn").on('click', function () {
+    resetSessionModal('create') // make sure we reset validation on first display
+})
+
+$('#editSessionModalCancelBtn').on('click', function () {
+    resetSessionModal('edit')
+})
+
+$('#editDayModalCancelBtn').on('click', function () {
+    resetDayModal('edit')
+})
+
+$('#createDayBtn').on('click', function() { 
+    resetDayModal('create')
 
     let modalHtml = $('#createDayModalBody').html();
     if (modalHtml.includes('Preset Session Times'))

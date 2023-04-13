@@ -28,9 +28,6 @@ async function login(username, password) {
     const username = $('#username').val()
     const password = $('#password').val()
 
-    console.log(username)
-    console.log(password)
-
     if (!isNotWhiteSpace(username) || !isNotWhiteSpace(password)) {
       console.error('Please fill in all fields!')
       return
@@ -65,7 +62,7 @@ async function login(username, password) {
   }
 }
 
-$('#submit').on('click', async function (e) {
+async function handleLogin(e) {
   e.preventDefault();
 
   const success = await login(username, password)
@@ -73,5 +70,17 @@ $('#submit').on('click', async function (e) {
   if (!success) {
     const alert = $("#warning-alert")
     alert.show()
+  }
+}
+
+$('#submit').on('click', function (e) {
+  handleLogin(e)
+})
+
+$(document).keypress( function (e) {
+  e.preventDefault()
+
+  if (e.key === 'Enter') {
+    handleLogin(e)
   }
 })

@@ -5,6 +5,7 @@ function validateSessionModal(type) {
   const room = $(`#${type}SessionRoomInput`).val()
   const startTime = $(`#${type}SessionStartTime`).val()
   const endTime = $(`#${type}SessionEndTime`).val()
+  const pattern = `?:[0][1-9]|1[0-2]):[0-5][0-9] [AP]M`
   let day
 
   if (type === "create") {
@@ -35,13 +36,13 @@ function validateSessionModal(type) {
       $(`#${type}SessionRoomInput`).removeClass('is-invalid')
   }
 
-  if (!isNotWhiteSpace(startTime)){
+  if (!isNotWhiteSpace(startTime) && pattern.test(startTime)){
       $(`#${type}SessionStartTime`).addClass('is-invalid')
   } else {
       $(`#${type}SessionStartTime`).removeClass('is-invalid')
   }
 
-  if (!isNotWhiteSpace(endTime)){
+  if (!isNotWhiteSpace(endTime) && pattern.test(endTime)){
       $(`#${type}SessionEndTime`).addClass('is-invalid')
   } else {
       $(`#${type}SessionEndTime`).removeClass('is-invalid')
