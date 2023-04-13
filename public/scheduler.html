@@ -23,7 +23,7 @@
       <div class="col">
         <h1>Conference Scheduler</h1>
         <p>
-          Build the conference schedule here. Below is each day as well as the sessions scheduled for each day.
+          Build the conference schedule here. Below is each day of the schedule as well as the sessions scheduled for that day.
           You can edit the individual papers assigned in the session editor.
         </p>
       </div>
@@ -91,7 +91,7 @@
 
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-secondary" id="" data-bs-dismiss="modal">Cancel</button>
           <button type="button" class="btn btn-primary" id="saveCreatedDay"><i class="fa-solid fa-floppy-disk mx-1"></i> Save</button>
         </div>
       </div>
@@ -259,13 +259,13 @@
                   <div class="col-5">
                     <div class="input-group p-2">
                       <span class="input-group-text">Start Time</span>
-                      <input id="editSessionStartTimeInput" type="time" required>
+                      <input id="editSessionStartTime" type="time">
                     </div>
                   </div>
                   <div class="col-5">
                     <div class="input-group p-2">
                       <span class="input-group-text">End Time</span>
-                      <input id="editSessionEndTimeInput" type="time" required>
+                      <input id="editSessionEndTime" type="time">
                     </div>
                   </div>
                   <div class="col-2"></div>
@@ -305,7 +305,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="deleteSession"><i class="fa-solid fa-trash-can mx-1"></i> Delete</button>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-secondary" id="editSessionModalCancelBtn" data-bs-dismiss="modal">Close</button>
             <button type="button" class="btn btn-primary" id="saveSession"><i class="fa-solid fa-floppy-disk mx-1"></i> Save</button>
           </div>
         </div>
@@ -315,6 +315,7 @@
     <script src='./scheduler/scheduler.js'></script>
     <script src='./scheduler/pdfs.js'></script>
     <script src='./scheduler/api.js'></script>
+    <script src='./scheduler/utils.js'></script>
     <script src='./scheduler/validation.js'></script>
 </body>
 

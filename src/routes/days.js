@@ -1,5 +1,5 @@
 const express = require('express')
-const { getAllDays, createDay, updateDay, deleteDay } = require('../database/days')
+const { getAllDays, getSingularDay, createDay, updateDay, deleteDay } = require('../database/days')
 const { Sessions, Papers, Days } = require('../database/db')
 const { getAllSessions } = require('../database/sessions')
 
@@ -11,6 +11,19 @@ router.get('/', async function (req, res) {
 
     res.json(days)
   } catch (err) {
+    console.error(err)
+    res.sendStatus(500)
+  }
+})
+
+router.get('/:id', async function(req, res){
+  try{
+    const { id } = req.params
+
+    const day = await getSingularDay(id)
+
+    res.json(day)
+  } catch (err){
     console.error(err)
     res.sendStatus(500)
   }
