@@ -74,7 +74,7 @@ function validateDayModal(type) {
   const weekday = $(`#${type}DayWeekday`).val()
   const date = $(`#${type}DayDateInput`).val()
 
-  const valid = true
+  let valid = true
 
   if (!isNotWhiteSpace(weekday) || weekday === 'Select Weekday'){
       valid = false
