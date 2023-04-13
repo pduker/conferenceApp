@@ -5,7 +5,7 @@ function validateSessionModal(type) {
   const room = $(`#${type}SessionRoomInput`).val()
   const startTime = $(`#${type}SessionStartTime`).val()
   const endTime = $(`#${type}SessionEndTime`).val()
-  const pattern = `?:[0][1-9]|1[0-2]):[0-5][0-9] [AP]M`
+  const pattern = /^([01]\d|2[0-3]):?([0-5]\d)$/
   let day
 
   if (type === "create") {
@@ -36,13 +36,13 @@ function validateSessionModal(type) {
       $(`#${type}SessionRoomInput`).removeClass('is-invalid')
   }
 
-  if (!isNotWhiteSpace(startTime) && pattern.test(startTime)){
+  if (!isNotWhiteSpace(startTime) && !pattern.test(startTime)){
       $(`#${type}SessionStartTime`).addClass('is-invalid')
   } else {
       $(`#${type}SessionStartTime`).removeClass('is-invalid')
   }
 
-  if (!isNotWhiteSpace(endTime) && pattern.test(endTime)){
+  if (!isNotWhiteSpace(endTime) && !pattern.test(endTime)){
       $(`#${type}SessionEndTime`).addClass('is-invalid')
   } else {
       $(`#${type}SessionEndTime`).removeClass('is-invalid')
@@ -57,9 +57,15 @@ function validateSessionModal(type) {
           $(`#${type}SessionDay`).removeClass('is-invalid')
       }
 
-      return isNotWhiteSpace(day) && isNotWhiteSpace(description) && isNotWhiteSpace(title) && isNotWhiteSpace(chair) && isNotWhiteSpace(room)
+      return isNotWhiteSpace(day) && isNotWhiteSpace(description) && 
+      isNotWhiteSpace(title) && isNotWhiteSpace(chair) && 
+      isNotWhiteSpace(room) && isNotWhiteSpace(endTime) && pattern.test(endTime) &&
+      isNotWhiteSpace(startTime) && pattern.test(startTime)
+
   } else {
-      return isNotWhiteSpace(description) && isNotWhiteSpace(title) && isNotWhiteSpace(chair) && isNotWhiteSpace(room)
+      return isNotWhiteSpace(description) && isNotWhiteSpace(title) && isNotWhiteSpace(chair) &&
+        isNotWhiteSpace(room) && isNotWhiteSpace(endTime) && pattern.test(endTime) &&
+        isNotWhiteSpace(startTime) && pattern.test(startTime)
   }
 }
 
