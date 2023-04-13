@@ -174,8 +174,6 @@ function populateAccordionData() {
                 }
             }
 
-            accordionHTML += `<button class="btn btn-secondary" id='edit-day-${day.id}' data-bs-toggle="modal" data-bs-target="#editDayModal">Edit Schedule Day</button>`
-            accordionHTML += `<button class="btn btn-secondary" id='duplicate-day-${day.id}'>Duplicate Timeslots</button>`
             // Day action button row
             accordionHTML += `
             <div class="row">
