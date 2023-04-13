@@ -12,6 +12,7 @@ function validateSessionModal(type) {
       day = $("#createSessionDay").val();
   }
 
+  let valid = true
 
   if (!isNotWhiteSpace(description)) {
       valid = false
