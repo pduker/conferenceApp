@@ -114,6 +114,7 @@ function populateAccordionData() {
 
                 <div class="row">`;
 
+
             // Show warning if there are no sessions scheduled
             if (day['Sessions']?.length === 0){
                 accordionHTML += `
@@ -162,7 +163,16 @@ function populateAccordionData() {
                 }
             }
 
-            accordionHTML += `<button class='btn btn-primary' id='edit-day-${day.id}' data-bs-toggle="modal" data-bs-target="#editDayModal">Edit Schedule Day</button>`
+            // Day action button row
+            accordionHTML += `
+            <div class="row">
+                <div class='col-auto p-1'>
+                    <button class='btn btn-primary day-button' id='edit-day-${day.id}' data-bs-toggle="modal" data-bs-target="#editDayModal">
+                        <i class="fa-solid fa-pencil mx-1"></i> Edit Day
+                    </button>
+                </div>
+            </div>
+            `
 
             accordionHTML += `</div>
                     </div>
@@ -204,8 +214,8 @@ function attachEditModalListeners() {
                 $("#editSessionDescriptionInput").val(session.description)
                 $("#editSessionChairInput").val(session.chair)
                 $("#editSessionRoomInput").val(session.room)
-                $("#editSessionStartTimeInput").val(convertTo24HourString(session.start))
-                $("#editSessionEndTimeInput").val(convertTo24HourString(session.end))
+                $("#editSessionStartTime").val(convertTo24HourString(session.start))
+                $("#editSessionEndTime").val(convertTo24HourString(session.end))
 
                 selectedPapers = []
                 removedPapers = []
@@ -323,8 +333,8 @@ async function saveSession() {
         const title = $('#editSessionTitleInput').val()
         const chair = $('#editSessionChairInput').val()
         const room = $('#editSessionRoomInput').val()
-        const start = convertTo12HourString($('#editSessionStartTimeInput').val())
-        const end = convertTo12HourString($('#editSessionEndTimeInput').val())
+        const start = convertTo12HourString($('#editSessionStartTime').val())
+        const end = convertTo12HourString($('#editSessionEndTime').val())
 
         for (const paper of selectedPapers) {
             await assignPaperToSession(paper)
@@ -506,12 +516,20 @@ $("#saveCreatedDay").on(`click`, function () {
     createDay()
 })
 
-$('#createDayBtn').on('click', function() {
-    // Clear fields and remove invalid validation
-    $('#createDayWeekday')[0].selectedIndex = 0
-    $('#createDayDateInput').val('')
-    $('#createDayWeekday').removeClass('is-invalid')
-    $('#createDayDateInput').removeClass('is-invalid')
+$("#createSessionBtn").on('click', function () {
+    resetSessionModal('create') // make sure we reset validation on first display
+})
+
+$('#editSessionModalCancelBtn').on('click', function () {
+    resetSessionModal('edit')
+})
+
+$('#editDayModalCancelBtn').on('click', function () {
+    resetDayModal('edit')
+})
+
+$('#createDayBtn').on('click', function() { 
+    resetDayModal('create')
 
     let modalHtml = $('#createDayModalBody').html();
     if (modalHtml.includes('Preset Session Times'))
