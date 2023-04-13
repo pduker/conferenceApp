@@ -214,8 +214,8 @@ function attachEditModalListeners() {
                 $("#editSessionDescriptionInput").val(session.description)
                 $("#editSessionChairInput").val(session.chair)
                 $("#editSessionRoomInput").val(session.room)
-                $("#editSessionStartTimeInput").val(convertTo24HourString(session.start))
-                $("#editSessionEndTimeInput").val(convertTo24HourString(session.end))
+                $("#editSessionStartTime").val(convertTo24HourString(session.start))
+                $("#editSessionEndTime").val(convertTo24HourString(session.end))
 
                 selectedPapers = []
                 removedPapers = []
@@ -333,8 +333,8 @@ async function saveSession() {
         const title = $('#editSessionTitleInput').val()
         const chair = $('#editSessionChairInput').val()
         const room = $('#editSessionRoomInput').val()
-        const start = convertTo12HourString($('#editSessionStartTimeInput').val())
-        const end = convertTo12HourString($('#editSessionEndTimeInput').val())
+        const start = convertTo12HourString($('#editSessionStartTime').val())
+        const end = convertTo12HourString($('#editSessionEndTime').val())
 
         for (const paper of selectedPapers) {
             await assignPaperToSession(paper)
