@@ -72,6 +72,17 @@ async function getData() {
     return data;
   }
 
+  async function getDay(dayId){
+    const res = await fetch(`api/days/${dayId}`, {
+        method: 'GET',
+        headers: {
+            "Content-Type": 'application/json'
+            }
+    });
+    let data = await res.json();
+    return data;
+  }
+
 function populateAccordionData() {
 
     let accordionHTML = '';
@@ -171,6 +182,11 @@ function populateAccordionData() {
                         <i class="fa-solid fa-pencil mx-1"></i> Edit Day
                     </button>
                 </div>
+                <div class='col-auto p-1'>
+                    <button class="btn btn-secondary" id='duplicate-day-${day.id}'>
+                        <i class="fa-solid fa-clone mx-1"></i> Clone Day
+                    </button>
+                </div>
             </div>
             `
 
@@ -178,7 +194,6 @@ function populateAccordionData() {
                     </div>
                 </div>
             </div>`;
-
         };
     }
 
@@ -190,6 +205,45 @@ function populateAccordionData() {
     updateCreateSessionModal()
     attachEditModalListeners()
     attachEditDayListeners()
+    attachDuplicateDayListeners()
+}
+
+function attachDuplicateDayListeners(){
+    for (const day of schedule) {
+        $(`#duplicate-day-${day.id}`).on("click" , function(){
+            duplicateDay(day.id);
+        })
+    }
+}
+
+async function duplicateDay(dayID){
+    const selectedDay = await getDay(dayID);
+    const body = {
+        date: selectedDay.date,
+        weekday: selectedDay.weekday
+    };
+
+    const newDay = await createDay(body);
+    let sessions = [];
+    for(session of selectedDay.Sessions){
+        let tempNewSession = {
+            "DayId": newDay.id,
+            "start":session.start,
+            "end": session.end,
+            "description": "TEMP DESC",
+            "title": "Temporary Title",
+            "chair": "Temporary Chair",
+            "room": "Temporary Room"
+        }
+
+        let newSession = await createSession(tempNewSession);
+        newSession.Papers = []
+        sessions.push(newSession)
+    }
+    newDay.Sessions = sessions;
+    schedule.push(newDay);
+    populateAccordionData();
+    $("#createDayModal").modal('hide');    
 }
 
 function attachEditDayListeners(){
@@ -229,7 +283,18 @@ function attachEditModalListeners() {
     }
 }
 
-async function createSession () {
+async function createSession(session) {
+    let res = await fetch('api/sessions', {
+        method: 'POST',
+        body: JSON.stringify(session),
+        headers: {
+            "Content-Type": 'application/json'
+        }
+    });
+    return await res.json();
+}
+
+async function saveCreateSession () {
     try {
 
         if (!validateSessionModal('create')) { return }
@@ -254,14 +319,7 @@ async function createSession () {
             room
         }
 
-        const res = await fetch('api/sessions', {
-            method: 'POST',
-            body: JSON.stringify(body),
-            headers: {
-                "Content-Type": 'application/json'
-            }
-        })
-        const newSession = await res.json();
+        const newSession = await createSession(body);
 
         newSession.Papers = []
 
@@ -274,7 +332,18 @@ async function createSession () {
     }
 }
 
-async function createDay () {
+async function createDay(day){
+    let res = await fetch(`api/days`, {
+        method: 'POST',
+        body: JSON.stringify(day),
+        headers: {
+            "Content-Type": 'application/json'
+        }
+    });
+    return await res.json();
+}
+
+async function saveCreateDay () {
 
     if (!validateDayModal('create')) return;
 
@@ -286,14 +355,7 @@ async function createDay () {
         weekday
     };
 
-    const res = await fetch('api/days', {
-        method: 'POST',
-        body: JSON.stringify(body),
-        headers: {
-            "Content-Type": 'application/json'
-        }
-    });
-    const newDay = await res.json();
+    const newDay = await createDay(body);
     console.log(newDay);
 
     let sessions = [];
@@ -503,17 +565,15 @@ function updateEditSessionModal(papers) {
             removeSelectedPaperFromList(paper)
         })
     }
-
-
 }
 
 
 $("#saveCreatedSession").on(`click`, function () {
-    createSession()
+    saveCreateSession()
 })
 
 $("#saveCreatedDay").on(`click`, function () {
-    createDay()
+    saveCreateDay()
 })
 
 $("#createSessionBtn").on('click', function () {
