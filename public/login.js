@@ -63,8 +63,6 @@ async function login(username, password) {
 }
 
 async function handleLogin(e) {
-  e.preventDefault();
-
   const success = await login(username, password)
 
   if (!success) {
@@ -78,9 +76,8 @@ $('#submit').on('click', function (e) {
 })
 
 $(document).keypress( function (e) {
-  e.preventDefault()
-
   if (e.key === 'Enter') {
     handleLogin(e)
   }
+
 })
