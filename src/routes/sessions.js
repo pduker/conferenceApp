@@ -1,6 +1,10 @@
 const express = require('express')
 const { Sessions, Papers, Days } = require('../database/db')
 const { getAllSessions, createSession, updateSession, deleteSession, duplicateSession } = require('../database/sessions')
+const { exportSessionYaml } = require("../parser.js")
+const path = require('path')
+const fs = require('fs')
+
 
 const router = express.Router()
 
@@ -12,6 +16,17 @@ router.get('/', async function (req, res) {
   } catch (err) {
     console.error(err)
     res.sendStatus(500)
+  }
+})
+
+router.get('/export', async function (req, res) {
+  try {
+    const sessions = await getAllSessions()
+      await exportSessionYaml(sessions)
+      res.sendFile(path.join(__dirname, '../../tmp/yaml','sessions.zip'), 'sessions.zip')
+  } catch (err) {
+      console.error(err)
+      res.sendStatus(500)
   }
 })
 
@@ -72,5 +87,7 @@ router.delete('/:id', async function (req, res) {
     res.sendStatus(500)
   }
 })
+
+
 
 module.exports = router

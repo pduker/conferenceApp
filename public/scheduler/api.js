@@ -80,6 +80,26 @@ async function updateDayDetails(weekday, date) {
   }
 }
 
+async function downloadZip(){
+        let res = await fetch('api/sessions/export', {
+            method: 'GET'
+        });
+        if (res.ok) {
+            console.log("1")
+            const fileBlob = await res.blob()
+            console.log("2")
+            const file = window.URL.createObjectURL(fileBlob)
+            const a = document.createElement('a')
+            a.href = file
+            a.download = 'sessions.zip'
+            document.body.appendChild(a)
+            a.click()
+            a.remove()
+        } else {
+            throw new Error('Failed to download session zip')
+        }
+}
+
 
 async function assignPaperToSession(paper) {
   let data = {
