@@ -50,6 +50,14 @@ function initializeServer (parentDir) {
   if (!fs.existsSync(path.join(parentDir, "tmp", "yaml"))) {
     fs.mkdirSync(path.join(parentDir, "tmp", "yaml"))
   }
+
+  if (!fs.existsSync(path.join(parentDir, "tmp", "yaml", "papers"))) {
+    fs.mkdirSync(path.join(parentDir, "tmp", "yaml", "papers"))
+  }
+
+  if (!fs.existsSync(path.join(parentDir, "tmp", "yaml", "sessions"))) {
+    fs.mkdirSync(path.join(parentDir, "tmp", "yaml", "sessions"))
+  }
 }
 
 function parseSuppMats(files, body){
