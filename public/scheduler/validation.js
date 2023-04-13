@@ -12,60 +12,60 @@ function validateSessionModal(type) {
       day = $("#createSessionDay").val();
   }
 
-  if (!isNotWhiteSpace(description)){
+
+  if (!isNotWhiteSpace(description)) {
+      valid = false
       $(`#${type}SessionDescriptionInput`).addClass('is-invalid')
   } else {
       $(`#${type}SessionDescriptionInput`).removeClass('is-invalid')
   }
 
   if (!isNotWhiteSpace(title)){
+      valid = false
       $(`#${type}SessionTitleInput`).addClass('is-invalid')
   } else {
       $(`#${type}SessionTitleInput`).removeClass('is-invalid')
   }
 
   if (!isNotWhiteSpace(chair)){
+      valid = false
       $(`#${type}SessionChairInput`).addClass('is-invalid')
   } else {
       $(`#${type}SessionChairInput`).removeClass('is-invalid')
   }
 
   if (!isNotWhiteSpace(room)){
+      valid = false
       $(`#${type}SessionRoomInput`).addClass('is-invalid')
   } else {
       $(`#${type}SessionRoomInput`).removeClass('is-invalid')
   }
 
   if (!isNotWhiteSpace(startTime) && !pattern.test(startTime)){
+      valid = false
       $(`#${type}SessionStartTime`).addClass('is-invalid')
   } else {
       $(`#${type}SessionStartTime`).removeClass('is-invalid')
   }
 
   if (!isNotWhiteSpace(endTime) && !pattern.test(endTime)){
+      valid = false
       $(`#${type}SessionEndTime`).addClass('is-invalid')
   } else {
       $(`#${type}SessionEndTime`).removeClass('is-invalid')
   }
 
   if (type === "create") {
-      console.log(day)
       if (!isNotWhiteSpace(day) || day === 'Select Day'){
-          console.log(day)
+          valid = false
           $(`#${type}SessionDay`).addClass('is-invalid')
       } else {
           $(`#${type}SessionDay`).removeClass('is-invalid')
       }
 
-      return isNotWhiteSpace(day) && isNotWhiteSpace(description) && 
-      isNotWhiteSpace(title) && isNotWhiteSpace(chair) && 
-      isNotWhiteSpace(room) && isNotWhiteSpace(endTime) && pattern.test(endTime) &&
-      isNotWhiteSpace(startTime) && pattern.test(startTime)
-
+      return valid
   } else {
-      return isNotWhiteSpace(description) && isNotWhiteSpace(title) && isNotWhiteSpace(chair) &&
-        isNotWhiteSpace(room) && isNotWhiteSpace(endTime) && pattern.test(endTime) &&
-        isNotWhiteSpace(startTime) && pattern.test(startTime)
+      return valid
   }
 }
 
@@ -73,17 +73,21 @@ function validateDayModal(type) {
   const weekday = $(`#${type}DayWeekday`).val()
   const date = $(`#${type}DayDateInput`).val()
 
+  const valid = true
+
   if (!isNotWhiteSpace(weekday) || weekday === 'Select Weekday'){
+      valid = false
       $(`#${type}DayWeekday`).addClass('is-invalid')
   } else {
       $(`#${type}DayWeekday`).removeClass('is-invalid')
   }
 
   if (!isNotWhiteSpace(date)){
+      valid = false
       $(`#${type}DayDateInput`).addClass('is-invalid')
   } else {
       $(`#${type}DayDateInput`).removeClass('is-invalid')
   }
 
-  return (isNotWhiteSpace(weekday) && weekday !== 'Select Weekday') && isNotWhiteSpace(date)
+  return valid
 }
