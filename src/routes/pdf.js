@@ -3,6 +3,10 @@ const PDFDocument = require('pdfkit')
 const fs = require('fs');
 const router = express.Router()
 
+const p_tags = /<p>.*<\/p>/gm
+const bold_tags = /<strong>.*<\/strong>/gm
+const italic_tags = /<em>.*<\/em>/gm
+
 router.post('/', async function (req, res) {
   try {
     schedule = req.body
@@ -14,7 +18,7 @@ router.post('/', async function (req, res) {
     doc.registerFont('Proxima-Bold', 'src/static/proxima_bold.otf')
     for (let i = 0; i<2; i++) {
           
-      for (day in schedule) {
+      for (let day in schedule) {
         // if (parseInt(day) != 0) {
         //   doc
         //   .fontSize(1)
@@ -56,8 +60,20 @@ router.post('/', async function (req, res) {
               .fontSize(11)
               .text(authors, {paragraphGap:9})
               if (i == 1) {
+                let paragraphs = []
+                while ((m = p_tags.exec(papers[paper]['abstract'])) !== null) {
+                  if (m.index === p_tags.lastIndex) {
+                      p_tags.lastIndex++;
+                  }
+                  
+                  m.forEach((match, groupIndex) => {
+                    // let result = match.replace(p_tags, ``)
+                    paragraphs.push(match)
+                  });
+                 }
                 doc.font('Proxima')
                 .text(papers[paper]['abstract'],{align: 'justify'})
+                console.log(paragraphs)
               }
             }            
             doc
