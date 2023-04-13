@@ -82,15 +82,19 @@ async function updateDayDetails(weekday, date) {
 
 async function downloadZip(){
         let res = await fetch('api/sessions/export', {
-            method: 'GET',
-            headers: {
-                "Content-Type": 'application/json'
-            }
+            method: 'GET'
         });
         if (res.ok) {
-            const blob = await res.blob()
-            const file = window.URL.createObjectURL(blob)
-            window.open(file)
+            console.log("1")
+            const fileBlob = await res.blob()
+            console.log("2")
+            const file = window.URL.createObjectURL(fileBlob)
+            const a = document.createElement('a')
+            a.href = file
+            a.download = 'sessions.zip'
+            document.body.appendChild(a)
+            a.click()
+            a.remove()
         } else {
             throw new Error('Failed to download session zip')
         }

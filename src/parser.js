@@ -3,7 +3,8 @@ const fs = require('fs')
 const path = require('path')
 const { removeSpaces } = require('./utils')
 const yaml = require('js-yaml')
-const JSZip = require('jszip');
+const JSZip = require('jszip')
+const { once } = require('events')
 
 /**
  * Deletes the file at the specified path
@@ -71,7 +72,7 @@ function exportYAML(title, authors, abstract, suppMats) {
   fs.writeFileSync(filePath, doc.toString())
 }
 
-function exportSessionYaml(sessions){
+async function exportSessionYaml(sessions){
   const zip = new JSZip();
   for(const session of sessions){
     let title = session.title
@@ -96,13 +97,14 @@ function exportSessionYaml(sessions){
       papers:paperTitles,
       respondent: {name: null}
     }
-  const doc = yaml.dump(sessionYaml)
-  zip.file(`${slug}.yaml`, doc);
-  fs.writeFileSync(filePath, doc.toString())
-
+    const doc = yaml.dump(sessionYaml)
+    fs.writeFileSync(filePath, doc)
+    await zip.file(`${slug}.yaml`, doc);
   }
-  zip.generateNodeStream({ type: 'nodebuffer', streamFiles: true })
-        .pipe(fs.createWriteStream(path.join(__dirname, '../tmp/yaml','sessions.zip')))
+
+  await once(zip.generateNodeStream({type:'nodebuffer',streamFiles:true})
+    .pipe(fs.createWriteStream(path.join(__dirname, '../tmp/yaml','sessions.zip'))), 'finish')
+    
 }
 
 module.exports = {
