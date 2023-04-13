@@ -517,19 +517,19 @@ $("#saveCreatedDay").on(`click`, function () {
 })
 
 $("#createSessionBtn").on('click', function () {
-    resetSessionValidation('create') // make sure we reset validation on first display
+    resetSessionModal('create') // make sure we reset validation on first display
 })
 
-$('#createSessionModalCancelBtn').on('click', function () {
-    resetSessionValidation('edit')
+$('#editSessionModalCancelBtn').on('click', function () {
+    resetSessionModal('edit')
 })
 
-$('#createDayBtn').on('click', function() {
-    // Clear fields and remove invalid validation
-    $('#createDayWeekday')[0].selectedIndex = 0
-    $('#createDayDateInput').val('')
-    
-    resetDayValidation('create')
+$('#editDayModalCancelBtn').on('click', function () {
+    resetDayModal('edit')
+})
+
+$('#createDayBtn').on('click', function() { 
+    resetDayModal('create')
 
     let modalHtml = $('#createDayModalBody').html();
     if (modalHtml.includes('Preset Session Times'))
