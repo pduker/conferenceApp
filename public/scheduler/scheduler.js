@@ -366,14 +366,18 @@ async function saveCreateDay () {
             for (let j = 0; j < numSessions; j++){
                 const times = presetSessions[i].split('-');
                 const session = {
+                    DayId: newDay.id,
                     start: times[0],
                     end: times[1],
                     description: 'temporary description',
-                    title: 'temporary title'
+                    title: 'temporary title',
+                    room: 'unassigned room',
+                    chair: 'unassigned char'
                 }
-                sessions.push(session);
 
-                // ADD THE SESSION TO THE DATABASE - CALL A CREATE SESSION FUNCTION
+                const newSession = await createSession(session);
+                sessions.push(newSession);
+                
             }
         }
     }
