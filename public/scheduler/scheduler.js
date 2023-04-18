@@ -1,7 +1,9 @@
 let numTimeslots = 0;
 let schedule;
 let allPapers;
-const presetSessions = ['10:15am - 12:00pm'];
+const presetSessions = ["7:15 AM - 8:45 AM", "9:00 AM - 10:30 AM", "10:45 AM - 12:15 PM", "12:30 PM - 2:00 PM", "2:15 PM - 3:45 PM", "4:00 PM - 5:30 PM", "7:30 PM - 9:00 PM"];
+
+
 
 
 // Reference to the actual currently selected day (WRITING TO THIS IS REFLECTED AS THE DATABASE RECORD)
@@ -40,7 +42,7 @@ function convertTo24HourString (time) {
     const hours = parseInt(hoursAndMinutes[0]) // convert hours to a number (for offsets)
     const minutes = hoursAndMinutes[1] // get the minutes (still a string since we don't need to offset this)
 
-    if (splitTime[1] === "PM") {
+    if (splitTime[1] === "PM" || splitTime[1] === "pm") {
         let final
 
         if (hours === 12) {
@@ -227,16 +229,16 @@ async function duplicateDay(dayID){
     let sessions = [];
     for(session of selectedDay.Sessions){
         let tempNewSession = {
-            "DayId": newDay.id,
-            "start":session.start,
-            "end": session.end,
-            "description": "TEMP DESC",
-            "title": "Temporary Title",
-            "chair": "Temporary Chair",
-            "room": "Temporary Room"
+            DayId: newDay.id,
+            start:session.start,
+            end: session.end,
+            description: "TEMP DESC",
+            title: "Temporary Title",
+            chair: "Temporary Chair",
+            room: "Temporary Room",
         }
 
-        let newSession = await createSession(tempNewSession);
+        let newSession = await createSession(tempNewSession.DayId, tempNewSession.title, tempNewSession.start, tempNewSession.end, tempNewSession.description, tempNewSession.chair, tempNewSession.room);
         newSession.Papers = []
         sessions.push(newSession)
     }
@@ -283,17 +285,6 @@ function attachEditModalListeners() {
     }
 }
 
-async function createSession(session) {
-    let res = await fetch('api/sessions', {
-        method: 'POST',
-        body: JSON.stringify(session),
-        headers: {
-            "Content-Type": 'application/json'
-        }
-    });
-    return await res.json();
-}
-
 async function saveCreateSession () {
     try {
 
@@ -319,7 +310,7 @@ async function saveCreateSession () {
             room
         }
 
-        const newSession = await createSession(body);
+        const newSession = await createSession(body.DayId, body.title, body.start, body.end, body.description, body.title, body.room, body.chair);
 
         newSession.Papers = []
 
@@ -364,16 +355,20 @@ async function saveCreateDay () {
         if (isChecked){
             const numSessions = $(`#presetSession${i}Num`)[0].value;
             for (let j = 0; j < numSessions; j++){
-                const times = presetSessions[i].split('-');
+                const times = presetSessions[i].split(' - ');
                 const session = {
+                    DayId: newDay.id,
                     start: times[0],
                     end: times[1],
                     description: 'temporary description',
-                    title: 'temporary title'
+                    title: 'temporary title',
+                    room: 'unassigned room',
+                    chair: 'unassigned char'
                 }
-                sessions.push(session);
 
-                // ADD THE SESSION TO THE DATABASE - CALL A CREATE SESSION FUNCTION
+                const newSession = await createSession(session.DayId, session.title, session.start, session.end, session.description, session.chair, session.room);
+                sessions.push(newSession);
+                
             }
         }
     }
