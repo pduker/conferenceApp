@@ -3,9 +3,9 @@ const PDFDocument = require('pdfkit')
 const fs = require('fs');
 const router = express.Router()
 
-const p_tags = /<p>.*<\/p>/gm
-const bold_tags = /<strong>.*<\/strong>/gm
-const italic_tags = /<em>.*<\/em>/gm
+const p_tags = /<p>.*?<\/p>/gm
+const bold_tags = /<strong>.*?<\/strong>/gmd
+const italic_tags = /<em>.*?<\/em>/gmd
 
 router.post('/', async function (req, res) {
   try {
@@ -37,7 +37,7 @@ router.post('/', async function (req, res) {
           if (session) {
             doc.font('Proxima-Bold')
             .fontSize(11)
-            .text(sessions[session]['title'].toUpperCase(), {continued:true}).font('Times-Roman').text('this is a test')
+            .text(sessions[session]['title'].toUpperCase())
             doc.font('Proxima')
             .fontSize(11)
             .text(sessions[session]['chair'] + ', Chair', {paragraphGap:9})
@@ -61,19 +61,52 @@ router.post('/', async function (req, res) {
               .text(authors, {paragraphGap:9})
               if (i == 1) {
                 let paragraphs = []
-                while ((m = p_tags.exec(papers[paper]['abstract'])) !== null) {
-                  if (m.index === p_tags.lastIndex) {
-                      p_tags.lastIndex++;
-                  }
+                let abstract = papers[paper]['abstract'].replace('\n',' ')
+                
+                let matches = abstract.match(p_tags)
+
+                for (let m in matches) {
+                  matches[m] = matches[m].replace(/(<p>)/,'')
+                  matches[m] = matches[m].replace(/(<\/p>)/,'\n')
+                  matches[m] = matches[m].replace(/\u0701/,' ')
+                  paragraphs.push(matches[m])
+                }
+
+                let out = []
+                let intermediate = []
+                for (let p in paragraphs) {
+                  intermediate.push(...paragraphs[p].split(/[<>]/))
                   
-                  m.forEach((match, groupIndex) => {
-                    // let result = match.replace(p_tags, ``)
-                    paragraphs.push(match)
-                  });
-                 }
-                doc.font('Proxima')
-                .text(papers[paper]['abstract'],{align: 'justify'})
-                console.log(paragraphs)
+                  console.log('test')
+                  console.log(intermediate)
+                }
+
+                for (let i = 0; i < intermediate.length; i++) {
+                  if (intermediate[i].includes('span') || intermediate[i].length < 1) {
+
+                  }
+                  else if (intermediate[i] === 'em') {
+                    i++
+                    doc.font('Proxima-Italic')
+                    .fontSize(11)
+                    .text(intermediate[i], {paragraphGap: 9, continued: !intermediate[i].includes('\n')})
+                    i++
+                  }
+                  else if (intermediate[i] === 'strong') {
+                    i++
+                    doc.font('Proxima-Bold')
+                    .fontSize(11)
+                    .text(intermediate[i], {paragraphGap: 9, continued: !intermediate[i].includes('\n')})
+                    i++
+                  }
+                  else {
+                    doc.font('Proxima')
+                    .fontSize(11)
+                    .text(intermediate[i], {paragraphGap: 9, continued: !intermediate[i].includes('\n')})
+                  }
+                }
+                
+                
               }
             }            
             doc
