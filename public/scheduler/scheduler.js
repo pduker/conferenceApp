@@ -1,7 +1,7 @@
 let numTimeslots = 0;
 let schedule;
 let allPapers;
-const presetSessions = ["7:15am - 8:45am", "9:00am - 10:30am", "10:45am - 12:15p", "12:30pm - 2:00pm", "2:15pm - 3:45pm", "4:00pm - 5:30pm", "7:30pm - 9:00pm"];
+const presetSessions = ["7:15 AM - 8:45 AM", "9:00 AM - 10:30 AM", "10:45 AM - 12:15 PM", "12:30 PM - 2:00 PM", "2:15 PM - 3:45 PM", "4:00 PM - 5:30 PM", "7:30 PM - 9:00 PM"];
 
 
 
@@ -355,7 +355,7 @@ async function saveCreateDay () {
         if (isChecked){
             const numSessions = $(`#presetSession${i}Num`)[0].value;
             for (let j = 0; j < numSessions; j++){
-                const times = presetSessions[i].split('-');
+                const times = presetSessions[i].split(' - ');
                 const session = {
                     DayId: newDay.id,
                     start: times[0],
