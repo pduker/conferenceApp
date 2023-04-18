@@ -42,7 +42,7 @@ function convertTo24HourString (time) {
     const hours = parseInt(hoursAndMinutes[0]) // convert hours to a number (for offsets)
     const minutes = hoursAndMinutes[1] // get the minutes (still a string since we don't need to offset this)
 
-    if (splitTime[1] === "PM") {
+    if (splitTime[1] === "PM" || splitTime[1] === "pm") {
         let final
 
         if (hours === 12) {
