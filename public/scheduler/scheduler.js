@@ -363,10 +363,11 @@ async function saveCreateDay () {
                     description: 'temporary description',
                     title: 'temporary title',
                     room: 'unassigned room',
-                    chair: 'unassigned char'
+                    chair: 'unassigned char',
                 }
 
                 const newSession = await createSession(session.DayId, session.title, session.start, session.end, session.description, session.chair, session.room);
+                newSession.Papers = []
                 sessions.push(newSession);
                 
             }
