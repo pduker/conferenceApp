@@ -227,16 +227,16 @@ async function duplicateDay(dayID){
     let sessions = [];
     for(session of selectedDay.Sessions){
         let tempNewSession = {
-            "DayId": newDay.id,
-            "start":session.start,
-            "end": session.end,
-            "description": "TEMP DESC",
-            "title": "Temporary Title",
-            "chair": "Temporary Chair",
-            "room": "Temporary Room"
+            DayId: newDay.id,
+            start:session.start,
+            end: session.end,
+            description: "TEMP DESC",
+            title: "Temporary Title",
+            chair: "Temporary Chair",
+            room: "Temporary Room",
         }
 
-        let newSession = await createSession(tempNewSession);
+        let newSession = await createSession(tempNewSession.DayId, tempNewSession.title, tempNewSession.start, tempNewSession.end, tempNewSession.description, tempNewSession.chair, tempNewSession.room);
         newSession.Papers = []
         sessions.push(newSession)
     }
@@ -283,17 +283,6 @@ function attachEditModalListeners() {
     }
 }
 
-async function createSession(session) {
-    let res = await fetch('api/sessions', {
-        method: 'POST',
-        body: JSON.stringify(session),
-        headers: {
-            "Content-Type": 'application/json'
-        }
-    });
-    return await res.json();
-}
-
 async function saveCreateSession () {
     try {
 
@@ -319,7 +308,7 @@ async function saveCreateSession () {
             room
         }
 
-        const newSession = await createSession(body);
+        const newSession = await createSession(body.DayId, body.title, body.start, body.end, body.description, body.title, body.room, body.chair);
 
         newSession.Papers = []
 
@@ -375,7 +364,7 @@ async function saveCreateDay () {
                     chair: 'unassigned char'
                 }
 
-                const newSession = await createSession(session);
+                const newSession = await createSession(session.DayId, session.title, session.start, session.end, session.description, session.chair, session.room);
                 sessions.push(newSession);
                 
             }

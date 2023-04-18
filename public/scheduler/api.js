@@ -21,6 +21,35 @@ async function deleteDay() {
   }
 }
 
+async function createSession(DayId, title, start, end, description, chair, room) {
+
+  const body = {
+      DayId,
+      start,
+      end,
+      title,
+      description,
+      chair,
+      room
+  }
+
+  let res = await fetch('api/sessions', {
+      method: 'POST',
+      body: JSON.stringify(body),
+      headers: {
+          "Content-Type": 'application/json'
+      }
+  });
+
+  if (res.ok) {
+      return await res.json();
+  } else {
+      console.error("Failed to create session")
+      throw new Error('Failed to create session')
+  }
+}
+
+
 async function updateSessionDetails(title, start, end, description, chair, room) {
 
   const body = {
