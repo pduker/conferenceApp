@@ -19,21 +19,14 @@ router.post('/', async function (req, res) {
     for (let i = 0; i<2; i++) {
           
       for (let day in schedule) {
-        // if (parseInt(day) != 0) {
-        //   doc
-        //   .fontSize(1)
-        //   .text(' '.repeat(129*14), {paragraphGap:9, underline:true})
-        // }
         doc.font('Proxima-Bold')
         .fontSize(14)
         .text(schedule[day]['weekday'].toUpperCase())
         doc
         .fontSize(1)
         .text(' '.repeat(129*14), {underline:true, paragraphGap:14})
-        // add spacing and line between day and sessions
         let sessions = schedule[day]['Sessions']
         for (let session in sessions) {
-          // add spacing and line between sessions
           if (session) {
             doc.font('Proxima-Bold')
             .fontSize(11)
@@ -43,7 +36,6 @@ router.post('/', async function (req, res) {
             .text(sessions[session]['chair'] + ', Chair', {paragraphGap:9})
             let papers = schedule[day]['Sessions'][session]['Papers']
             for (let paper in papers) {
-              // add spacing between papers
               doc.font('Proxima-Bold')
               .fontSize(11)
               .text(papers[paper]['title'])
@@ -72,13 +64,9 @@ router.post('/', async function (req, res) {
                   paragraphs.push(matches[m])
                 }
 
-                let out = []
                 let intermediate = []
                 for (let p in paragraphs) {
                   intermediate.push(...paragraphs[p].split(/[<>]/))
-                  
-                  console.log('test')
-                  console.log(intermediate)
                 }
 
                 for (let i = 0; i < intermediate.length; i++) {
