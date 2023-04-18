@@ -1,7 +1,9 @@
 let numTimeslots = 0;
 let schedule;
 let allPapers;
-const presetSessions = ['10:15am - 12:00pm'];
+const presetSessions = ["7:15am - 8:45am", "9:00am - 10:30am", "10:45am - 12:15p", "12:30pm - 2:00pm", "2:15pm - 3:45pm", "4:00pm - 5:30pm", "7:30pm - 9:00pm"];
+
+
 
 
 // Reference to the actual currently selected day (WRITING TO THIS IS REFLECTED AS THE DATABASE RECORD)
