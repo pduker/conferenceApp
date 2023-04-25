@@ -341,7 +341,8 @@ async function saveCreateDay () {
     if (!validateDayModal('create')) return;
 
     const weekday = $("#createDayWeekday").val();
-    const date = $("#createDayDateInput").val();
+    const tempDate = $("#createDayDateInput").val().slice(0, 10).split('-');
+    let date = tempDate[1] + '-' + tempDate[2] + '-' + tempDate[0];
 
     const body = {
         date,
