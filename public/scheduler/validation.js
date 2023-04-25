@@ -70,6 +70,15 @@ function validateSessionModal(type) {
   }
 }
 
+function checkDate(SelectedDay){
+    for (const day of schedule) {
+        if (day['date'] === SelectedDay){
+            return false;
+        }
+    }
+    return true;
+}
+
 function validateDayModal(type) {
   const weekday = $(`#${type}DayWeekday`).val()
   let originalDate = $(`#${type}DayDateInput`).val()

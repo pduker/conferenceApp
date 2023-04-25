@@ -2,7 +2,6 @@ let numTimeslots = 0;
 let schedule;
 let allPapers;
 const presetSessions = ["7:15 AM - 8:45 AM", "9:00 AM - 10:30 AM", "10:45 AM - 12:15 PM", "12:30 PM - 2:00 PM", "2:15 PM - 3:45 PM", "4:00 PM - 5:30 PM", "7:30 PM - 9:00 PM"];
-const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 
 
@@ -218,15 +217,6 @@ function attachDuplicateDayListeners(){
             currentlySelectedDay = day
         })
     }
-}
-
-function checkDate(SelectedDay){
-    for (const day of schedule) {
-        if (day['date'] === SelectedDay){
-            return false;
-        }
-    }
-    return true;
 }
 
 async function duplicateDay(weekDay, date){
@@ -675,6 +665,7 @@ function addCreateDayInputListener() {
 addCreateDayInputListener();
 
 function getWeekday(event){
+    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     const dayOfWeek = (new Date(event.target.value)).getDay();
     return days[dayOfWeek];
 }
