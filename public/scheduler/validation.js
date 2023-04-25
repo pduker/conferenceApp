@@ -70,10 +70,20 @@ function validateSessionModal(type) {
   }
 }
 
+function checkDate(SelectedDay){
+    for (const day of schedule) {
+        if (day['date'] === SelectedDay){
+            return false;
+        }
+    }
+    return true;
+}
+
 function validateDayModal(type) {
   const weekday = $(`#${type}DayWeekday`).val()
-  const date = $(`#${type}DayDateInput`).val()
-
+  let originalDate = $(`#${type}DayDateInput`).val()
+  let tempDate = originalDate.slice(0, 10).split('-');
+  let date = tempDate[1] + '-' + tempDate[2] + '-' + tempDate[0];
   let valid = true
 
   if (!isNotWhiteSpace(weekday) || weekday === 'Select Weekday'){
@@ -83,12 +93,19 @@ function validateDayModal(type) {
       $(`#${type}DayWeekday`).removeClass('is-invalid')
   }
 
-  if (!isNotWhiteSpace(date)){
-      valid = false
-      $(`#${type}DayDateInput`).addClass('is-invalid')
+
+  if (!isNotWhiteSpace(originalDate)){
+    valid = false
+    $(`#${type}DayDateInput`).addClass('is-invalid')
   } else {
-      $(`#${type}DayDateInput`).removeClass('is-invalid')
-  }
+    if(!checkDate(date)){
+        valid = false
+        $(`#${type}DayDateInput`).addClass('is-invalid')
+    }
+    else{
+        $(`#${type}DayDateInput`).removeClass('is-invalid')
+    }
+}
 
   return valid
 }

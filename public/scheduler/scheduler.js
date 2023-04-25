@@ -185,7 +185,7 @@ function populateAccordionData() {
                     </button>
                 </div>
                 <div class='col-auto p-1'>
-                    <button class="btn btn-secondary" id='duplicate-day-${day.id}'>
+                    <button class="btn btn-secondary" id='duplicate-day-${day.id}' data-bs-toggle="modal" data-bs-target="#editDayModal">
                         <i class="fa-solid fa-clone mx-1"></i> Clone Day
                     </button>
                 </div>
@@ -213,16 +213,18 @@ function populateAccordionData() {
 function attachDuplicateDayListeners(){
     for (const day of schedule) {
         $(`#duplicate-day-${day.id}`).on("click" , function(){
-            duplicateDay(day.id);
+            $(`#editDayModalLabel`).html("Duplicate Day");
+            currentlySelectedDay = day
         })
     }
 }
 
-async function duplicateDay(dayID){
-    const selectedDay = await getDay(dayID);
+async function duplicateDay(weekDay, date){
+    const selectedDay = await getDay(currentlySelectedDay.id);
+
     const body = {
-        date: selectedDay.date,
-        weekday: selectedDay.weekday
+        date: date,
+        weekday: weekDay
     };
 
     const newDay = await createDay(body);
@@ -245,7 +247,6 @@ async function duplicateDay(dayID){
     newDay.Sessions = sessions;
     schedule.push(newDay);
     populateAccordionData();
-    $("#createDayModal").modal('hide');    
 }
 
 function attachEditDayListeners(){
@@ -254,6 +255,7 @@ function attachEditDayListeners(){
             currentlySelectedDay = day
             $('#editDayWeekday').val(day.weekday)
             $('#editDayDateInput').val(day.date)
+            $(`#editDayModalLabel`).html("Edit Day");
         });
     }
 }
@@ -339,7 +341,8 @@ async function saveCreateDay () {
     if (!validateDayModal('create')) return;
 
     const weekday = $("#createDayWeekday").val();
-    const date = $("#createDayDateInput").val();
+    const tempDate = $("#createDayDateInput").val().slice(0, 10).split('-');
+    let date = tempDate[1] + '-' + tempDate[2] + '-' + tempDate[0];
 
     const body = {
         date,
@@ -418,12 +421,19 @@ async function saveDay() {
         if (!validateDayModal('edit')) return;
 
         const weekday = $("#editDayWeekday").val();
-        const date = $("#editDayDateInput").val();
+        let tempDate = $("#editDayDateInput").val().slice(0, 10).split('-');
+        let date = tempDate[1] + '-' + tempDate[2] + '-' + tempDate[0];
 
-        await updateDayDetails(weekday, date);
+        let functionVersion = $("#editDayModalLabel")[0].innerHTML
+        if(functionVersion === "Edit Day"){
+            await updateDayDetails(weekday, date);
+        } else{
+            await duplicateDay(weekday, date);
+        }
 
         populateAccordionData()
         $("#editDayModal").modal('hide');
+        $(`#editDayModalLabel`).html("Edit Day");
     } catch (err) {
         console.error(err)
     }
