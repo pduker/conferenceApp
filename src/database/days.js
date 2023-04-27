@@ -3,18 +3,23 @@ const { deleteSession } = require('./sessions')
 const { updateChangedFields } = require('./utils')
 
 async function getAllDays() {
-  const days = await Days.findAll({ include: [
-    { model: Sessions,
+  const days = await Days.findAll({ 
+    include: [{
+      model: Sessions,
       include: [
         {
           model: Papers,
           include: [
             Authors, SuppMaterials
-          ]
+          ],
         }
       ]
-    } 
-  ]})
+    }],
+    order: [
+      // Order by the sessionOrder property on Papers, which is a child of Sessions in descending order
+      [ Sessions, Papers, 'sessionOrder', 'DESC']
+    ]
+  })
 
   return days
 }

@@ -49,6 +49,10 @@ const Papers = db.define('Papers', {
     type: DataTypes.STRING,
     allowNull: false
   },
+  sessionOrder: {
+    type: DataTypes.NUMBER,
+    allowNull: true
+  },
   titleNameString: {
     type: DataTypes.STRING,
     allowNull: false
