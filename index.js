@@ -156,6 +156,7 @@ server.use('/js', express.static(path.join(__dirname, 'node_modules/@forttawesom
 server.use('/js', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/js')))
 server.use('/js', express.static(path.join(__dirname, 'node_modules/jquery/dist')))
 server.use('/js', express.static(path.join(__dirname, 'node_modules/texlive')))
+server.use('/js', express.static(path.join(__dirname, 'node_modules/sortablejs')))
 server.use(express.static("public"))
 
 // Protected authenticated routing from here on
