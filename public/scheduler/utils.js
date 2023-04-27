@@ -23,3 +23,18 @@ function resetDayModal (type) {
   $(`#${type}DayWeekday`).removeClass('is-invalid')
   $(`#${type}DayDateInput`).removeClass('is-invalid')
 }
+
+function handleUpdatingSortableList () {
+
+  if (currentlySelectedSessionPapersSortable !== null) {
+    currentlySelectedSessionPapersSortable.destroy() // Cleanup the old instance
+  }
+
+  // Create the sortable list from the rendered papers in editSessionModal
+  currentlySelectedSessionPapersSortable = Sortable.create(document.getElementById('insertPapers'), {
+    group: 'papers',
+    sort: true,
+    easing: 'cubic-bezier(1, 0, 0, 1)',
+    dataIdAttr: 'data-paperId' // This is the paper id on each card. Will be outputted later for order adjustment
+  })
+}

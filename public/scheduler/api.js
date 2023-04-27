@@ -169,3 +169,22 @@ async function unassignPaperFromSession(paper) {
       throw new Error('Received a non-200 response code while removing paper from session!')
   }
 }
+
+async function updatePaperOrderInSession (paperId, order) {
+    let data = {
+        "id": paperId,
+        "sessionOrder": order
+    }
+  
+    let res = await fetch('api/papers', {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: {
+            "Content-Type": 'application/json'
+        }
+    });
+  
+    if (!res.ok) {
+        throw new Error('Received a non-200 response code while removing paper from session!')
+    }
+}

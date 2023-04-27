@@ -16,8 +16,8 @@ async function getAllDays() {
       ]
     }],
     order: [
-      // Order by the sessionOrder property on Papers, which is a child of Sessions in descending order
-      [ Sessions, Papers, 'sessionOrder', 'DESC']
+      // Order by the sessionOrder property on Papers, which is a child of Sessions in ascending order
+      [ Sessions, Papers, 'sessionOrder', 'ASC']
     ]
   })
 
