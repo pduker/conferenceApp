@@ -279,6 +279,13 @@ function attachEditModalListeners() {
 
                 updateEditSessionModal(currentlySelectedSessionPapers)
                 renderSelectablePapers(allPapers)
+
+                // Create the sortable list
+                Sortable.create(document.getElementById('insertPapers'), {
+                    group: 'papers',
+                    sort: true,
+                    easing: 'cubic-bezier(1, 0, 0, 1)'
+                })
             });
         }
     }
