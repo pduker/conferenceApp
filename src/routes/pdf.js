@@ -150,7 +150,7 @@ function convertTo24HourString (time) {
       
       return final
   } else {
-    if (hours.length < 2)
+    if (hours.length < 2 || hours < 10)
       return `0${hours}:${minutes}` // Needs to be in full 24HR format still so we have a leading 0
     else 
       return `${hours}:${minutes}`
