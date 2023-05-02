@@ -3,15 +3,14 @@ let schedule;
 let allPapers;
 const presetSessions = ["7:15 AM - 8:45 AM", "9:00 AM - 10:30 AM", "10:45 AM - 12:15 PM", "12:30 PM - 2:00 PM", "2:15 PM - 3:45 PM", "4:00 PM - 5:30 PM", "7:30 PM - 9:00 PM"];
 
-
-
-
 // Reference to the actual currently selected day (WRITING TO THIS IS REFLECTED AS THE DATABASE RECORD)
 let currentlySelectedDay = {}
 // Reference to the actual currently selected session (WRITING TO THIS IS REFLECTED AS THE DATABASE RECORD)
 let currentlySelectedSession = {}
 // A shallow copy of the session papers to allow for on-the-fly editing before writing changes to sessions
 let currentlySelectedSessionPapers = []
+// The current Sortable instance of the drag and drop system for the selected session
+let currentlySelectedSessionPapersSortable = null
 // Papers to be selected when a session save occurs
 let selectedPapers = []
 // Papers to be removed when a session save occurs
@@ -296,6 +295,8 @@ function attachEditModalListeners() {
 
                 updateEditSessionModal(currentlySelectedSessionPapers)
                 renderSelectablePapers(allPapers)
+
+                handleUpdatingSortableList()
             });
         }
     }
@@ -419,6 +420,19 @@ async function saveSession() {
             await unassignPaperFromSession(paper)
         }
 
+        // Update paper order at DB layer
+        let i = 1
+        const orderArray = currentlySelectedSessionPapersSortable.toArray()
+        for (const paperId of orderArray) {
+            await updatePaperOrderInSession(paperId, i)
+            i++
+        }
+
+        // Rebuild the sessionPapers to reflect this new order
+        currentlySelectedSessionPapers.sort((a, b) => {
+            return orderArray.indexOf(a.id.toString()) - orderArray.indexOf(b.id.toString())
+        })
+
         await updateSessionDetails(title, start, end, description, chair, room)
 
         currentlySelectedSession.Papers = currentlySelectedSessionPapers
@@ -532,7 +546,7 @@ function updateEditSessionModal(papers) {
         const authors = renderAuthors(paper.Authors)
 
         tempHTML +=
-            `<div class="card paper-card">
+            `<div class="card paper-card" data-paperId='${paper.id}'>
             <div class='card-button h-100' id='paper-card-${paper.id}'>
                 <div class="card-body">
                     <div class="row d-flex">
@@ -553,7 +567,7 @@ function updateEditSessionModal(papers) {
         const authors = renderAuthors(paper.Authors)
 
         tempHTML +=
-            `<div class="card paper-card selected">
+            `<div class="card paper-card selected" data-paperId='${paper.id}'>
             <div class='card-button h-100' id='paper-card-selected-${paper.id}'>
                 <div class="card-body">
                     <div class="row">
