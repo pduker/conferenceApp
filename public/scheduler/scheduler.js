@@ -31,6 +31,13 @@ function isNotUndefinedOrNull(text) {
     return text !== undefined && text !== null
 }
 
+function sortSessionsByTime(a, b){
+    if (convertTo24HourString(a.start) === convertTo24HourString(b.start))
+      return convertTo24HourString(a.end) < convertTo24HourString(b.end) ? -1 : 1
+    else
+      return convertTo24HourString(a.start) < convertTo24HourString(b.start) ? -1 : 1
+}
+
 function convertTo12HourString (time) {
     // Set some arbitrary start date, the day does not matter only the time does and so we do this to get the time helper functions
     return new Date(`1970-01-01T${time}Z`).toLocaleTimeString('en-US', { timeZone:'UTC',hour12:true,hour:'numeric',minute:'numeric'} )
@@ -53,7 +60,11 @@ function convertTo24HourString (time) {
         
         return final
     } else {
-        return `0${hours}:${minutes}` // Needs to be in full 24HR format still so we have a leading 0
+        //return `0${hours}:${minutes}` // Needs to be in full 24HR format still so we have a leading 0
+        if (hours < 10 || hours.length < 2)
+            return `0${hours}:${minutes}` // Needs to be in full 24HR format still so we have a leading 0
+        else 
+            return `${hours}:${minutes}`
     }
 }
 
@@ -148,7 +159,10 @@ function populateAccordionData() {
                     <div class='col-2'></div>
                 </div>`
             } else {
-                for (let session of day['Sessions']) {
+
+                const sortedSessions = day.Sessions.sort((a, b) => sortSessionsByTime(a, b))
+
+                for (let session of sortedSessions) {
 
                     let shortenedDescr = session.description
 
