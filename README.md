@@ -1,11 +1,11 @@
-# document-parser
-A super cool parser
+# Conference Scheduler
+A conference scheduling application built as an open-source, lightweight solution to handling the logics of research conferences.
 
 ## Requirements
-- Node (latest preferably, v16)
+- NodeJS (v18 currently is supported)
 - Pandoc (2.19 preferably)
 
-## How to Start
+## How to Install
 - Install the packages `npm i`
 - Type `npm run local` to start the server
 
